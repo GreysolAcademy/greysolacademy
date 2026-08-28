@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Run Payroll | Greysol Academy</title>
+<link rel="icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{--navy:#001f3f;--light:#f4f7fb;--green:#27ae60;--red:#c0392b;--border:#e2e6ea}
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{margin:0;background:var(--light)}
+header{background:var(--navy);color:white;padding:15px 30px;display:flex;justify-content:space-between;position:sticky;top:0;z-index:999}
+.container{padding:30px;max-width:1600px;margin:auto}
+.card{background:white;padding:25px;border-radius:12px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+input,select{padding:10px;border-radius:8px;border:1px solid var(--border);width:100%}
+.btn{padding:11px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:bold;display:inline-flex;gap:8px;align-items:center}
+.btn-primary{background:var(--navy);color:white}.btn-success{background:var(--green);color:white}.btn-info{background:#17a2b8;color:white}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:15px;min-width:1400px}
+th{background:var(--navy);color:white;padding:12px;text-align:left;font-size:12px;position:sticky;top:0}
+td{padding:8px;border-bottom:1px solid #eee;font-size:12px}
+.total-row{font-weight:bold;background:#f4f7fb}
+.summary-box{display:grid;grid-template-columns:repeat(5,1fr);gap:15px;margin:20px 0}
+.summary-card{background:var(--light);padding:15px;border-radius:10px;text-align:center}
+.summary-card h4{margin:0;color:#666;font-size:12px}.summary-card h2{margin:5px 0;color:var(--navy);font-size:18px}
+.alert{padding:12px;border-radius:8px;margin-bottom:15px;background:#fff3cd;color:#856404;border:1px solid #ffeeba;display:none}
+.warn{background:#fff3cd;color:#856404}
+#reportToPrint{display:none}
+@page { size: A4 landscape; margin: 10mm; }
+@media print{ body * { visibility: hidden; } #reportToPrint, #reportToPrint * { visibility: visible; } #reportToPrint { position: absolute; left: 0; top: 0; width: 100%; display:block!important; }.no-print{display:none!important} * {-webkit-print-color-adjust: exact!important;} }
+</style>
+</head>
+<body>
+<header class="no-print"><h2><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</h2><div id="staffName"></div></header>
+
+<div class="container">
+  <div class="alert" id="errorAlert"></div>
+
+  <div class="card no-print">
+    <h3>1. Run New Payroll</h3>
+    <div class="grid-3">
+      <div><label>Month</label><select id="month"></select></div>
+      <div><label>Year</label><input id="year" value="2026"></div>
+      <div><label>Pay Date</label><input type="date" id="payDate"></div>
+    </div>
+    <button class="btn btn-primary" id="loadStaffBtn" style="margin-top:15px"><i class="fa-solid fa-users"></i> Load Staff + Attendance</button>
+    <p id="staffCount" style="margin-top:10px;color:#666"></p>
+  </div>
+
+  <div class="card no-print" id="payrollTable" style="display:none">
+    <h3>Staff Payroll <span class="small">Prorated by: <b id="prorateMethod">Month Days</b></span></h3>
+    <div class="table-wrap">
+    <table id="staffTable">
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="selectAll" checked></th>
+          <th>Staff ID</th><th>Name</th><th>Status</th><th>Basic</th>
+          <th>Payroll Days</th><th>Present</th><th>Absent</th>
+          <th>Allowance</th><th>Deduction</th><th>Advance</th>
+          <th>Gross</th><th>Emp Pen 5%</th><th>Er Pen 10%</th><th>PAYE</th><th>Other</th><th>Net</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot><tr class="total-row"><td colspan="11">TOTALS</td><td id="tGross">0</td><td id="tEmpPension">0</td><td id="tErPension">0</td><td id="tPAYE">0</td><td id="tOther">0</td><td id="tNet">0</td></tr></tfoot>
+    </table>
+    </div>
+    <div class="summary-box">
+      <div class="summary-card"><h4>Total Gross</h4><h2 id="sGross">MWK 0</h2></div>
+      <div class="summary-card"><h4>Er Pension</h4><h2 id="sErPension">MWK 0</h2></div>
+      <div class="summary-card"><h4>Deductions</h4><h2 id="sDed">MWK 0</h2></div>
+      <div class="summary-card"><h4>Net</h4><h2 id="sNet">MWK 0</h2></div>
+      <div class="summary-card"><h4>Employees</h4><h2 id="sCount">0</h2></div>
+    </div>
+    <button class="btn btn-success" id="processPayrollBtn"><i class="fa-solid fa-check"></i> Process & Post Journal</button>
+  </div>
+
+  <div class="card no-print">
+    <h3>2. Search Existing Payroll</h3>
+    <div class="grid-3">
+      <div><label>Month</label><select id="searchMonth"></select></div>
+      <div><label>Year</label><input id="searchYear" value="2026"></div>
+      <div><label>&nbsp;</label><button class="btn btn-primary" id="searchBtn"><i class="fa-solid fa-search"></i> Search</button></div>
+    </div>
+    <div id="searchResults" style="margin-top:20px"></div>
+  </div>
+
+  <div id="reportToPrint"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, runTransaction, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",projectId:"greysol-academy"});
+const db = getFirestore(app);
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+document.getElementById("staffName").innerHTML = loggedUser?.username || "Admin";
+document.getElementById("payDate").valueAsDate = new Date();
+
+let staffList=[], settings={}, chartOfAccounts={}, attendanceData={};
+
+function showError(msg, isWarn=false){
+  const el = document.getElementById("errorAlert");
+  el.style.display="block";
+  el.className = isWarn? "alert warn" : "alert";
+  el.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}`;
+}
+function parseDate(d){ try{ if(!d) return "-"; if(d.toDate) return d.toDate().toLocaleDateString(); if(d.seconds) return new Date(d.seconds * 1000).toLocaleDateString(); return new Date(d).toLocaleDateString(); }catch(e){return d} }
+function fmt(num){ return Number(num||0).toLocaleString() }
+function safeDate(d){ try{ return new Date(d) }catch(e){ return new Date() } }
+
+function loadMonths(){
+  const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const currentMonth = new Date().getMonth();
+  document.getElementById("month").innerHTML = months.map((m,i)=>`<option value="${i}" ${i===currentMonth?"selected":""}>${m}</option>`).join("");
+  document.getElementById("searchMonth").innerHTML = months.map((m,i)=>`<option value="${i}" ${i===currentMonth?"selected":""}>${m}</option>`).join("");
+}
+loadMonths();
+
+async function loadSettings(){
+  try{
+    const sSnap = await getDoc(doc(db,"payrollSettings","main"));
+    if(sSnap.exists()) settings = sSnap.data();
+    else settings = {workingDays:22, pensionRate:0.05, employerPensionRate:0.10};
+
+    const coaSnap = await getDocs(collection(db,"chartOfAccounts"));
+    coaSnap.forEach(d=> chartOfAccounts[d.data().accountCode] = d.data().accountName);
+
+    console.log("Settings Loaded:", settings);
+  }catch(e){ console.log("Settings error",e) }
+}
+loadSettings(); // Load immediately
+
+function calcPAYE(taxable){
+  if(!settings.payeRates || settings.payeRates.length === 0) return taxable * 0.3;
+  let paye=0; settings.payeRates.forEach(bracket=>{ if(taxable > bracket.from){ let amount = Math.min(taxable, bracket.to) - bracket.from; if(amount > 0) paye += amount * bracket.rate; } }); return paye;
+}
+
+function getDaysInMonth(year, monthIndex){ return new Date(year, monthIndex + 1, 0).getDate(); }
+
+// FIXED: USE settings.workingDays FOR PRORATION
+document.getElementById("loadStaffBtn").onclick = async ()=>{
+  const btn = document.getElementById("loadStaffBtn");
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+  btn.disabled = true;
+  document.getElementById("errorAlert").style.display="none";
+  staffList = []; attendanceData = {};
+
+  try{
+    await loadSettings(); // Reload settings before load
+
+    const monthIndex = Number(document.getElementById("month").value);
+    const year = Number(document.getElementById("year").value);
+    const monthName = new Date(year, monthIndex).toLocaleString('default', { month: 'long' });
+    const daysInMonth = getDaysInMonth(year, monthIndex);
+
+    // KEY FIX: Use settings.workingDays if set, else use actual days in month
+    const payrollDays = settings.workingDays && settings.workingDays > 0? settings.workingDays : daysInMonth;
+    document.getElementById("prorateMethod").innerText = `Settings: ${payrollDays} Days`;
+
+    // 1. Load ALL Staff
+    const staffSnap = await getDocs(collection(db,"staff"));
+    let inactiveCount = 0;
+    staffSnap.forEach(d=>{
+      const data = d.data();
+      const status = (data.status || data.employmentStatus || "Active").toString();
+      if(status.toLowerCase()!== "active") inactiveCount++;
+
+      staffList.push({
+        docID: d.id,
+        staffID: data.staffID || data.employeeID || d.id,
+        firstName: data.firstName || data.name?.split(" ")[0] || "",
+        surname: data.surname || data.lastName || data.name?.split(" ").slice(1).join(" ") || "",
+        status: status,
+        basicSalary: Number(data.basicSalary || data.salary || data.basic || 0),
+        defaultAllowances: data.defaultAllowances || data.allowances || [],
+        defaultDeductions: data.defaultDeductions || data.deductions || [],
+        presentDays: 0, absentDays: 0, payrollDays: payrollDays // <-- USE SETTINGS HERE
+      })
+    });
+
+    if(inactiveCount > 0) showError(`${inactiveCount} staff are not 'Active'. They are unchecked by default.`, true);
+
+    // 2. Load Attendance
+    const attSnap = await getDocs(collection(db,"attendance"));
+    attSnap.forEach(d=>{
+      try{
+        const att = d.data();
+        if(!att.date) return;
+        const attDate = safeDate(att.date);
+        if(attDate.getMonth() === monthIndex && attDate.getFullYear() === year){
+          const key1 = att.staffID;
+          const key2 = d.id.split("_")[0];
+          if(!attendanceData[key1]) attendanceData[key1] = [];
+          attendanceData[key1].push(att);
+          if(key2!== key1){
+            if(!attendanceData[key2]) attendanceData[key2] = [];
+            attendanceData[key2].push(att);
+          }
+        }
+      }catch(e){}
+    });
+
+    // 3. Calculate
+    staffList.forEach(s=>{
+      const records = attendanceData[s.docID] || attendanceData[s.staffID] || [];
+      s.presentDays = records.filter(r=>r.status==="Present" || r.status==="Holiday").length;
+      s.absentDays = records.filter(r=>r.status==="Absent" || r.status==="Leave").length;
+    });
+
+    document.getElementById("staffCount").innerText = `${staffList.length} staff loaded | Prorating by ${payrollDays} days from settings | ${Object.keys(attendanceData).length} staff with attendance`;
+    renderTable();
+    document.getElementById("payrollTable").style.display="block";
+  }catch(e){
+    showError("Error: " + e.message);
+  }finally{
+    btn.innerHTML = '<i class="fa-solid fa-users"></i> Reload Staff + Attendance';
+    btn.disabled = false;
+  }
+}
+
+function renderTable(){
+  const tbody = document.querySelector("#staffTable tbody");
+  tbody.innerHTML = staffList.map((s,i)=>{
+    const defaultAllow = s.defaultAllowances?.reduce((a,b)=>a+Number(b.amount||0),0) || 0;
+    const defaultDed = s.defaultDeductions?.reduce((a,b)=>a+Number(b.amount||0),0) || 0;
+    const rowColor = s.status.toLowerCase()!== "active"? 'style="background:#fff3cd"' : "";
+    return `<tr data-i="${i}" ${rowColor}>
+      <td><input type="checkbox" class="staffCheck" ${s.status.toLowerCase()==="active"?"checked":""}></td>
+      <td>${s.staffID}</td><td>${s.firstName} ${s.surname}</td><td>${s.status}</td><td>${fmt(s.basicSalary)}</td>
+      <td>${s.payrollDays}</td><td style="color:green">${s.presentDays}</td><td style="color:red">${s.absentDays}</td>
+      <td><input type="number" class="thisAllowance" value="${defaultAllow}" style="width:80px"></td>
+      <td><input type="number" class="thisDeduction" value="${defaultDed}" style="width:80px"></td>
+      <td><input type="number" class="thisAdvance" value="0" style="width:80px"></td>
+      <td class="gross">0</td><td class="empPension">0</td><td class="erPension">0</td><td class="paye">0</td><td class="otherDed">0</td><td><b class="net">0</b></td>
+    </tr>`
+  }).join("");
+  recalculateAll();
+}
+
+function recalculateAll(){
+  let t = {gross:0,empPension:0,erPension:0,paye:0,other:0,net:0};
+  const empPensionRate = settings.pensionRate || 0.05;
+  const erPensionRate = settings.employerPensionRate || 0.10;
+
+  document.querySelectorAll("#staffTable tbody tr").forEach(row=>{
+    if(!row.querySelector(".staffCheck").checked) return;
+    const i = row.dataset.i; const s = staffList[i];
+
+    // FIX: PRORATE USING settings.workingDays
+    const proratedBasic = s.payrollDays > 0? (Number(s.basicSalary) / s.payrollDays) * s.presentDays : Number(s.basicSalary);
+
+    const thisAllow = Number(row.querySelector(".thisAllowance").value) || 0;
+    const thisDed = Number(row.querySelector(".thisDeduction").value) || 0;
+    const thisAdvance = Number(row.querySelector(".thisAdvance").value) || 0;
+    const gross = proratedBasic + thisAllow; const empPension = gross * empPensionRate;
+    const erPension = gross * erPensionRate; const taxable = gross - empPension;
+    const paye = calcPAYE(taxable); const otherDed = thisDed + thisAdvance;
+    const totalDed = empPension + paye + otherDed; const net = gross - totalDed;
+
+    row.querySelector(".gross").innerText = fmt(gross); row.querySelector(".empPension").innerText = fmt(empPension);
+    row.querySelector(".erPension").innerText = fmt(erPension); row.querySelector(".paye").innerText = fmt(paye);
+    row.querySelector(".otherDed").innerText = fmt(otherDed); row.querySelector(".net").innerText = fmt(net);
+    s.calc = {proratedBasic, gross, empPension, erPension, paye, otherDed, net, thisAdvance, thisDed};
+    t.gross+=gross;t.empPension+=empPension;t.erPension+=erPension;t.paye+=paye;t.other+=otherDed;t.net+=net;
+  });
+  document.getElementById("tGross").innerText = fmt(t.gross); document.getElementById("tEmpPension").innerText = fmt(t.empPension);
+  document.getElementById("tErPension").innerText = fmt(t.erPension); document.getElementById("tPAYE").innerText = fmt(t.paye);
+  document.getElementById("tOther").innerText = fmt(t.other); document.getElementById("tNet").innerText = fmt(t.net);
+  document.getElementById("sGross").innerText = "MWK "+fmt(t.gross); document.getElementById("sErPension").innerText = "MWK "+fmt(t.erPension);
+  document.getElementById("sDed").innerText = "MWK "+fmt(t.empPension+t.paye+t.other); document.getElementById("sNet").innerText = "MWK "+fmt(t.net);
+  document.getElementById("sCount").innerText = document.querySelectorAll(".staffCheck:checked").length;
+}
+
+document.addEventListener("input",e=>{ if(["thisAllowance","thisDeduction","thisAdvance"].some(c=>e.target.classList.contains(c))) recalculateAll(); });
+document.addEventListener("change",e=>{ if(e.target.classList.contains("staffCheck")) recalculateAll(); });
+document.getElementById("selectAll").onchange = e=>{ document.querySelectorAll(".staffCheck").forEach(c=>c.checked=e.target.checked); recalculateAll(); }
+
+async function generatePayrollNo(){ const snap = await getDocs(query(collection(db,"payrollRuns"), orderBy("createdAt","desc"), limit(1))); let number = 1; if(!snap.empty) number = Number(snap.docs[0].data().runNo.replace("PR","")) + 1; return "PR" + String(number).padStart(6,"0"); }
+async function generateJournalNo(){ const snap = await getDocs(query(collection(db,"journalEntries"), orderBy("createdAt","desc"), limit(1))); let number = 1; if(!snap.empty) number = Number(snap.docs[0].data().journalNo.replace("JV","")) + 1; return "JV" + String(number).padStart(5,"0"); }
+
+document.getElementById("processPayrollBtn").onclick = async ()=>{
+  let selected = []; 
+  document.querySelectorAll("#staffTable tbody tr").forEach(row=>{ 
+    if(row.querySelector(".staffCheck").checked) selected.push(staffList[row.dataset.i]); 
+  });
+  
+  if(selected.length===0) return alert("Select staff"); 
+  if(!confirm(`Process payroll for ${selected.length} staff?`)) return;
+  
+  try{
+    await runTransaction(db, async (transaction)=>{
+      const runNo = await generatePayrollNo(); 
+      const journalNo = await generateJournalNo(); 
+      const payDate = new Date(document.getElementById("payDate").value);
+      
+      let totalGross=0,totalEmpPension=0,totalErPension=0,totalPAYE=0,totalOther=0,totalNet=0,totalAdvance=0,totalLoanDed=0;
+      
+      let employees = selected.map(s=>{ 
+        totalGross+=s.calc.gross; 
+        totalEmpPension+=s.calc.empPension; 
+        totalErPension+=s.calc.erPension; 
+        totalPAYE+=s.calc.paye; 
+        totalOther+=s.calc.otherDed; 
+        totalNet+=s.calc.net; 
+        totalAdvance+=s.calc.thisAdvance; 
+        totalLoanDed+=s.calc.thisDed; 
+        
+        // UPDATED: Added role, email, proratedBasic, and fallback for staffID
+        return {
+          staffID: s.staffID || s.docID, // FIX: ensures payslip can find staff
+          name: s.firstName + " " + s.surname, 
+          role: s.role || "-", // ADDED
+          email: s.email || "", // ADDED
+          presentDays: s.presentDays, 
+          absentDays: s.absentDays, 
+          payrollDays: s.payrollDays,
+          proratedBasic: s.calc.proratedBasic, // ADDED for payslip
+          gross: s.calc.gross, 
+          empPension: s.calc.empPension, 
+          erPension: s.calc.erPension, 
+          paye: s.calc.paye, 
+          otherDed: s.calc.otherDed, 
+          net: s.calc.net
+        } 
+      });
+      
+      const totalPensionPayable = totalEmpPension + totalErPension; 
+      let lines = [];
+      
+      lines.push({accountCode: settings.salaryExpenseAccount||"6000", accountName: chartOfAccounts[settings.salaryExpenseAccount]||"Salaries Expense", debit: totalGross + totalErPension, credit: 0});
+      
+      if(totalAdvance > 0 && settings.advanceAccount){ 
+        lines.push({accountCode: settings.advanceAccount, accountName: chartOfAccounts[settings.advanceAccount]||"Staff Advance", debit: totalAdvance, credit: 0}); 
+      }
+      
+      lines.push({accountCode: settings.receivableAccount||"2100", accountName: chartOfAccounts[settings.receivableAccount]||"Salaries Payable", debit: 0, credit: totalNet});
+      lines.push({accountCode: settings.pensionPayableAccount||"2105", accountName: chartOfAccounts[settings.pensionPayableAccount]||"Pension Payable", debit: 0, credit: totalPensionPayable});
+      lines.push({accountCode: settings.payePayableAccount||"2110", accountName: chartOfAccounts[settings.payePayableAccount]||"PAYE Payable", debit: 0, credit: totalPAYE});
+      
+      if(totalLoanDed > 0){ 
+        lines.push({accountCode: "2106", accountName: "Other Deductions Payable", debit: 0, credit: totalLoanDed}); 
+      }
+      
+      const totalDebit = lines.reduce((a,l)=>a+l.debit,0); 
+      const totalCredit = lines.reduce((a,l)=>a+l.credit,0);
+      
+      if(Math.abs(totalDebit - totalCredit) > 0.01) throw new Error(`Journal not balanced`);
+      
+      transaction.set(doc(collection(db,"payrollRuns")),{
+        runNo, 
+        month:document.getElementById("month").options[document.getElementById("month").selectedIndex].text, 
+        year:Number(document.getElementById("year").value), 
+        payDate:Timestamp.fromDate(payDate), 
+        employees, // now has role, email, staffID
+        totals:{gross:totalGross,empPension:totalEmpPension,erPension:totalErPension,paye:totalPAYE,other:totalOther,net:totalNet}, 
+        journalNo, 
+        status:"Posted", 
+        createdBy:loggedUser.username, 
+        createdAt:Timestamp.now() 
+      });
+      
+      transaction.set(doc(collection(db,"journalEntries")),{
+        journalNo, 
+        date:Timestamp.fromDate(payDate), 
+        reference:runNo, 
+        description:`Payroll ${runNo}`, 
+        lines, 
+        totalDebit, 
+        totalCredit, 
+        source:"Payroll", 
+        createdBy:loggedUser.username, 
+        createdAt:Timestamp.now(), 
+        postedBy:loggedUser.username, 
+        postedAt:Timestamp.now() 
+      });
+      
+    }); 
+    
+    alert("Payroll processed and Journal Posted successfully"); 
+    location.reload();
+    
+  }catch(e){ 
+    alert("Error: " + e.message); 
+  }
+}
+
+document.getElementById("searchBtn").onclick = async ()=>{
+  const monthIndex = Number(document.getElementById("searchMonth").value);
+  const monthName = new Date(2026, monthIndex).toLocaleString('default', { month: 'long' });
+  const year = Number(document.getElementById("searchYear").value);
+  document.getElementById("searchResults").innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Searching...';
+  const snap = await getDocs(query(collection(db,"payrollRuns"), where("month","==",monthName), where("year","==",year)));
+  if(snap.empty) return document.getElementById("searchResults").innerHTML = "No payroll found for this period";
+  const run = snap.docs[0].data(); const runForPrint = JSON.parse(JSON.stringify(run));
+  let html = `<h4>Payroll: ${run.runNo} - ${run.month} ${run.year}</h4><p>Pay Date: ${parseDate(run.payDate)}</p><button class="btn btn-info" onclick='printReport(${JSON.stringify(runForPrint)})'><i class="fa-solid fa-print"></i> Print</button><div class="table-wrap"><table><thead><tr><th>Staff</th><th>Present</th><th>Payroll Days</th><th>Gross</th><th>Net</th></tr></thead><tbody>`;
+  run.employees.forEach(e=>{ html += `<tr><td>${e.name}</td><td>${e.presentDays||0}</td><td>${e.payrollDays||0}</td><td>${fmt(e.gross)}</td><td><b>${fmt(e.net)}</b></td></tr>`; });
+  html += `</tbody></table></div>`; document.getElementById("searchResults").innerHTML = html;
+}
+
+window.printReport = (run)=>{
+  const reportDiv = document.getElementById("reportToPrint"); const payDate = parseDate(run.payDate);
+  reportDiv.innerHTML = `<div style="padding:15px"><h2>GREYSOL ACADEMY - PAYROLL ${run.month} ${run.year}</h2><p>Pay Date: ${payDate}</p><table border="1" style="width:100%;border-collapse:collapse;font-size:10px"><thead style="background:#001f3f;color:white"><tr><th>#</th><th>Staff</th><th>Present</th><th>Payroll Days</th><th>Gross</th><th>Net</th></tr></thead><tbody>${run.employees.map((e,i)=>`<tr><td>${i+1}</td><td>${e.name}</td><td>${e.presentDays||0}</td><td>${e.payrollDays||0}</td><td>${fmt(e.gross)}</td><td><b>${fmt(e.net)}</b></td></tr>`).join("")}</tbody></table></div>`;
+  reportDiv.style.display = "block"; setTimeout(()=>{ window.print(); reportDiv.style.display = "none"; }, 250);
+}
+</script>
+</body>
+</html>

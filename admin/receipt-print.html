@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Print Receipt | Greysol Academy</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--light:#f4f7fb}
+body{margin:0;background:var(--light);padding:30px}
+.box{background:white;padding:30px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.1);max-width:800px;margin:0 auto}
+.receipt-header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--navy);padding-bottom:20px;margin-bottom:20px}
+.school-info{display:flex;gap:15px;align-items:center}
+.school-info img{width:80px;height:80px;object-fit:contain}
+.school-info h1{margin:0;font-size:24px;color:var(--navy)}
+.receipt-title{text-align:right}
+.receipt-title h2{margin:0;color:var(--navy);font-size:28px;letter-spacing:2px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:25px}
+.info-item label{font-size:12px;color:#777;display:block;text-transform:uppercase}
+.info-item p{margin:5px 0;font-weight:bold;color:var(--navy);font-size:16px}
+.details-table{width:100%;border-collapse:collapse;margin:20px 0}
+.details-table th{background:var(--navy);color:white;padding:12px;text-align:left}
+.details-table td{padding:12px;border-bottom:1px solid #ddd}
+.text-right{text-align:right}
+.total-row td{font-weight:bold;background:#f4f7fb;font-size:18px}
+.footer{margin-top:50px;display:flex;justify-content:space-between;border-top:1px dashed #ccc;padding-top:20px}
+.signature{width:45%;text-align:center}
+.signature.line{border-top:1px solid #333;margin-top:50px;padding-top:5px;font-size:12px}
+.btn-group{display:flex;gap:10px;justify-content:center;margin-top:30px}
+.btn{padding:12px 25px;border-radius:8px;border:none;cursor:pointer;font-weight:bold;font-size:14px;background:var(--navy);color:white}
+.btn-back{background:#7f8c8d}
+.error-box{background:#f8d7da;color:#721c24;padding:15px;border-radius:8px;margin-bottom:15px}
+@media print{body{background:white;padding:0}.box{box-shadow:none;padding:0;max-width:100%}.btn-group{display:none}}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <div id="errorBox"></div>
+
+  <div class="receipt-header">
+    <div class="school-info">
+      <img src="../images/logo1 - Copy.png" alt="Greysol Logo">
+      <div>
+        <h1>GREYSOL ACADEMY</h1>
+        <p>Blantyre, Malawi</p>
+      </div>
+    </div>
+    <div class="receipt-title">
+      <h2>RECEIPT</h2>
+      <p><b>No:</b> <span id="receiptNo">-</span></p>
+      <p><b>Date:</b> <span id="receiptDate">-</span></p>
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-item"><label>Received From</label><p id="studentName">-</p></div>
+    <div class="info-item"><label>Student ID(s)</label><p id="studentID">-</p></div>
+    <div class="info-item"><label>Payment Method</label><p id="paymentMethod">-</p></div>
+    <div class="info-item"><label>Reference</label><p id="reference">-</p></div>
+  </div>
+
+  <table class="details-table">
+    <thead>
+      <tr><th style="width:5%">#</th><th>Description</th><th style="width:15%">Invoice No</th><th class="text-right" style="width:20%">Amount MWK</th></tr>
+    </thead>
+    <tbody id="receiptBody"><tr><td colspan="4">Loading...</td></tr></tbody>
+    <tfoot>
+      <tr class="total-row"><td colspan="3" class="text-right">TOTAL PAID:</td><td class="text-right" id="totalAmount">MWK 0</td></tr>
+    </tfoot>
+  </table>
+
+  <div class="footer">
+    <div class="signature"><div class="line">Received By</div></div>
+    <div class="signature"><div class="line">Authorized Signature</div></div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn" onclick="window.print()">Print Receipt</button>
+    <button class="btn btn-back" onclick="window.history.back()">Back</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",projectId:"greysol-academy"});
+const db = getFirestore(app);
+
+function showError(msg){
+  document.getElementById("errorBox").innerHTML = `<div class="error-box">${msg}</div>`;
+}
+
+const receiptId = new URLSearchParams(window.location.search).get('id');
+if(!receiptId){ showError("No Receipt ID provided in URL"); }
+
+async function loadReceipt(){
+  try{
+    const docSnap = await getDoc(doc(db,"receipts", receiptId));
+    if(!docSnap.exists()){ showError(`Receipt "${receiptId}" not found`); return; }
+
+    const r = docSnap.data();
+
+    document.getElementById("receiptNo").innerText = r.receiptNo;
+    document.getElementById("receiptDate").innerText = formatDate(r.paymentDate);
+
+    let studentNames = [];
+    let studentIDs = [];
+    if(r.allocations && r.allocations.length > 0){
+      r.allocations.forEach(a=>{
+        if(a.studentName) studentNames.push(a.studentName);
+        if(a.studentID) studentIDs.push(a.studentID);
+      });
+    }else{
+      studentNames.push(r.studentName || "Customer");
+      studentIDs.push(r.studentID || "-");
+    }
+
+    document.getElementById("studentName").innerText = [...new Set(studentNames)].join(", ");
+    document.getElementById("studentID").innerText = [...new Set(studentIDs)].join(", ");
+    document.getElementById("paymentMethod").innerText = r.paymentMethod + (r.paymentMethodCode? ` (${r.paymentMethodCode})` : '');
+    document.getElementById("reference").innerText = r.reference || '-';
+
+    const tbody = document.getElementById("receiptBody");
+    tbody.innerHTML = "";
+    let counter = 1;
+
+    if(r.allocations && r.allocations.length > 0){
+      r.allocations.forEach(a=>{
+        tbody.innerHTML += `<tr><td>${counter++}</td><td>School Fees Payment</td><td>${a.invoiceNo}</td><td class="text-right">${Number(a.amount).toLocaleString()}</td></tr>`;
+      });
+    }else{
+      tbody.innerHTML += `<tr><td>1</td><td>School Fees Payment</td><td>${r.invoiceNo || '-'}</td><td class="text-right">${Number(r.amount).toLocaleString()}</td></tr>`;
+    }
+
+    document.getElementById("totalAmount").innerText = "MWK " + Number(r.amount).toLocaleString();
+
+  }catch(error){
+    console.error(error);
+    showError("Error: " + error.message);
+  }
+}
+
+function formatDate(timestamp){
+  if(!timestamp) return "-";
+  const date = timestamp.toDate? timestamp.toDate() : new Date(timestamp);
+  if(isNaN(date)) return timestamp;
+  return date.toLocaleDateString("en-GB", {day:'2-digit', month:'long', year:'numeric'});
+}
+
+loadReceipt();
+</script>
+</body>
+</html>

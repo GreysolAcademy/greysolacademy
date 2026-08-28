@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greysol Academy | Teacher Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{ box-sizing:border-box; font-family:'Segoe UI',Arial,sans-serif; }
+:root{ --navy:#001f3f; --blue:#003366; --light:#f4f7fb; }
+body{ margin:0; background:var(--light); display:flex; height:100vh; overflow:hidden; }
+.sidebar{ width:270px; background:var(--navy); color:white; height:100vh; overflow:auto; position: fixed; left: 0; z-index: 1000; transition:.3s; }
+.sidebar.hide{ left: -270px; }
+.logo{ padding:20px; text-align:center; border-bottom:1px solid rgba(255,255,255,.2); }
+.menu a{ display:flex; align-items:center; gap:15px; padding:15px 25px; color:white; text-decoration:none; }
+.menu a.active{ background:rgba(255,255,255,.1); }
+.main{ flex:1; display:flex; flex-direction:column; margin-left: 270px; transition:.3s; }
+.topbar{ height:75px; background:white; display:flex; justify-content:space-between; align-items:center; padding:0 30px; box-shadow:0 3px 10px rgba(0,0,0,.1); position: sticky; top:0; z-index: 999; }
+.menu-toggle{ display:none; font-size:24px; cursor:pointer; color:var(--navy); }
+.user{ display:flex; align-items:center; gap:10px; font-weight:bold; color:var(--navy); }
+.role-badge{ background:var(--navy); color:white; padding:5px 12px; border-radius:20px; font-size:12px; }
+.content{ padding:30px; overflow:auto; }
+.cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; }
+.card{ background:white; padding:25px; border-radius:15px; text-align:center; box-shadow:0 5px 20px rgba(0,0,0,.1); }
+.card i{ font-size:35px; color:var(--navy); }
+.card h1{ margin:10px; color:var(--navy); }
+.box{ background:white; padding:25px; border-radius:15px; margin-top:25px; box-shadow:0 5px 20px rgba(0,0,0,.1); }
+.tabs{ display:flex; gap:10px; margin-bottom:20px; }
+.tab{ padding:10px 20px; background:#ddd; border-radius:8px; cursor:pointer; font-weight:bold; }
+.tab.active{ background:var(--navy); color:white; }
+table{ width:100%; border-collapse:collapse; }
+th{ background:var(--navy); color:white; padding:12px; text-align:left; }
+td{ padding:12px; border-bottom:1px solid #ddd; }
+@media(max-width:900px){
+.sidebar{ left: -270px; }
+.sidebar.show{ left: 0; }
+.main{ margin-left: 0; }
+.menu-toggle{ display:block; }
+.content{ padding:15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div class="logo"><h2>GREYSOL ACADEMY</h2><p>Teacher Portal</p></div>
+  <div class="menu">
+    <a href="teacher-dashboard.html" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+    <a href="teacher-class-students.html"><i class="fa-solid fa-book-open"></i> My Classes</a>
+    <a href="teacher-attendance.html"><i class="fa-solid fa-clipboard-check"></i> Attendance</a>
+    <a href="teacher-results.html"><i class="fa-solid fa-file-lines"></i> Enter Results</a>
+    <a href="staff-login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </div>
+</div>
+
+<div class="main" id="main">
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:15px;">
+      <i class="fa-solid fa-bars menu-toggle" id="menuToggle"></i>
+      <h2>Welcome, <span id="teacherName">Teacher</span></h2>
+    </div>
+    <div class="user"><span class="role-badge" id="teacherRole"></span></div>
+  </div>
+
+  <div class="content">
+    <div class="cards">
+      <div class="card"><i class="fa-solid fa-users"></i><h1 id="myStudents">0</h1><p>My Students</p></div>
+      <div class="card"><i class="fa-solid fa-book"></i><h1 id="mySubjects">0</h1><p>My Subjects</p></div>
+      <div class="card"><i class="fa-solid fa-calendar-day"></i><h1 id="todayClasses">0</h1><p>Classes Today</p></div>
+    </div>
+
+    <div class="box">
+      <h3><i class="fa-solid fa-book-open"></i> My Subjects & Classes</h3>
+      <table><thead><tr><th>Subject</th><th>Class</th></tr></thead><tbody id="mySubjectsTable"><tr><td colspan="2">Loading...</td></tr></tbody></table>
+    </div>
+
+    <div class="box">
+      <h3><i class="fa-solid fa-clock"></i> My Timetable</h3>
+      <div class="tabs">
+        <div class="tab active" onclick="showTab('today')">Today</div>
+        <div class="tab" onclick="showTab('week')">Weekly View</div>
+      </div>
+
+      <div id="todayTab">
+        <table><thead><tr><th>Time</th><th>Subject</th><th>Class</th></tr></thead><tbody id="scheduleTable"><tr><td colspan="3">Loading...</td></tr></tbody></table>
+      </div>
+
+      <div id="weekTab" style="display:none;">
+        <table><thead><tr><th>Day</th><th>Time</th><th>Subject</th><th>Class</th></tr></thead><tbody id="weeklyTable"><tr><td colspan="4">Loading...</td></tr></tbody></table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// TAB SWITCH
+function showTab(tab){
+  document.getElementById("todayTab").style.display = tab=='today'? 'block' : 'none';
+  document.getElementById("weekTab").style.display = tab=='week'? 'block' : 'none';
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  event.target.classList.add("active");
+}
+
+// SIDEBAR TOGGLE
+document.getElementById("menuToggle").onclick = function(){
+  document.getElementById("sidebar").classList.toggle("show");
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",authDomain:"greysol-academy.firebaseapp.com",projectId:"greysol-academy"});
+const db = getFirestore(app);
+
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+if(!loggedUser){ window.location.href="staff-login.html"; }
+
+async function loadDashboard(){
+  const userName = loggedUser.username;
+
+  // FIND TEACHER IN STAFF COLLECTION
+  const staffSnap = await getDocs(query(collection(db,"staff"), where("username","==",userName)));
+  if(staffSnap.empty){ alert("Teacher record not found"); return; }
+
+  const teacherDoc = staffSnap.docs[0];
+  const teacher = teacherDoc.data();
+  const staffID = teacher.staffID;
+
+  document.getElementById("teacherName").innerText = `${teacher.firstName} ${teacher.surname}`;
+  document.getElementById("teacherRole").innerText = teacher.role || "Staff";
+
+  // 1. MY SUBJECTS FROM ALLOCATIONS
+  let allocSnap = await getDocs(query(collection(db,"allocations"), where("staffID","==",staffID)));
+  const mySubjectsTable = document.getElementById("mySubjectsTable");
+  mySubjectsTable.innerHTML = "";
+  let uniqueSubjects = new Set();
+  allocSnap.forEach(a => {
+    const d = a.data();
+    uniqueSubjects.add(d.subjectName);
+    mySubjectsTable.innerHTML += `<tr><td>${d.subjectName}</td><td>${d.class}</td></tr>`;
+  });
+  document.getElementById("mySubjects").innerText = uniqueSubjects.size;
+
+  // 2. TODAY'S SCHEDULE FROM TIMETABLE
+  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const todayName = days[new Date().getDay()];
+  const scheduleSnap = await getDocs(query(collection(db,"timetable"), where("staffID","==",staffID), where("day","==",todayName)));
+
+  const tbody = document.getElementById("scheduleTable");
+  tbody.innerHTML = "";
+  let todayRows = [];
+  scheduleSnap.forEach(s => todayRows.push(s.data()));
+  todayRows.sort((a,b)=> a.startTime.localeCompare(b.startTime)); // sort by time
+
+  if(todayRows.length === 0) tbody.innerHTML = "<tr><td colspan='3'>No classes today</td></tr>";
+  todayRows.forEach(d => {
+    tbody.innerHTML += `<tr>
+      <td>${d.startTime} - ${d.endTime}</td>
+      <td>${d.subjectName}</td>
+      <td>${d.class}</td>
+    </tr>`;
+  });
+  document.getElementById("todayClasses").innerText = todayRows.length;
+
+  // 3. WEEKLY VIEW
+  const weekSnap = await getDocs(query(collection(db,"timetable"), where("staffID","==",staffID)));
+  const weeklyTable = document.getElementById("weeklyTable");
+  weeklyTable.innerHTML = "";
+  let weekRows = [];
+  weekSnap.forEach(s => weekRows.push(s.data()));
+
+  const dayOrder = {Monday:1,Tuesday:2,Wednesday:3,Thursday:4,Friday:5};
+  weekRows.sort((a,b)=> dayOrder[a.day]-dayOrder[b.day] || a.startTime.localeCompare(b.startTime));
+
+  if(weekRows.length === 0) weeklyTable.innerHTML = "<tr><td colspan='4'>No timetable set</td></tr>";
+  weekRows.forEach(d => {
+    weeklyTable.innerHTML += `<tr>
+      <td>${d.day}</td>
+      <td>${d.startTime} - ${d.endTime}</td>
+      <td>${d.subjectName}</td>
+      <td>${d.class}</td>
+    </tr>`;
+  });
+}
+loadDashboard();
+</script>
+</body>
+</html>

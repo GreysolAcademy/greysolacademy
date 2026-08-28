@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bills | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif}
+:root{--navy:#001f3f;--navy2:#003366;--blue:#1769aa;--green:#1f9d55;--red:#c0392b;--orange:#f39c12;--purple:#6f42c1;--teal:#008c95;--light:#f4f7fb;--border:#e5e9ef;--muted:#6b7280;--white:#fff}
+html,body{margin:0;width:100%;height:100%;background:var(--light)}body{overflow:hidden;color:#1f2937}
+.sidebar{width:270px;height:100vh;position:fixed;left:0;top:0;z-index:1100;background:var(--navy);color:#fff;overflow-y:auto;transition:width .25s ease,left .25s ease}
+.logo{padding:18px 15px;text-align:center;border-bottom:1px solid rgba(255,255,255,.14)}
+.logo img{width:66px;height:66px;object-fit:contain}
+.logo h2{font-size:17px;margin:8px 0 3px}
+.logo p{margin:0;font-size:12px;opacity:.7}
+.menu{padding:8px 0 20px}
+.section-label{padding:15px 24px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.1px;opacity:.5}
+.menu a,.menu-header{display:flex;align-items:center;gap:13px;padding:12px 22px;color:#fff;text-decoration:none;cursor:pointer;font-size:13px;min-height:46px}
+.menu a i,.menu-header>i:first-child{width:18px;text-align:center}
+.menu a:hover,.menu-header:hover{background:rgba(255,255,255,.08)}
+.menu a.active{background:rgba(255,255,255,.13);border-left:4px solid var(--green);padding-left:18px}
+.arrow{margin-left:auto!important;width:auto!important;font-size:11px!important;transition:transform .25s ease}
+.submenu{max-height:0;overflow:hidden;background:rgba(0,0,0,.17);transition:max-height .3s ease}
+.menu-group.active .submenu{max-height:800px}
+.menu-group.active .arrow{transform:rotate(180deg)}
+.submenu a{padding-left:54px;font-size:12px}
+.main{margin-left:270px;width:calc(100% - 270px);height:100vh;display:flex;flex-direction:column;transition:margin-left .25s ease,width .25s ease}
+.topbar{height:70px;flex:0 0 70px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 25px;box-shadow:0 2px 10px rgba(0,0,0,.07);z-index:900}
+.top-left{display:flex;align-items:center;gap:14px}
+.topbar h2{margin:0;color:var(--navy);font-size:20px}
+.hamburger{font-size:21px;color:var(--navy);cursor:pointer}
+.mobile-menu{display:none}
+.user-info{display:flex;align-items:center;gap:12px}
+.user-avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.user-text{text-align:right}.user-text strong{display:block;font-size:13px;color:var(--navy)}.user-text span{font-size:11px;color:var(--muted)}
+.content{flex:1;overflow-y:auto;padding:22px 25px 35px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:18px}
+.page-head h1{font-size:21px;color:var(--navy);margin:0 0 4px}
+.page-head p{margin:0;color:var(--muted);font-size:12px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.04);margin-bottom:16px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.card-header h3{margin:0;font-size:14px;color:var(--navy)}
+.card-header span{color:var(--muted);font-size:11px}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:9px;align-items:end;margin-bottom:15px}
+.field label{display:block;font-size:10px;font-weight:700;color:#536174;margin-bottom:5px}
+.field input,.field select{width:100%;height:38px;border:1px solid var(--border);border-radius:7px;padding:0 10px;font-size:11px;outline:none;background:#fff}
+.btn{border:0;border-radius:8px;padding:10px 14px;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:var(--navy2)}
+.btn-green{background:var(--green);color:#fff}.btn-add{background:var(--blue);color:#fff}
+.btn-secondary{background:#fff;border:1px solid var(--border);color:#344054}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:1050px}
+th{background:#f5f7fa;color:#536174;text-align:left;padding:11px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--border)}
+td{padding:11px 10px;font-size:11px;border-bottom:1px solid #eef1f4;color:#344054}
+.ref{font-weight:800;color:var(--blue)}
+.amount{text-align:right;font-weight:750;color:var(--navy)}
+.badge{display:inline-flex;padding:4px 8px;border-radius:20px;font-size:9px;font-weight:700;white-space:nowrap}
+.badge-pending{background:#fff4df;color:#a76600}
+.info-alert{background:#e8f1fb;border:1px solid #1769aa;padding:10px;border-radius:8px;font-size:12px;margin-bottom:15px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.lines-table{width:100%;min-width:0;margin-top:10px}
+.lines-table th,.lines-table td{font-size:10px;padding:8px}
+.remove-btn{background:var(--red);color:#fff;border:none;padding:6px 8px;border-radius:6px;cursor:pointer}
+.total-row td{font-weight:700;background:#f5f7fa;color:var(--navy)}
+.error{color:var(--red)!important;font-weight:700}.balanced{color:var(--green)!important;font-weight:700}
+.account-search{position:relative}
+.account-search input{padding-right:30px}
+.account-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--border);border-top:0;max-height:220px;overflow-y:auto;z-index:2600;display:none;border-radius:0 0 8px 8px;box-shadow:0 8px 16px rgba(0,0,0,.1)}
+.account-dropdown.show{display:block}
+.account-option{padding:8px 10px;font-size:11px;cursor:pointer;border-bottom:1px solid #f1f3f5}
+.account-option:hover{background:#f5f7fa}
+.account-option small{color:var(--muted);display:block}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.48);display:none;align-items:center;justify-content:center;z-index:2500;padding:20px}
+.modal.show{display:flex}
+.modal-box{background:#fff;width:100%;max-width:950px;max-height:90vh;overflow-y:auto;border-radius:13px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-head{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{margin:0;color:var(--navy);font-size:15px}
+.close{border:0;background:none;cursor:pointer;font-size:18px;color:var(--muted)}
+.modal-body{padding:20px}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+#pageLoader{position:fixed;inset:0;background:rgba(244,247,251,.92);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:3000}
+#pageLoader i{font-size:42px;color:var(--navy);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1050}
+.empty{padding:35px 10px;text-align:center;color:var(--muted);font-size:12px}
+@media(max-width:1200px){.filters{grid-template-columns:1fr 1fr}}
+@media(max-width:992px){.sidebar{left:-270px}.sidebar.open{left:0}.main{margin-left:0;width:100%}.mobile-menu{display:block}.overlay.show{display:block}}
+</style>
+</head>
+
+<body>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+    <h2>GREYSOL ACADEMY</h2>
+    <p id="portalRole">Accountant Portal</p>
+  </div>
+
+  <div class="menu">
+    <a href="accounting-dashboard.html" >
+      <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+    </a>
+    <a href="staff-profile.html">
+      <i class="fa-solid fa-user"></i><span>Staff Profile</span>
+    </a>
+
+    <div class="section-label">Operations</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Sales & Receivables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="students.html"><i class="fa-solid fa-user-graduate"></i> Students / Customers</a>
+        <a href="quotations.html"><i class="fa-solid fa-file-signature"></i> Quotations</a>
+        <a href="invoice-list.html"><i class="fa-solid fa-file-invoice"></i> Invoices</a>
+        <a href="credit-notes.html"><i class="fa-solid fa-file-circle-minus"></i> Credit Notes</a>
+        <a href="receipts-list.html"><i class="fa-solid fa-money-bill-wave"></i> Customer Payments</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="accounts-receivable.html"><i class="fa-solid fa-hand-holding-dollar"></i> Accounts Receivable</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Receivables Aging</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-cart-shopping"></i><span>Purchases & Payables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="suppliers.html"><i class="fa-solid fa-truck-field"></i> Suppliers</a>
+        <a href="requisitions.html"><i class="fa-solid fa-file-circle-plus"></i> Purchase Requisitions</a>
+        <a href="requisition-create.html"><i class="fa-solid fa-plus"></i> Create Requisition</a>
+        <a href="purchase-orders.html"><i class="fa-solid fa-clipboard-list"></i> Purchase Orders</a>
+        <a href="goods-received.html"><i class="fa-solid fa-box-open"></i> Goods Received</a>
+        <a href="bills.html" class="active"><i class="fa-solid fa-file-invoice"></i> Bills</a>
+        <a href="supplier-payments.html"><i class="fa-solid fa-money-check-dollar"></i> Supplier Payments</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="accounts-payable.html"><i class="fa-solid fa-money-bill-transfer"></i> Accounts Payable</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Payables Aging</a>
+      </div>
+    </div>
+
+    <div class="section-label">Cash Management</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-building-columns"></i><span>Banking</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="bank-accounts.html"><i class="fa-solid fa-building-columns"></i> Bank Accounts</a>
+        <a href="cash-accounts.html"><i class="fa-solid fa-wallet"></i> Cash Accounts</a>
+        <a href="bank-transactions.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Bank Transactions</a>
+        <a href="bank-transfer.html"><i class="fa-solid fa-right-left"></i> Transfers</a>
+        <a href="bank-reconciliation.html"><i class="fa-solid fa-scale-balanced"></i> Bank Reconciliation</a>
+        <a href="reconciliation-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Reconciliation History</a>
+      </div>
+    </div>
+
+    <div class="section-label">General Accounting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-book"></i><span>Accounting</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="chart-of-accounts.html"><i class="fa-solid fa-list"></i> Chart of Accounts</a>
+        <a href="journal-entry.html"><i class="fa-solid fa-book-journal-whills"></i> Journal Entry</a>
+        <a href="journal-list.html"><i class="fa-solid fa-list-check"></i> Journal List</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="ledger.html"><i class="fa-solid fa-table-list"></i> Account Ledger</a>
+        <a href="#"><i class="fa-solid fa-repeat"></i> Recurring Journals</a>
+        <a href="#"><i class="fa-solid fa-lock"></i> Period Closing</a>
+        <a href="accounting-settings.html"><i class="fa-solid fa-gear"></i>Settings</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-receipt"></i><span>Expenses</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="expenses.html"><i class="fa-solid fa-file-circle-plus"></i> Expense Entry</a>
+        <a href="expense-list.html"><i class="fa-solid fa-list"></i> Expense List</a>
+        <a href="expense-categories.html"><i class="fa-solid fa-tags"></i> Expense Categories</a>
+        <a href="expense-claims.html"><i class="fa-solid fa-hand-holding-dollar"></i> Expense Claims</a>
+      </div>
+    </div>
+
+    <div class="section-label">People & Statutory</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-users-gear"></i><span>HR & Payroll</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="employees.html"><i class="fa-solid fa-users"></i> Employees</a>
+        <a href="#"><i class="fa-solid fa-user-tag"></i> Employee Categories</a>
+        <a href="attendance.html"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="payroll-settings.html"><i class="fa-solid fa-gears"></i> Payroll Settings</a>
+        <a href="payroll-run.html"><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</a>
+        <a href="payslips.html"><i class="fa-solid fa-file-invoice-dollar"></i> Payslips</a>
+        <a href="payroll-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Payroll History</a>
+        <a href="payroll-journal.html"><i class="fa-solid fa-book"></i> Payroll Journal</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-chart-column"></i> Payroll Reports</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-percent"></i><span>Taxes</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="vat.html"><i class="fa-solid fa-percent"></i> VAT</a>
+        <a href="vat-transactions.html"><i class="fa-solid fa-receipt"></i> VAT Transactions</a>
+        <a href="vat-return.html"><i class="fa-solid fa-file-circle-check"></i> VAT Return</a>
+        <a href="#"><i class="fa-solid fa-file-invoice"></i> Withholding Tax</a>
+        <a href="paye.html"><i class="fa-solid fa-user-shield"></i> PAYE</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-chart-column"></i> Tax Reports</a>
+      </div>
+    </div>
+
+    <div class="section-label">Reporting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-chart-pie"></i><span>Reports</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-user-clock"></i> AR Aging</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-file-circle-exclamation"></i> AP Aging</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="expense-report.html"><i class="fa-solid fa-receipt"></i> Expense Report</a>
+        <a href="revenue-report.html"><i class="fa-solid fa-arrow-trend-up"></i> Revenue Report</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-percent"></i> Tax Reports</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-users"></i> Payroll Reports</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+      </div>
+    </div>
+
+    <div class="section-label">Administration</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-user-shield"></i><span>Administration</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="userlist.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="#"><i class="fa-solid fa-key"></i> Roles & Permissions</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+        <a href="#"><i class="fa-solid fa-check-double"></i> Approval Workflows</a>
+        <a href="#"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="#"><i class="fa-solid fa-building"></i> Company Profile</a>
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> Financial Year</a>
+        <a href="#"><i class="fa-solid fa-calendar-check"></i> Accounting Periods</a>
+        <a href="#"><i class="fa-solid fa-percent"></i> Tax Settings</a>
+        <a href="#"><i class="fa-solid fa-hashtag"></i> Numbering</a>
+        <a href="#"><i class="fa-solid fa-sliders"></i> System Settings</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div class="top-left"><i class="fa-solid fa-bars hamburger mobile-menu" onclick="toggleSidebar()"></i><h2>Bills</h2></div>
+  <div class="user-info"><div class="user-text"><strong id="staffName">Loading...</strong><span id="staffRole">Accountant</span></div><div class="user-avatar" id="avatar">A</div></div>
+</header>
+
+<section class="content">
+  <div class="page-head"><div><h1>Create Bills from GRN</h1><p>Convert received goods to Accounts Payable. Total Credit must equal GRN Total.</p></div></div>
+
+  <div class="card">
+    <div class="card-header"><h3><i class="fa-solid fa-box-open"></i> Goods Received Pending Billing</h3><span id="grnCount">0 records</span></div>
+    <div class="filters">
+      <div class="field"><label>Search GRN / PO / Supplier</label><input type="text" id="searchInput" placeholder="Search GRN number, PO, supplier..."></div>
+      <div class="field"><label>Supplier</label><select id="supplierFilter"><option value="">All Suppliers</option></select></div>
+      <div class="field"><label>From Date</label><input type="date" id="fromDate"></div>
+      <div class="field"><label>To Date</label><input type="date" id="toDate"></div>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr><th>GRN No.</th><th>Date</th><th>PO No.</th><th>Supplier</th><th style="text-align:right">Amount</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="grnTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody></table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3><i class="fa-solid fa-file-invoice"></i> Bills Register</h3><span id="billCount">0 records</span></div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Bill No.</th><th>Date</th><th>Supplier</th><th>GRN Ref</th><th style="text-align:right">Amount</th><th>Status</th></tr></thead>
+      <tbody id="billTable"><tr><td colspan="6" class="empty">No bills yet</td></tr></tbody></table>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="modal" id="billModal">
+  <div class="modal-box">
+    <div class="modal-head"><h3><i class="fa-solid fa-file-invoice"></i> Create Bill</h3><button class="close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="modal-body">
+      <div class="info-alert"><i class="fa-solid fa-circle-info"></i> Total of Credit lines must exactly match the GRN Total.</div>
+      <div class="grid-3">
+        <div class="field"><label>Bill No</label><input id="billNo" readonly></div>
+        <div class="field"><label>Bill Date</label><input type="date" id="billDate"></div>
+        <div class="field"><label>Due Date</label><input type="date" id="dueDate"></div>
+      </div>
+      <div class="grid-3">
+        <div class="field"><label>Supplier</label><input id="supplierName" readonly></div>
+        <div class="field"><label>GRN Total</label><input id="grnTotal" readonly style="font-weight:800;color:var(--navy)"></div>
+        <div class="field"><label>Supplier Invoice No</label><input id="supplierInvNo"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:15px 0"><h4 style="margin:0;color:var(--navy);font-size:13px">Journal Lines</h4><button class="btn btn-add" onclick="addLine()"><i class="fa-solid fa-plus"></i> Add Line</button></div>
+      <table class="lines-table">
+        <thead><tr><th style="width:45%">Account - type to search</th><th style="width:20%">Debit MWK</th><th style="width:20%">Credit MWK</th><th>Action</th></tr></thead>
+        <tbody id="linesBody"></tbody>
+        <tfoot><tr class="total-row"><td>TOTAL</td><td id="totalDebit">MWK 0</td><td id="totalCredit">MWK 0</td><td id="balanceStatus" class="error">Not Balanced</td></tr></tfoot>
+      </table>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-green" id="saveBillBtn" onclick="saveBill()"><i class="fa-solid fa-floppy-disk"></i> Post Bill</button></div>
+  </div>
+</div>
+
+<div id="pageLoader"><i class="fa-solid fa-circle-notch"></i><p>Loading...</p></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, Timestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",projectId:"greysol-academy"});
+const db = getFirestore(app);
+
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+if(!loggedUser || loggedUser.role !== "Accountant"){alert("Access Denied");window.location.href="staff-login.html"}
+document.getElementById("staffName").textContent = loggedUser.username;
+document.getElementById("staffRole").textContent = loggedUser.role;
+document.getElementById("avatar").textContent = loggedUser.username.charAt(0).toUpperCase();
+document.getElementById("portalRole").textContent = loggedUser.role + " Portal";
+
+document.querySelectorAll(".menu-header").forEach(header=>{header.addEventListener("click",()=>header.parentElement.classList.toggle("active"))});
+window.toggleSidebar=function(){document.getElementById("sidebar").classList.toggle("open");document.getElementById("overlay").classList.toggle("show")}
+document.getElementById("logoutBtn").onclick=e=>{e.preventDefault();localStorage.removeItem("loggedUser");window.location.href="staff-login.html"}
+
+let allGRNs=[], filteredGRNs=[], allBills=[], chartOfAccounts=[], selectedGRN=null, lineCount=0, billCounter=1, grnTotal=0;
+const fmt=n=>"MWK "+Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2});
+const num=v=>Number(v||0);
+const escapeHtml=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+async function loadData(){
+  try{
+    const [grnSnap,billSnap,coaSnap]=await Promise.all([
+      getDocs(collection(db,"goodsReceived")),
+      getDocs(collection(db,"bills")),
+      getDocs(collection(db,"chartOfAccounts"))
+    ]);
+    allGRNs=grnSnap.docs.map(d=>({id:d.id,...d.data()}));
+    allBills=billSnap.docs.map(d=>({id:d.id,...d.data()}));
+    chartOfAccounts=coaSnap.docs.map(d=>({id:d.id,...d.data()})).map(a=>({...a,accountCode: a.accountCode || a.code})).sort((a,b)=>String(a.accountCode).localeCompare(String(b.accountCode)));
+    billCounter=allBills.length+1;
+    populateSuppliers();
+    applyGRNFilters();
+    renderBills();
+  }catch(err){alert("Error loading data: "+err.message);console.error(err)}
+  finally{document.getElementById("pageLoader").style.display="none"}
+}
+
+function populateSuppliers(){
+  const select=document.getElementById("supplierFilter");
+  select.innerHTML=`<option value="">All Suppliers</option>`;
+  // NOW USE supplierCode + supplierName to avoid duplicates
+  const suppliers=[...new Map(allGRNs.filter(g=>g.supplierCode).map(g=>[g.supplierCode, g.supplierName || g.supplierCode])).entries()].sort();
+  suppliers.forEach(([code,name])=>{
+    const opt=document.createElement("option");
+    opt.value=code;
+    opt.textContent=`${code} - ${name}`;
+    select.appendChild(opt);
+  });
+}
+
+function applyGRNFilters(){
+  const search=document.getElementById("searchInput").value.toLowerCase().trim();
+  const supplierCode=document.getElementById("supplierFilter").value; // NOW FILTER BY CODE
+  const from=document.getElementById("fromDate").value;
+  const to=document.getElementById("toDate").value;
+  filteredGRNs=allGRNs.filter(g=>{
+    // ONLY SHOW RECEIVED AND NOT BILLED
+    if(g.status!== "Received") return false;
+    if(g.billId || g.billNo) return false;
+
+    const grnNo=g.grnNumber||""; const po=g.purchaseOrderNumber||""; const sup=g.supplierName||""; const code=g.supplierCode||"";
+    const searchable=(grnNo+" "+po+" "+sup+" "+code).toLowerCase(); // ADDED CODE TO SEARCH
+    if(search &&!searchable.includes(search)) return false;
+    if(supplierCode && code!==supplierCode) return false; // FILTER BY CODE NOW
+    const d=new Date(g.grnDate);
+    if(from && d<new Date(from)) return false;
+    if(to){const toD=new Date(to);toD.setHours(23,59,59,999);if(d>toD) return false;}
+    return true;
+  });
+  renderGRNs();
+}
+
+function renderGRNs(){
+  document.getElementById("grnCount").textContent=filteredGRNs.length+" records";
+  document.getElementById("grnTable").innerHTML=filteredGRNs.length?filteredGRNs.map(grn=>{
+    const total=grn.receivedItems.reduce((s,i)=>s+(num(i.receivedQuantity)*num(i.unitPrice)),0);
+    return `<tr>
+      <td class="ref">${escapeHtml(grn.grnNumber)}</td>
+      <td>${new Date(grn.grnDate).toLocaleDateString("en-GB")}</td>
+      <td>${escapeHtml(grn.purchaseOrderNumber)}</td>
+      <td>${escapeHtml(grn.supplierCode || '')} ${escapeHtml(grn.supplierName)}</td> <!-- SHOW CODE -->
+      <td class="amount">${fmt(total)}</td>
+      <td><span class="badge badge-pending">Received</span></td>
+      <td><button class="btn btn-primary" onclick="openBill('${grn.id}')"><i class="fa-solid fa-file-invoice"></i> Create Bill</button></td>
+    </tr>`
+  }).join(""):`<tr><td colspan="7" class="empty">No GRNs pending billing</td></tr>`;
+}
+
+function renderBills(){
+  document.getElementById("billCount").textContent=allBills.length+" records";
+  document.getElementById("billTable").innerHTML=allBills.length?allBills.map(b=>`
+    <tr>
+      <td class="ref">${b.billNo}</td>
+      <td>${new Date(b.date).toLocaleDateString("en-GB")}</td>
+      <td>${escapeHtml(b.supplierCode || '')} ${escapeHtml(b.supplierName)}</td> <!-- SHOW CODE -->
+      <td>${b.grnNo}</td>
+      <td class="amount">${fmt(b.totalAmount)}</td>
+      <td><span class="badge badge-pending">${b.status}</span></td>
+    </tr>
+  `).join(""):`<tr><td colspan="6" class="empty">No bills yet</td></tr>`;
+}
+
+window.openBill=id=>{
+  selectedGRN=allGRNs.find(g=>g.id===id);
+  grnTotal=selectedGRN.receivedItems.reduce((s,i)=>s+(num(i.receivedQuantity)*num(i.unitPrice)),0);
+  document.getElementById("billModal").classList.add("show");
+  document.getElementById("billNo").value=`BILL-${String(billCounter).padStart(4,'0')}`;
+  document.getElementById("billDate").value=new Date().toISOString().split('T')[0];
+  document.getElementById("dueDate").value=new Date(Date.now()+30*86400000).toISOString().split('T')[0];
+  document.getElementById("supplierName").value=`${selectedGRN.supplierCode || ''} - ${selectedGRN.supplierName}`; // SHOW CODE
+  document.getElementById("grnTotal").value=fmt(grnTotal);
+  document.getElementById("linesBody").innerHTML="";lineCount=0;addLine();addLine();
+}
+
+window.closeModal=()=>document.getElementById("billModal").classList.remove("show");
+
+window.addLine=()=>{
+  lineCount++;
+  const rowId=`line-${lineCount}`;
+  document.getElementById("linesBody").insertAdjacentHTML('beforeend',`
+    <tr id="${rowId}">
+      <td><div class="account-search"><input type="text" class="accountInput" placeholder="Type code or name..." data-line="${lineCount}" autocomplete="off"><i class="fa-solid fa-magnifying-glass"></i><div class="account-dropdown" id="dropdown-${lineCount}"></div></div></td>
+      <td><input type="number" class="debitInput" min="0" step="0.01" oninput="calculateTotals()"></td>
+      <td><input type="number" class="creditInput" min="0" step="0.01" oninput="calculateTotals()"></td>
+      <td><button class="remove-btn" onclick="removeLine(${lineCount})"><i class="fa-solid fa-trash"></i></button></td>
+    </tr>
+  `);
+  setupAccountSearch(lineCount);
+}
+
+function setupAccountSearch(line){
+  const input=document.querySelector(`#line-${line} .accountInput`);
+  const dropdown=document.getElementById(`dropdown-${line}`);
+  input.addEventListener("input",()=>{
+    const val=input.value.toLowerCase();
+    if(!val){dropdown.classList.remove("show");return}
+    const results=chartOfAccounts.filter(a=>String(a.accountCode).toLowerCase().includes(val) || String(a.accountName).toLowerCase().includes(val)).slice(0,15);
+    dropdown.innerHTML=results.map(a=>`<div class="account-option" onclick="selectAccount(${line},'${a.accountCode}','${a.accountName.replace(/'/g,"\\'")}')"><strong>${a.accountCode} - ${a.accountName}</strong><small>Type: ${a.accountType || ''}</small></div>`).join("");
+    dropdown.classList.add("show");
+  });
+  document.addEventListener("click",(e)=>{if(!e.target.closest(`#line-${line}`)) dropdown.classList.remove("show");});
+}
+
+window.selectAccount=(line,code,name)=>{const input=document.querySelector(`#line-${line} .accountInput`);input.value=`${code} - ${name}`;input.dataset.code=code;document.getElementById(`dropdown-${line}`).classList.remove("show");}
+
+window.removeLine=id=>{document.getElementById(`line-${id}`).remove();calculateTotals()}
+window.calculateTotals=()=>{let d=0,c=0;document.querySelectorAll(".debitInput").forEach(i=>d+=num(i.value));document.querySelectorAll(".creditInput").forEach(i=>c+=num(i.value));document.getElementById("totalDebit").innerText=fmt(d);document.getElementById("totalCredit").innerText=fmt(c);const el=document.getElementById("balanceStatus");if(d===c&&d>0){el.innerText="Balanced";el.className="balanced"}else{el.innerText=`Diff: ${fmt(Math.abs(d-c))}`;el.className="error"}}
+
+async function generateJournalNo(){const q=query(collection(db,"journalEntries"),orderBy("createdAt","desc"),limit(1));const snap=await getDocs(q);let number=1;if(!snap.empty){const last=snap.docs[0].data().journalNo;if(last){const n=Number(last.replace("JV",""));if(!isNaN(n))number=n+1}}return "JV"+String(number).padStart(5,"0");}
+
+window.saveBill=async()=>{
+  const btn=document.getElementById("saveBillBtn");btn.disabled=true;btn.innerHTML=`<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+  try{
+    const lines=[];document.querySelectorAll("#linesBody tr").forEach(tr=>{
+      const input=tr.querySelector(".accountInput");
+      const accountCode=input.dataset.code || input.value.split(" - ")[0];
+      const d=num(tr.querySelector(".debitInput").value);
+      const c=num(tr.querySelector(".creditInput").value);
+      const accObj=chartOfAccounts.find(a=>a.accountCode===accountCode);
+      if(accountCode&&(d>0||c>0))lines.push({accountCode,accountName:accObj?.accountName||"",debit:d,credit:c})
+    });
+    const totalDebit=lines.reduce((s,l)=>s+l.debit,0),totalCredit=lines.reduce((s,l)=>s+l.credit,0);
+    if(lines.length<2)throw new Error("At least 2 lines required");
+    if(totalDebit!==totalCredit)throw new Error(`Debit ${fmt(totalDebit)} and Credit ${fmt(totalCredit)} must balance`);
+    if(Math.abs(totalCredit-grnTotal)>0.01)throw new Error(`Total Credit ${fmt(totalCredit)} must equal GRN Total ${fmt(grnTotal)}`);
+
+    const journalNo=await generateJournalNo();
+    await addDoc(collection(db,"journalEntries"),{journalNo,date:Timestamp.fromDate(new Date(document.getElementById("billDate").value)),reference:document.getElementById("billNo").value,description:`Bill ${document.getElementById("billNo").value} - ${selectedGRN.supplierName}`,lines,totalDebit,totalCredit,createdBy:loggedUser.username,createdAt:Timestamp.now(),source:"Bill",sourceRef:selectedGRN.grnNumber});
+    
+    // NOW SAVES SUPPLIERCODE
+    await addDoc(collection(db,"bills"),{
+      billNo:document.getElementById("billNo").value,
+      date:document.getElementById("billDate").value,
+      dueDate:document.getElementById("dueDate").value,
+      supplierCode: selectedGRN.supplierCode || "", // NEW
+      supplierName:selectedGRN.supplierName,
+      grnNo:selectedGRN.grnNumber,
+      totalAmount:totalDebit,
+      balance:totalDebit,
+      status:"Unpaid",
+      journalNo,
+      createdAt:Timestamp.now()
+    });
+
+    // MARK GRN AS BILLED SO IT DISAPPEARS
+    await updateDoc(doc(db,"goodsReceived",selectedGRN.id),{
+      status:"Billed",
+      billNo:document.getElementById("billNo").value,
+      billId: document.getElementById("billNo").value,
+      billedAt: Timestamp.now()
+    });
+
+    alert("Bill posted successfully");
+    closeModal();
+    await loadData(); // RELOAD TO REMOVE FROM WAITING LIST
+  }catch(e){alert(e.message)}finally{btn.disabled=false;btn.innerHTML=`<i class="fa-solid fa-floppy-disk"></i> Post Bill`}
+}
+
+["searchInput","supplierFilter","fromDate","toDate"].forEach(id=>{document.getElementById(id).addEventListener("input",applyGRNFilters);document.getElementById(id).addEventListener("change",applyGRNFilters);});
+
+loadData();
+</script>
+</body>
+</html>

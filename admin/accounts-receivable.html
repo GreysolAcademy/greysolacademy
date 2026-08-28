@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greysol Academy | Debtors</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--blue:#003366;--green:#16a085;--red:#e74c3c;--light:#f4f7fb;--white:#ffffff;--shadow:0 5px 15px rgba(0,0,0,.08);--muted:#6b7280}
+body{background:var(--light)}
+.main-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(244,247,251,.95);display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:99999;color:var(--navy);transition:.3s}
+.main-loader.hidden{opacity:0;pointer-events:none}
+.spinner{width:50px;height:50px;border:4px solid rgba(0,31,63,.2);border-top:4px solid var(--navy);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.header{height:70px;background:white;display:flex;justify-content:space-between;align-items:center;padding:0 25px;box-shadow:var(--shadow);position:sticky;top:0;z-index:99}
+.left-header{display:flex;align-items:center;gap:20px}
+.btn-back{padding:10px 16px;background:var(--navy);color:white;border:0;border-radius:8px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px;transition:.2s}
+.btn-back:hover{background:#003366}
+.header h2{margin:0;color:var(--navy);font-size:20px}
+.top-right{display:flex;align-items:center;gap:14px}
+.user-info{display:flex;align-items:center;gap:12px}
+.user-avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.user-text{text-align:right}
+.user-text strong{display:block;font-size:13px;color:var(--navy)}
+.user-text span{font-size:11px;color:var(--muted)}
+.content{padding:25px;max-width:1400px;margin:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:25px}
+.card{background:white;padding:25px;border-radius:15px;box-shadow:var(--shadow);position:relative;overflow:hidden;border:1px solid #e5e9ef}
+.card h4{color:#777;font-weight:500;font-size:11px;text-transform:uppercase}
+.card h1{margin-top:10px;color:var(--navy);font-size:32px;font-weight:750}
+.card i{position:absolute;right:20px;top:20px;font-size:40px;opacity:.12}
+.box{background:white;padding:20px;border-radius:15px;box-shadow:var(--shadow);border:1px solid #e5e9ef}
+.box h3{margin-bottom:20px;color:var(--navy)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:#f5f7fa;color:#536174;text-align:left;padding:12px;font-size:10px;text-transform:uppercase;border-bottom:1px solid #e5e9ef}
+td{padding:12px;border-bottom:1px solid #eee;font-size:13px}
+.balance{color:var(--red);font-weight:700}
+.btn-view{padding:7px 12px;background:var(--blue);color:white;border:0;border-radius:6px;cursor:pointer;font-size:12px}
+.no-data{text-align:center;padding:40px;color:#777}
+.access-denied{text-align:center;padding:100px 20px}
+.access-denied i{font-size:60px;color:var(--red);margin-bottom:20px}
+.search{position:relative;margin-left:auto}
+.search input{width:320px;padding:11px 15px 11px 42px;border-radius:30px;border:1px solid #ddd}
+.search i{position:absolute;left:15px;top:12px;color:#777}
+@media(max-width:900px){.search input{width:180px}.user-text{display:none}}
+</style>
+</head>
+<body>
+
+<div class="main-loader" id="mainLoader">
+  <div class="spinner"></div>
+  <p style="margin-top:15px">Loading Debtors...</p>
+</div>
+
+<div id="appContent" style="display:none">
+  <div class="header">
+    <div class="left-header">
+      <button class="btn-back" id="backBtn"><i class="fas fa-arrow-left"></i> Back</button> <!-- REMOVED ONCLICK -->
+      <h2>Debtors Report</h2>
+    </div>
+    <div class="top-right">
+      <div class="user-info">
+        <div class="user-text">
+          <strong id="staffName">Loading...</strong>
+          <span id="staffRole">-</span>
+        </div>
+        <div class="user-avatar" id="avatar">A</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;gap:15px;flex-wrap:wrap">
+      <h1 style="color:var(--navy);margin:0">Students With Outstanding Balance</h1>
+      <div class="search">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search by Student ID, Name, Class...">
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><h4>Total Debtors</h4><h1 id="totalDebtors">0</h1><i class="fas fa-users"></i></div>
+      <div class="card"><h4>Total Outstanding</h4><h1 id="totalOutstanding">MWK 0</h1><i class="fas fa-money-bill-wave"></i></div>
+      <div class="card"><h4>Total Invoiced</h4><h1 id="totalInvoiced">MWK 0</h1><i class="fas fa-file-invoice"></i></div>
+      <div class="card"><h4>Total Collected</h4><h1 id="totalCollected">MWK 0</h1><i class="fas fa-wallet"></i></div>
+    </div>
+
+    <div class="box">
+      <h3>Debtors List</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Student ID</th><th>Student Name</th><th>Class</th>
+              <th>Total Invoiced</th><th>Total Paid</th><th>Balance</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="debtorsBody">
+            <tr><td colspan="8" class="no-data"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="noAccess" style="display:none" class="access-denied">
+  <i class="fas fa-ban"></i>
+  <h2>Access Denied</h2>
+  <p>Only Administrator and Accountant can access this page.</p>
+  <button class="btn-back" id="backBtnDenied"><i class="fas fa-arrow-left"></i> Go Back</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",authDomain:"greysol-academy.firebaseapp.com",projectId:"greysol-academy"};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+const loader = document.getElementById("mainLoader");
+let allDebtors = [];
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+
+// BACK BUTTON FUNCTION - NOW INSIDE MODULE AND ATTACHED WITH addEventListener
+function goBack(){
+  let target = "staff-login.html";
+  if(loggedUser?.role === "Administrator"){
+    target = "admin-dashboard.html";
+  }else if(loggedUser?.role === "Accountant"){
+    target = "accounting-dashboard.html";
+  }
+
+  if(window.history.length > 1 && document.referrer && document.referrer.includes(window.location.hostname)){
+    window.history.back();
+  }else{
+    window.location.href = target;
+  }
+}
+
+// ATTACH CLICK EVENTS HERE
+document.getElementById("backBtn").addEventListener("click", goBack);
+document.getElementById("backBtnDenied").addEventListener("click", goBack);
+
+// ROLE CHECK
+const allowedRoles = ["Administrator", "Accountant"];
+
+if(!loggedUser || !allowedRoles.includes(loggedUser.role)){
+  loader.classList.add("hidden");
+  document.getElementById("noAccess").style.display = "block";
+}else{
+  document.getElementById("appContent").style.display = "block";
+  document.getElementById("staffName").textContent = loggedUser?.username || "User";
+  document.getElementById("staffRole").textContent = loggedUser?.role || "Staff";
+  document.getElementById("avatar").textContent = (loggedUser?.username || "A").charAt(0).toUpperCase();
+  loadDebtors();
+}
+
+async function loadDebtors(){
+  loader.classList.remove("hidden");
+  try{
+    const [studentsSnap, invoicesSnap, receiptsSnap] = await Promise.all([
+      getDocs(collection(db,"students")),
+      getDocs(collection(db,"invoices")),
+      getDocs(collection(db,"receipts"))
+    ]);
+
+    const studentMap = {};
+    studentsSnap.forEach(doc=>{
+      const s = doc.data();
+      studentMap[s.studentID] = {
+        studentID: s.studentID,
+        name: `${s.firstName || ''} ${s.middleName || ''} ${s.surname || ''}`.trim(),
+        class: s.classApplying || s.class || '-'
+      }
+    });
+
+    const invoiceTotals = {};
+    invoicesSnap.forEach(doc=>{
+      const inv = doc.data();
+      if(!invoiceTotals[inv.studentID]) invoiceTotals[inv.studentID] = 0;
+      invoiceTotals[inv.studentID] += Number(inv.totalAmount || 0);
+    });
+
+    const paymentTotals = {};
+    receiptsSnap.forEach(doc=>{
+      const rec = doc.data();
+      if(rec.allocations){
+        rec.allocations.forEach(a=>{
+          if(!paymentTotals[a.studentID]) paymentTotals[a.studentID] = 0;
+          paymentTotals[a.studentID] += Number(a.amount || 0);
+        })
+      }
+    });
+
+    allDebtors = [];
+    let totalInvoiced = 0, totalPaid = 0;
+    Object.keys(studentMap).forEach(studentID=>{
+      const invoiced = Number(invoiceTotals[studentID] || 0);
+      const paid = Number(paymentTotals[studentID] || 0);
+      const balance = invoiced - paid;
+      totalInvoiced += invoiced;
+      totalPaid += paid;
+      if(balance > 0){
+        allDebtors.push({...studentMap[studentID], invoiced, paid, balance})
+      }
+    });
+
+    allDebtors.sort((a,b)=>b.balance-a.balance);
+    renderTable(allDebtors);
+    updateStats(allDebtors, totalInvoiced, totalPaid);
+
+  }catch(error){
+    document.getElementById("debtorsBody").innerHTML = `<tr><td colspan="8" class="no-data">Error loading data</td></tr>`;
+    console.error(error);
+  }
+  loader.classList.add("hidden");
+}
+
+function renderTable(data){
+  const tbody = document.getElementById("debtorsBody");
+  if(data.length === 0){
+    tbody.innerHTML = `<tr><td colspan="8" class="no-data">No students with outstanding balance</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map((d,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td><b>${d.studentID}</b></td>
+      <td>${d.name}</td>
+      <td>${d.class}</td>
+      <td>MWK ${d.invoiced.toLocaleString()}</td>
+      <td>MWK ${d.paid.toLocaleString()}</td>
+      <td class="balance">MWK ${d.balance.toLocaleString()}</td>
+      <td><button class="btn-view" data-id="${d.studentID}"><i class="fas fa-eye"></i> Statement</button></td>
+    </tr>
+  `).join("");
+
+  // Attach statement button clicks
+  document.querySelectorAll(".btn-view").forEach(btn=>{
+    btn.addEventListener("click", (e)=>{
+      const studentID = e.currentTarget.dataset.id;
+      localStorage.setItem("statementStudentID", studentID);
+      window.location.href = "student-statement.html";
+    })
+  })
+}
+
+function updateStats(data, totalInvoiced, totalPaid){
+  document.getElementById("totalDebtors").innerText = data.length;
+  const totalOutstanding = data.reduce((sum,d)=>sum+d.balance,0);
+  document.getElementById("totalOutstanding").innerText = "MWK " + totalOutstanding.toLocaleString();
+  document.getElementById("totalInvoiced").innerText = "MWK " + totalInvoiced.toLocaleString();
+  document.getElementById("totalCollected").innerText = "MWK " + totalPaid.toLocaleString();
+}
+
+document.getElementById("searchInput").addEventListener("keyup", (e)=>{
+  const val = e.target.value.toLowerCase();
+  const filtered = allDebtors.filter(d=>
+    d.studentID.toLowerCase().includes(val) ||
+    d.name.toLowerCase().includes(val) ||
+    d.class.toLowerCase().includes(val)
+  );
+  renderTable(filtered);
+});
+</script>
+</body>
+</html>

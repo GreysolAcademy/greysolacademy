@@ -1,0 +1,2878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Balance Sheet | Greysol Academy</title>
+
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI",Arial,sans-serif
+}
+
+:root{
+  --navy:#001f3f;
+  --navy2:#003366;
+  --blue:#1769aa;
+  --green:#1f9d55;
+  --red:#c0392b;
+  --orange:#f39c12;
+  --purple:#6f42c1;
+  --teal:#008c95;
+  --light:#f4f7fb;
+  --border:#e5e9ef;
+  --muted:#6b7280;
+  --white:#fff;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--light);
+}
+
+body{
+  overflow:hidden;
+  color:#1f2937;
+}
+
+/* =========================================================
+   SIDEBAR — SAME AS TRIAL BALANCE
+========================================================= */
+
+.sidebar{
+  width:270px;
+  height:100vh;
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:1100;
+  background:var(--navy);
+  color:#fff;
+  overflow-y:auto;
+  transition:width .25s ease,left .25s ease;
+}
+
+.logo{
+  padding:18px 15px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+
+.logo img{
+  width:66px;
+  height:66px;
+  object-fit:contain;
+}
+
+.logo h2{
+  font-size:17px;
+  margin:8px 0 3px;
+}
+
+.logo p{
+  margin:0;
+  font-size:12px;
+  opacity:.7;
+}
+
+.menu{
+  padding:8px 0 20px;
+}
+
+.section-label{
+  padding:15px 24px 6px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1.1px;
+  opacity:.5;
+}
+
+.menu a,
+.menu-header{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:12px 22px;
+  color:#fff;
+  text-decoration:none;
+  cursor:pointer;
+  font-size:13px;
+  min-height:46px;
+}
+
+.menu a i,
+.menu-header>i:first-child{
+  width:18px;
+  text-align:center;
+}
+
+.menu a:hover,
+.menu-header:hover{
+  background:rgba(255,255,255,.08);
+}
+
+.menu a.active{
+  background:rgba(255,255,255,.13);
+  border-left:4px solid var(--green);
+  padding-left:18px;
+}
+
+.arrow{
+  margin-left:auto!important;
+  width:auto!important;
+  font-size:11px!important;
+  transition:transform .25s ease;
+}
+
+.submenu{
+  max-height:0;
+  overflow:hidden;
+  background:rgba(0,0,0,.17);
+  transition:max-height .3s ease;
+}
+
+.menu-group.active .submenu{
+  max-height:800px;
+}
+
+.menu-group.active .arrow{
+  transform:rotate(180deg);
+}
+
+.submenu a{
+  padding-left:54px;
+  font-size:12px;
+}
+
+.submenu a.active{
+  padding-left:50px;
+}
+
+.sidebar::-webkit-scrollbar{
+  width:5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.2);
+  border-radius:10px;
+}
+
+.menu-group{
+  position:relative;
+}
+
+.menu-header span{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.menu a span{
+  white-space:nowrap;
+}
+
+@media(min-width:993px){
+  .sidebar{
+    scrollbar-width:thin;
+  }
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+  margin-left:270px;
+  width:calc(100% - 270px);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  transition:margin-left .25s ease,width .25s ease;
+}
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.topbar{
+  height:70px;
+  flex:0 0 70px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px;
+  box-shadow:0 2px 10px rgba(0,0,0,.07);
+  z-index:900;
+}
+
+.top-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.topbar h2{
+  margin:0;
+  color:var(--navy);
+  font-size:20px;
+}
+
+.hamburger{
+  font-size:21px;
+  color:var(--navy);
+  cursor:pointer;
+}
+
+.mobile-menu{
+  display:none;
+}
+
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.user-avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--navy);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+}
+
+.user-text{
+  text-align:right;
+}
+
+.user-text strong{
+  display:block;
+  font-size:13px;
+  color:var(--navy);
+}
+
+.user-text span{
+  font-size:11px;
+  color:var(--muted);
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content{
+  flex:1;
+  overflow-y:auto;
+  padding:22px 25px 35px;
+}
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+.main-loader{
+  position:fixed;
+  inset:0;
+  background:rgba(244,247,251,.95);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:3000;
+  color:var(--navy);
+  transition:.3s;
+}
+
+.main-loader.hidden{
+  opacity:0;
+  pointer-events:none;
+}
+
+.spinner{
+  width:50px;
+  height:50px;
+  border:4px solid rgba(0,31,63,.2);
+  border-top:4px solid var(--navy);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  z-index:1050;
+}
+
+.overlay.show{
+  display:block;
+}
+
+/* =========================================================
+   CONNECTION STATUS
+========================================================= */
+
+.connection-status{
+  position:fixed;
+  top:0;
+  left:270px;
+  right:0;
+  z-index:2001;
+  padding:12px 20px;
+  text-align:center;
+  font-weight:bold;
+  font-size:14px;
+  color:white;
+  transform:translateY(-100%);
+  transition:transform .3s ease;
+}
+
+.connection-status.show{
+  transform:translateY(0);
+}
+
+.connection-status.offline{
+  background:var(--red);
+}
+
+.connection-status.online{
+  background:var(--green);
+}
+
+/* =========================================================
+   BALANCE SHEET CONTENT
+========================================================= */
+
+.box{
+  background:#fff;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,.08);
+  margin-bottom:20px;
+}
+
+.box h3{
+  margin:0 0 20px;
+  color:var(--navy);
+}
+
+.btn{
+  background:var(--blue);
+  color:#fff;
+  border:none;
+  padding:12px 20px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:.25s;
+}
+
+.btn:hover{
+  background:#004b96;
+}
+
+.btn-pdf{
+  background:var(--red);
+}
+
+.btn-pdf:hover{
+  background:#a93226;
+}
+
+.alert-error{
+  background:#f8d7da;
+  color:#721c24;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:15px;
+  display:none;
+}
+
+/* =========================================================
+   BALANCE SHEET GRID
+========================================================= */
+
+.bs-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+}
+
+.bs-main-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:var(--navy);
+  color:white;
+  padding:14px 15px;
+  border-radius:8px;
+  margin-bottom:10px;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+}
+
+.bs-sub-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#e2e8f0;
+  color:var(--navy);
+  padding:10px 15px;
+  border-radius:6px;
+  margin:10px 0 5px;
+  font-weight:bold;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.bs-category-body{
+  max-height:3000px;
+  overflow:hidden;
+  transition:max-height .35s ease;
+}
+
+.bs-category.collapsed > .bs-category-body{
+  max-height:0;
+}
+
+/* =========================================================
+   BALANCE SHEET ROWS
+========================================================= */
+
+.bs-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 15px;
+  border-bottom:1px solid #e2e6ea;
+  font-size:13px;
+}
+
+.bs-row.sub{
+  padding-left:15px;
+}
+
+.bs-row.account-row{
+  cursor:pointer;
+}
+
+.bs-row.account-row:hover{
+  background:#f8f9fa;
+}
+
+.bs-row.total{
+  font-weight:bold;
+  background:#dcecff;
+  border-top:2px solid var(--navy);
+  border-bottom:2px solid var(--navy);
+  padding:12px 15px;
+  margin-top:10px;
+}
+
+.bs-row.row-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:1;
+  min-width:0;
+}
+
+.row-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:1;
+  min-width:0;
+}
+
+.account-name{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.amount{
+  text-align:right;
+  min-width:150px;
+  font-family:Consolas,monospace;
+  flex-shrink:0;
+}
+
+.toggle-account{
+  width:16px;
+  display:inline-block;
+  transition:transform .2s ease;
+  font-size:12px;
+  color:#667085;
+  flex-shrink:0;
+}
+
+.account-row.expanded > .row-left > .toggle-account{
+  transform:rotate(90deg);
+}
+
+/* =========================================================
+   TRANSACTION DETAILS
+========================================================= */
+
+.transaction-detail{
+  display:none;
+  background:#fdfdfd;
+  font-size:12px;
+  padding:8px 15px 8px 60px;
+  border-bottom:1px dashed #eee;
+  cursor:pointer;
+}
+
+.transaction-detail:hover{
+  background:#eef5ff;
+}
+
+.transaction-detail .jno{
+  font-weight:bold;
+  color:var(--navy);
+  margin-right:8px;
+}
+
+/* =========================================================
+   PRINT HEADER
+========================================================= */
+
+.print-header{
+  display:none;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:1100px){
+
+  .sidebar{
+    left:-270px;
+  }
+
+  .sidebar.open{
+    left:0;
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  .mobile-menu{
+    display:block;
+  }
+
+  .connection-status{
+    left:0;
+  }
+
+  .bs-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:650px){
+
+  .content{
+    padding:15px;
+  }
+
+  .topbar{
+    padding:0 15px;
+  }
+
+  .user-text{
+    display:none;
+  }
+
+  .box{
+    padding:18px;
+  }
+
+  .topbar h2{
+    font-size:17px;
+  }
+
+  .bs-grid{
+    gap:20px;
+  }
+
+  .amount{
+    min-width:115px;
+    font-size:12px;
+  }
+
+  .bs-row{
+    font-size:12px;
+  }
+}
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print{
+
+  @page{
+    size:A4 portrait;
+    margin:15mm;
+  }
+
+  html,
+  body{
+    width:100%;
+    height:auto;
+    overflow:visible!important;
+    background:#fff!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+
+  *{
+    overflow:visible!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+
+  body *{
+    visibility:hidden;
+  }
+
+  #printArea,
+  #printArea *{
+    visibility:visible;
+  }
+
+  #printArea{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    background:#fff!important;
+    box-shadow:none!important;
+    border:none!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  .sidebar,
+  .topbar,
+  .content > .box:first-child,
+  .mobile-menu,
+  .overlay,
+  .main-loader,
+  .alert-error,
+  .connection-status,
+  button,
+  input,
+  label{
+    display:none!important;
+  }
+
+  .main{
+    margin:0!important;
+    width:100%!important;
+  }
+
+  .content{
+    padding:0!important;
+    margin:0!important;
+    overflow:visible!important;
+    height:auto!important;
+  }
+
+  .arrow,
+  .toggle-account{
+    display:none!important;
+  }
+
+  .bs-category-body{
+    max-height:none!important;
+    overflow:visible!important;
+  }
+
+  .transaction-detail{
+    display:none!important;
+  }
+
+  .print-header{
+    display:flex!important;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
+    text-align:center;
+    margin-bottom:25px;
+    padding-bottom:15px;
+    border-bottom:3px solid #001f3f;
+  }
+
+  .print-header img{
+    width:85px;
+    height:85px;
+    object-fit:contain;
+  }
+
+  .print-header h1{
+    margin:0;
+    font-size:22px;
+    color:#001f3f!important;
+  }
+
+  .print-header h2{
+    margin:4px 0;
+    font-size:17px;
+    color:#000!important;
+  }
+
+  .print-header p{
+    margin:3px 0;
+    font-size:11px;
+    color:#444!important;
+  }
+
+  .bs-grid{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:25px!important;
+  }
+
+  .bs-main-header{
+    background:#001f3f!important;
+    color:#fff!important;
+    font-size:12px;
+    padding:9px 10px;
+  }
+
+  .bs-sub-header{
+    background:#e2e8f0!important;
+    color:#001f3f!important;
+    font-size:11px;
+    padding:7px 10px;
+  }
+
+  .bs-row{
+    font-size:10px;
+    padding:5px 8px;
+    border-bottom:1px solid #ccc!important;
+  }
+
+  .bs-row.total{
+    background:#dcecff!important;
+    border-top:2px solid #001f3f!important;
+    border-bottom:2px solid #001f3f!important;
+    padding:8px;
+  }
+
+  .amount{
+    min-width:105px;
+    font-size:10px;
+  }
+
+  .account-name{
+    white-space:normal;
+  }
+
+  #bsTitle{
+    display:none!important;
+  }
+}
+
+/* =========================================================
+   PDF MODE
+========================================================= */
+
+.pdf-mode .print-header{
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+  text-align:center;
+  margin-bottom:25px;
+  padding-bottom:15px;
+  border-bottom:3px solid #001f3f;
+}
+
+.pdf-mode .print-header img{
+  width:85px;
+  height:85px;
+  object-fit:contain;
+}
+
+.pdf-mode .print-header h1{
+  margin:0;
+  font-size:22px;
+  color:#001f3f;
+}
+
+.pdf-mode .print-header h2{
+  margin:4px 0;
+  font-size:17px;
+}
+
+.pdf-mode .print-header p{
+  margin:3px 0;
+  font-size:11px;
+}
+
+.pdf-mode .bs-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:25px;
+}
+
+.pdf-mode .bs-main-header{
+  font-size:12px;
+  padding:9px 10px;
+}
+
+.pdf-mode .bs-sub-header{
+  font-size:11px;
+  padding:7px 10px;
+}
+
+.pdf-mode .bs-row{
+  font-size:10px;
+  padding:5px 8px;
+}
+
+.pdf-mode .amount{
+  font-size:10px;
+}
+
+.pdf-mode .transaction-detail{
+  display:none!important;
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     MOBILE OVERLAY
+========================================================= -->
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- =========================================================
+     CONNECTION STATUS
+========================================================= -->
+
+<div class="connection-status" id="connectionStatus"></div>
+
+<!-- =========================================================
+     LOADER
+========================================================= -->
+
+<div class="main-loader" id="mainLoader">
+
+  <div class="spinner"></div>
+
+  <p style="margin-top:15px">
+    Generating Balance Sheet...
+  </p>
+
+</div>
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+    <h2>GREYSOL ACADEMY</h2>
+    <p id="portalRole">Accountant Portal</p>
+  </div>
+
+  <div class="menu">
+    <a href="accounting-dashboard.html" >
+      <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+    </a>
+
+    <div class="section-label">Operations</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Sales & Receivables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="students.html"><i class="fa-solid fa-user-graduate"></i> Students / Customers</a>
+        <a href="quotations.html"><i class="fa-solid fa-file-signature"></i> Quotations</a>
+        <a href="invoice-list.html"><i class="fa-solid fa-file-invoice"></i> Invoices</a>
+        <a href="credit-notes.html"><i class="fa-solid fa-file-circle-minus"></i> Credit Notes</a>
+        <a href="receipts-list.html"><i class="fa-solid fa-money-bill-wave"></i> Customer Payments</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="accounts-receivable.html"><i class="fa-solid fa-hand-holding-dollar"></i> Accounts Receivable</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Receivables Aging</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-cart-shopping"></i><span>Purchases & Payables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="suppliers.html"><i class="fa-solid fa-truck-field"></i> Suppliers</a>
+        <a href="requisitions.html"><i class="fa-solid fa-file-circle-plus"></i> Purchase Requisitions</a>
+        <a href="requisition-create.html"><i class="fa-solid fa-plus"></i> Create Requisition</a>
+        <a href="purchase-orders.html"><i class="fa-solid fa-clipboard-list"></i> Purchase Orders</a>
+        <a href="goods-received.html"><i class="fa-solid fa-box-open"></i> Goods Received</a>
+        <a href="bills.html"><i class="fa-solid fa-file-invoice"></i> Bills</a>
+        <a href="supplier-payments.html"><i class="fa-solid fa-money-check-dollar"></i> Supplier Payments</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="accounts-payable.html"><i class="fa-solid fa-money-bill-transfer"></i> Accounts Payable</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Payables Aging</a>
+      </div>
+    </div>
+
+    <div class="section-label">Cash Management</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-building-columns"></i><span>Banking</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="bank-accounts.html"><i class="fa-solid fa-building-columns"></i> Bank Accounts</a>
+        <a href="cash-accounts.html"><i class="fa-solid fa-wallet"></i> Cash Accounts</a>
+        <a href="bank-transactions.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Bank Transactions</a>
+        <a href="bank-transfer.html"><i class="fa-solid fa-right-left"></i> Transfers</a>
+        <a href="bank-reconciliation.html"><i class="fa-solid fa-scale-balanced"></i> Bank Reconciliation</a>
+        <a href="reconciliation-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Reconciliation History</a>
+      </div>
+    </div>
+
+    <div class="section-label">General Accounting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-book"></i><span>Accounting</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="chart-of-accounts.html"><i class="fa-solid fa-list"></i> Chart of Accounts</a>
+        <a href="journal-entry.html"><i class="fa-solid fa-book-journal-whills"></i> Journal Entry</a>
+        <a href="journal-list.html"><i class="fa-solid fa-list-check"></i> Journal List</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="ledger.html"><i class="fa-solid fa-table-list"></i> Account Ledger</a>
+        <a href="#"><i class="fa-solid fa-repeat"></i> Recurring Journals</a>
+        <a href="#"><i class="fa-solid fa-lock"></i> Period Closing</a>
+        <a href="accounting-settings.html"><i class="fa-solid fa-gear"></i>Settings</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-receipt"></i><span>Expenses</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="expenses.html"><i class="fa-solid fa-file-circle-plus"></i> Expense Entry</a>
+        <a href="expense-list.html"><i class="fa-solid fa-list"></i> Expense List</a>
+        <a href="expense-categories.html"><i class="fa-solid fa-tags"></i> Expense Categories</a>
+        <a href="expense-claims.html"><i class="fa-solid fa-hand-holding-dollar"></i> Expense Claims</a>
+      </div>
+    </div>
+
+    <div class="section-label">People & Statutory</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-users-gear"></i><span>HR & Payroll</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="employees.html"><i class="fa-solid fa-users"></i> Employees</a>
+        <a href="#"><i class="fa-solid fa-user-tag"></i> Employee Categories</a>
+        <a href="attendance.html"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="payroll-settings.html"><i class="fa-solid fa-gears"></i> Payroll Settings</a>
+        <a href="payroll-run.html"><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</a>
+        <a href="payslips.html"><i class="fa-solid fa-file-invoice-dollar"></i> Payslips</a>
+        <a href="payroll-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Payroll History</a>
+        <a href="payroll-journal.html"><i class="fa-solid fa-book"></i> Payroll Journal</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-chart-column"></i> Payroll Reports</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-percent"></i><span>Taxes</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="vat.html"><i class="fa-solid fa-percent"></i> VAT</a>
+        <a href="vat-transactions.html"><i class="fa-solid fa-receipt"></i> VAT Transactions</a>
+        <a href="vat-return.html"><i class="fa-solid fa-file-circle-check"></i> VAT Return</a>
+        <a href="#"><i class="fa-solid fa-file-invoice"></i> Withholding Tax</a>
+        <a href="paye.html"><i class="fa-solid fa-user-shield"></i> PAYE</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-chart-column"></i> Tax Reports</a>
+      </div>
+    </div>
+
+    <div class="section-label">Reporting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-chart-pie"></i><span>Reports</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html" class="active"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-user-clock"></i> AR Aging</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-file-circle-exclamation"></i> AP Aging</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="expense-report.html"><i class="fa-solid fa-receipt"></i> Expense Report</a>
+        <a href="revenue-report.html"><i class="fa-solid fa-arrow-trend-up"></i> Revenue Report</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-percent"></i> Tax Reports</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-users"></i> Payroll Reports</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+      </div>
+    </div>
+
+    <div class="section-label">Administration</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-user-shield"></i><span>Administration</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="userlist.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="#"><i class="fa-solid fa-key"></i> Roles & Permissions</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+        <a href="#"><i class="fa-solid fa-check-double"></i> Approval Workflows</a>
+        <a href="#"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="#"><i class="fa-solid fa-building"></i> Company Profile</a>
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> Financial Year</a>
+        <a href="#"><i class="fa-solid fa-calendar-check"></i> Accounting Periods</a>
+        <a href="#"><i class="fa-solid fa-percent"></i> Tax Settings</a>
+        <a href="#"><i class="fa-solid fa-hashtag"></i> Numbering</a>
+        <a href="#"><i class="fa-solid fa-sliders"></i> System Settings</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+    </a>
+  </div>
+</aside>
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main">
+
+  <header class="topbar">
+
+    <div class="top-left">
+
+      <i
+        class="fa-solid fa-bars hamburger mobile-menu"
+        onclick="toggleSidebar()">
+      </i>
+
+      <h2>Balance Sheet</h2>
+
+    </div>
+
+    <div class="user-info">
+
+      <div class="user-text">
+
+        <strong id="staffName">
+          Loading...
+        </strong>
+
+        <span id="staffRole">
+          Accountant
+        </span>
+
+      </div>
+
+      <div class="user-avatar" id="avatar">
+        A
+      </div>
+
+    </div>
+
+  </header>
+
+  <section class="content">
+
+    <div class="alert-error" id="errorAlert"></div>
+
+    <!-- DATE FILTER -->
+
+    <div class="box">
+
+      <h3>
+
+        <i class="fa-solid fa-calendar-days"></i>
+
+        As At Date
+
+      </h3>
+
+      <div style="
+        display:flex;
+        gap:15px;
+        align-items:end;
+        flex-wrap:wrap">
+
+        <div>
+
+          <label>
+            Balance Sheet Date
+          </label>
+
+          <input
+            type="date"
+            id="asAtDateInput"
+            style="
+              padding:12px;
+              border:1px solid #ccc;
+              border-radius:8px">
+
+        </div>
+
+        <button
+          class="btn"
+          id="applyFilterBtn">
+
+          <i class="fa-solid fa-magnifying-glass"></i>
+
+          Generate
+
+        </button>
+
+        <button
+          class="btn"
+          style="background:var(--green)"
+          onclick="window.print()">
+
+          <i class="fa-solid fa-print"></i>
+
+          Print
+
+        </button>
+
+        <button
+          class="btn btn-pdf"
+          onclick="downloadPDF()">
+
+          <i class="fa-solid fa-file-pdf"></i>
+
+          Download PDF
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- BALANCE SHEET -->
+
+    <div
+      class="box"
+      id="printArea">
+
+      <!-- PRINT HEADER -->
+
+      <div class="print-header">
+
+        <img
+          src="../images/logo1 - Copy.png"
+          alt="Greysol Academy">
+
+        <div>
+
+          <h1>
+            GREYSOL ACADEMY
+          </h1>
+
+          <h2>
+            Balance Sheet
+          </h2>
+
+          <p>
+            Accountant Portal
+          </p>
+
+          <p>
+            As At
+            <span id="printAsAt"></span>
+          </p>
+
+        </div>
+
+      </div>
+
+      <h3
+        id="bsTitle"
+        style="
+          text-align:center;
+          margin-bottom:20px">
+
+        Balance Sheet
+
+      </h3>
+
+      <div class="bs-grid">
+
+        <div id="assetsColumn"></div>
+
+        <div id="liabEquityColumn"></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<!-- =========================================================
+     GENERAL JAVASCRIPT
+========================================================= -->
+
+<script>
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+document
+  .querySelectorAll(".menu-header")
+  .forEach(header=>{
+
+    header.addEventListener("click",()=>{
+
+      header.parentElement.classList.toggle("active");
+
+    });
+
+  });
+
+
+function toggleSidebar(){
+
+  document
+    .getElementById("sidebar")
+    .classList.toggle("open");
+
+  document
+    .getElementById("overlay")
+    .classList.toggle("show");
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+document
+  .getElementById("logoutBtn")
+  .addEventListener("click",e=>{
+
+    e.preventDefault();
+
+    localStorage.removeItem("loggedUser");
+
+    window.location.href="staff-login.html";
+
+  });
+
+
+/* =========================================================
+   JOURNAL NAVIGATION
+========================================================= */
+
+window.openJournal=function(id){
+
+  if(!id)return;
+
+  window.location.href=
+    `journal-view.html?id=${id}`;
+
+};
+
+
+/* =========================================================
+   ACCOUNT DRILLDOWN
+========================================================= */
+
+window.toggleAccount=function(id,el){
+
+  document
+    .querySelectorAll(`#${id}`)
+    .forEach(row=>{
+
+      row.style.display=
+        row.style.display==="block"
+        ?"none"
+        :"block";
+
+    });
+
+  el.classList.toggle("expanded");
+
+};
+
+
+/* =========================================================
+   INCOME STATEMENT
+========================================================= */
+
+window.openIncomeStatement=function(){
+
+  const date=
+    document.getElementById(
+      "asAtDateInput"
+    ).value;
+
+  window.location.href=
+    `report-income-statement.html?asAt=${date}`;
+
+};
+
+
+/* =========================================================
+   PDF
+========================================================= */
+
+async function downloadPDF(){
+
+  const {jsPDF}=window.jspdf;
+
+  const area=
+    document.getElementById("printArea");
+
+  /*
+    Expand all sections before creating PDF.
+  */
+
+  document
+    .querySelectorAll(".bs-category")
+    .forEach(category=>{
+
+      category.classList.remove(
+        "collapsed"
+      );
+
+    });
+
+
+  /*
+    Hide transaction details.
+  */
+
+  document
+    .querySelectorAll(".transaction-detail")
+    .forEach(row=>{
+
+      row.style.display="none";
+
+    });
+
+
+  area.classList.add("pdf-mode");
+
+
+  const canvas=
+    await html2canvas(
+      area,
+      {
+        scale:2,
+        backgroundColor:"#ffffff"
+      }
+    );
+
+
+  area.classList.remove("pdf-mode");
+
+
+  const pdf=
+    new jsPDF(
+      "p",
+      "mm",
+      "A4"
+    );
+
+
+  const pageWidth=
+    pdf.internal.pageSize.getWidth();
+
+  const pageHeight=
+    pdf.internal.pageSize.getHeight();
+
+  const imgWidth=
+    pageWidth;
+
+  const imgHeight=
+    canvas.height *
+    imgWidth /
+    canvas.width;
+
+
+  let heightLeft=
+    imgHeight;
+
+  let position=0;
+
+
+  pdf.addImage(
+    canvas.toDataURL("image/png"),
+    "PNG",
+    0,
+    position,
+    imgWidth,
+    imgHeight
+  );
+
+
+  heightLeft-=pageHeight;
+
+
+  while(heightLeft>0){
+
+    position=
+      heightLeft-imgHeight;
+
+    pdf.addPage();
+
+    pdf.addImage(
+      canvas.toDataURL("image/png"),
+      "PNG",
+      0,
+      position,
+      imgWidth,
+      imgHeight
+    );
+
+    heightLeft-=pageHeight;
+
+  }
+
+
+  const date=
+    document
+      .getElementById(
+        "asAtDateInput"
+      )
+      .value;
+
+
+  pdf.save(
+    "Balance-Sheet-"+date+".pdf"
+  );
+
+}
+
+
+/* =========================================================
+   CONNECTION STATUS
+========================================================= */
+
+const statusBar=
+  document.getElementById(
+    "connectionStatus"
+  );
+
+let isOnline=
+  navigator.onLine;
+
+
+function showStatus(type,msg){
+
+  statusBar.className=
+    `connection-status ${type} show`;
+
+  statusBar.innerHTML=msg;
+
+
+  if(type==="online"){
+
+    setTimeout(()=>{
+
+      statusBar.classList.remove(
+        "show"
+      );
+
+    },3000);
+
+  }
+
+}
+
+
+async function checkInternet(){
+
+  try{
+
+    await fetch(
+      "https://www.google.com/favicon.ico",
+      {
+        mode:"no-cors",
+        cache:"no-store"
+      }
+    );
+
+    return true;
+
+  }catch{
+
+    return false;
+
+  }
+
+}
+
+
+async function updateConnectionStatus(){
+
+  const online=
+    await checkInternet();
+
+
+  if(
+    online &&
+    !isOnline
+  ){
+
+    isOnline=true;
+
+    showStatus(
+      "online",
+      `<i class="fa-solid fa-wifi"></i>
+       You are back online`
+    );
+
+  }
+
+
+  else if(
+    !online &&
+    isOnline
+  ){
+
+    isOnline=false;
+
+    showStatus(
+      "offline",
+      `<i class="fa-solid fa-triangle-exclamation"></i>
+       No internet connection. Data may be outdated`
+    );
+
+  }
+
+}
+
+
+window.addEventListener(
+  "online",
+  updateConnectionStatus
+);
+
+
+window.addEventListener(
+  "offline",
+  updateConnectionStatus
+);
+
+
+setInterval(
+  updateConnectionStatus,
+  5000
+);
+
+
+updateConnectionStatus();
+
+</script>
+
+<!-- =========================================================
+     FIREBASE
+========================================================= -->
+
+<script type="module">
+
+import {
+  initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+  getFirestore,
+  collection,
+  getDocs
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+const app=
+  initializeApp({
+
+    apiKey:
+      "AIzaSyAgoW4eu_hvrWHSxJci0WqU0WeUXOr-msgw",
+
+    projectId:
+      "greysol-academy"
+
+  });
+
+
+const db=
+  getFirestore(app);
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const loader=
+  document.getElementById(
+    "mainLoader"
+  );
+
+
+const errorAlert=
+  document.getElementById(
+    "errorAlert"
+  );
+
+
+/* =========================================================
+   LOGGED USER
+========================================================= */
+
+const loggedUser=
+  JSON.parse(
+    localStorage.getItem(
+      "loggedUser"
+    )
+  );
+
+
+const userRole=
+  (
+    loggedUser?.role||""
+  )
+  .toString()
+  .trim()
+  .toLowerCase();
+
+
+if(
+  !loggedUser ||
+  userRole!=="accountant"
+){
+
+  alert(
+    "Access Denied. This page is for Accountants only."
+  );
+
+  window.location.href=
+    "staff-login.html";
+
+}
+
+
+/* =========================================================
+   USER DISPLAY
+========================================================= */
+
+document
+  .getElementById("staffName")
+  .innerText=
+    loggedUser?.username||
+    "Accountant";
+
+
+document
+  .getElementById("staffRole")
+  .innerText=
+    loggedUser?.role||
+    "Accountant";
+
+
+document
+  .getElementById("portalRole")
+  .innerText=
+    (loggedUser?.role||
+    "Accountant")+
+    " Portal";
+
+
+document
+  .getElementById("avatar")
+  .innerText=
+    (
+      loggedUser?.username||
+      "A"
+    )
+    .charAt(0)
+    .toUpperCase();
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+document
+  .getElementById("logoutBtn")
+  .onclick=
+    e=>{
+
+      e.preventDefault();
+
+      localStorage.removeItem(
+        "loggedUser"
+      );
+
+      window.location.href=
+        "staff-login.html";
+
+    };
+
+
+/* =========================================================
+   DEFAULT DATE
+========================================================= */
+
+document
+  .getElementById(
+    "asAtDateInput"
+  )
+  .value=
+    new Date()
+      .toISOString()
+      .split("T")[0];
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function getField(
+  obj,
+  ...fields
+){
+
+  for(
+    const field of fields
+  ){
+
+    if(
+      obj[field]!==undefined &&
+      obj[field]!==null &&
+      obj[field]!==""
+    ){
+
+      return obj[field];
+
+    }
+
+  }
+
+  return "";
+
+}
+
+
+function money(value){
+
+  const val=
+    Number(value||0);
+
+  return "MWK "+
+    val.toLocaleString(
+      "en-ZA",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+
+}
+
+
+function toDateObj(ts){
+
+  if(!ts)return new Date();
+
+  return ts?.toDate
+    ?ts.toDate()
+    :new Date(ts);
+
+}
+
+
+/* =========================================================
+   BALANCE SHEET GROUPING
+========================================================= */
+
+function getBSGrouping(acc){
+
+  const type=
+    (
+      getField(
+        acc,
+        "accountType",
+        "type"
+      )||""
+    )
+    .toLowerCase();
+
+
+  const sub=
+    (
+      getField(
+        acc,
+        "accountSubType",
+        "subType"
+      )||""
+    )
+    .toLowerCase()
+    .replace(/-/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+
+
+  if(type==="asset"){
+
+    if(
+      sub.includes(
+        "current asset"
+      )
+    ){
+
+      return {
+        main:"ASSETS",
+        sub:"Current Assets"
+      };
+
+    }
+
+
+    if(
+      sub.includes(
+        "non current asset"
+      )||
+      sub.includes(
+        "fixed asset"
+      )
+    ){
+
+      return {
+        main:"ASSETS",
+        sub:"Non-Current Assets"
+      };
+
+    }
+
+
+    return {
+      main:"ASSETS",
+      sub:"Other Assets"
+    };
+
+  }
+
+
+  if(type==="liability"){
+
+    if(
+      sub.includes(
+        "non current liability"
+      )||
+      sub.includes(
+        "long term liability"
+      )
+    ){
+
+      return {
+        main:"LIABILITIES",
+        sub:"Non-Current Liabilities"
+      };
+
+    }
+
+
+    if(
+      sub.includes(
+        "current liability"
+      )
+    ){
+
+      return {
+        main:"LIABILITIES",
+        sub:"Current Liabilities"
+      };
+
+    }
+
+
+    return {
+      main:"LIABILITIES",
+      sub:"Other Liabilities"
+    };
+
+  }
+
+
+  if(type==="equity"){
+
+    if(
+      sub.includes(
+        "retained earnings"
+      )
+    ){
+
+      return {
+        main:"EQUITY",
+        sub:"Retained Earnings"
+      };
+
+    }
+
+
+    if(
+      sub.includes(
+        "share capital"
+      )
+    ){
+
+      return {
+        main:"EQUITY",
+        sub:"Share Capital"
+      };
+
+    }
+
+
+    return {
+      main:"EQUITY",
+      sub:"Other Equity"
+    };
+
+  }
+
+
+  return {
+    main:"OTHER",
+    sub:"Other"
+  };
+
+}
+
+
+/* =========================================================
+   NORMAL BALANCE
+========================================================= */
+
+function getAccountNormalBalance(
+  type
+){
+
+  type=
+    (type||"")
+    .toLowerCase();
+
+
+  if(
+    type==="asset"||
+    type==="expense"
+  ){
+
+    return "debit";
+
+  }
+
+
+  return "credit";
+
+}
+
+
+/* =========================================================
+   RENDER SECTION
+========================================================= */
+
+function renderSection(
+  title,
+  data,
+  transactionsMap
+){
+
+  let html=
+    `
+    <div class="bs-category">
+
+      <div class="bs-main-header">
+
+        ${title}
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+      <div class="bs-category-body">
+    `;
+
+
+  let total=0;
+
+
+  for(
+    let sub in data
+  ){
+
+    let subTotal=0;
+
+
+    html+=
+      `
+      <div class="bs-category">
+
+        <div class="bs-sub-header">
+
+          ${sub}
+
+          <i class="fa-solid fa-chevron-down arrow"></i>
+
+        </div>
+
+        <div class="bs-category-body">
+      `;
+
+
+    data[sub]
+      .sort(
+        (a,b)=>
+          a.code.localeCompare(
+            b.code
+          )
+      )
+      .forEach(acc=>{
+
+        const accId=
+          `acc-${acc.code}`;
+
+
+        const isRE=
+          acc.isRE;
+
+
+        html+=
+          `
+          <div
+            class="bs-row sub account-row"
+            ${
+              isRE
+              ?
+              `ondblclick="openIncomeStatement()"
+               style="cursor:pointer"`
+              :
+              `onclick="toggleAccount('${accId}',this)"`
+            }
+          >
+
+            <div class="row-left">
+
+              <i
+                class="fa-solid fa-chevron-right toggle-account">
+              </i>
+
+              <span class="account-name">
+
+                ${acc.code}
+                -
+                ${acc.name}
+
+              </span>
+
+            </div>
+
+            <span class="amount">
+
+              ${money(acc.balance)}
+
+            </span>
+
+          </div>
+        `;
+
+
+        if(
+          !acc.isRE &&
+          transactionsMap[acc.code]
+        ){
+
+          transactionsMap[
+            acc.code
+          ].forEach(tx=>{
+
+            html+=
+              `
+              <div
+                class="transaction-detail"
+                id="${accId}"
+                ondblclick="openJournal('${tx.journalId}')"
+              >
+
+                <span class="jno">
+
+                  [${tx.journalNo}]
+
+                </span>
+
+                ${toDateObj(
+                  tx.date
+                ).toLocaleDateString(
+                  "en-GB"
+                )}
+
+                -
+
+                ${tx.desc}
+
+                <span
+                  class="amount"
+                  style="float:right"
+                >
+
+                  ${money(tx.amount)}
+
+                </span>
+
+              </div>
+            `;
+
+          });
+
+        }
+
+
+        subTotal+=
+          acc.balance;
+
+      });
+
+
+    html+=
+      `
+        <div
+          class="bs-row"
+          style="
+            font-weight:bold;
+            padding-left:25px"
+        >
+
+          <div class="row-left">
+
+            <span>
+              Total ${sub}
+            </span>
+
+          </div>
+
+          <span class="amount">
+
+            ${money(subTotal)}
+
+          </span>
+
+        </div>
+
+        </div>
+      </div>
+      `;
+
+
+    total+=
+      subTotal;
+
+  }
+
+
+  html+=
+    `
+      </div>
+
+    </div>
+
+    <div class="bs-row total">
+
+      <div class="row-left">
+
+        <span>
+          TOTAL ${title}
+        </span>
+
+      </div>
+
+      <span class="amount">
+
+        ${money(total)}
+
+      </span>
+
+    </div>
+    `;
+
+
+  return {
+    html,
+    total
+  };
+
+}
+
+
+/* =========================================================
+   LOAD BALANCE SHEET
+========================================================= */
+
+async function loadBalanceSheet(){
+
+  if(!navigator.onLine){
+
+    errorAlert.innerText=
+      "You are offline. Cannot load new data.";
+
+    errorAlert.style.display=
+      "block";
+
+    return;
+
+  }
+
+
+  loader.classList.remove(
+    "hidden"
+  );
+
+  errorAlert.style.display=
+    "none";
+
+
+  try{
+
+    const date=
+      new Date(
+        document
+          .getElementById(
+            "asAtDateInput"
+          )
+          .value
+      );
+
+
+    date.setHours(
+      23,
+      59,
+      59,
+      999
+    );
+
+
+    const formattedDate=
+      date.toLocaleDateString(
+        "en-GB"
+      );
+
+
+    document
+      .getElementById(
+        "bsTitle"
+      )
+      .innerText=
+        `Balance Sheet As At ${formattedDate}`;
+
+
+    document
+      .getElementById(
+        "printAsAt"
+      )
+      .innerText=
+        formattedDate;
+
+
+    /* =====================================================
+       FIRESTORE
+    ===================================================== */
+
+    const [
+      accountsSnap,
+      journalsSnap
+    ]=
+      await Promise.all([
+
+        getDocs(
+          collection(
+            db,
+            "chartOfAccounts"
+          )
+        ),
+
+        getDocs(
+          collection(
+            db,
+            "journalEntries"
+          )
+        )
+
+      ]);
+
+
+    const accounts=
+      accountsSnap.docs.map(
+        d=>({
+          id:d.id,
+          ...d.data()
+        })
+      );
+
+
+    const journals=
+      journalsSnap.docs.map(
+        d=>({
+          id:d.id,
+          ...d.data()
+        })
+      );
+
+
+    /* =====================================================
+       RAW BALANCES
+    ===================================================== */
+
+    const rawBalances={};
+
+    const transactionsMap={};
+
+
+    journals.forEach(j=>{
+
+      const jd=
+        toDateObj(
+          j.entryDate||
+          j.date
+        );
+
+
+      if(jd>date)return;
+
+
+      const journalNo=
+        j.journalNumber||
+        j.journalNo||
+        j.reference||
+        j.id;
+
+
+      j.lines?.forEach(line=>{
+
+        const code=
+          getField(
+            line,
+            "accountCode",
+            "account",
+            "code"
+          );
+
+
+        if(!code)return;
+
+
+        const dr=
+          Number(
+            line.debit||0
+          );
+
+
+        const cr=
+          Number(
+            line.credit||0
+          );
+
+
+        if(
+          !rawBalances[code]
+        ){
+
+          rawBalances[code]={
+            dr:0,
+            cr:0
+          };
+
+        }
+
+
+        rawBalances[code].dr+=
+          dr;
+
+
+        rawBalances[code].cr+=
+          cr;
+
+
+        if(
+          !transactionsMap[code]
+        ){
+
+          transactionsMap[code]=[];
+
+        }
+
+
+        const amount=
+          dr>0
+          ?dr
+          :cr*-1;
+
+
+        transactionsMap[
+          code
+        ].push({
+
+          date:
+            j.entryDate||
+            j.date,
+
+          journalId:
+            j.id,
+
+          journalNo:
+            journalNo,
+
+          desc:
+            j.description||
+            j.narration||
+            "-",
+
+          amount:
+            amount
+
+        });
+
+      });
+
+    });
+
+
+    /* =====================================================
+       ACCOUNT BALANCES
+    ===================================================== */
+
+    const balances={};
+
+
+    accounts.forEach(acc=>{
+
+      const code=
+        getField(
+          acc,
+          "accountCode",
+          "code"
+        );
+
+
+      const type=
+        getField(
+          acc,
+          "accountType",
+          "type"
+        );
+
+
+      const raw=
+        rawBalances[code]||
+        {
+          dr:0,
+          cr:0
+        };
+
+
+      const normal=
+        getAccountNormalBalance(
+          type
+        );
+
+
+      let finalBalance=0;
+
+
+      if(
+        normal==="debit"
+      ){
+
+        finalBalance=
+          raw.dr-
+          raw.cr;
+
+      }else{
+
+        finalBalance=
+          raw.cr-
+          raw.dr;
+
+      }
+
+
+      balances[code]=
+        finalBalance;
+
+    });
+
+
+    /* =====================================================
+       GROUP ACCOUNTS
+    ===================================================== */
+
+    const grouped={
+      ASSETS:{},
+      LIABILITIES:{},
+      EQUITY:{}
+    };
+
+
+    accounts.forEach(acc=>{
+
+      const group=
+        getBSGrouping(acc);
+
+
+      if(
+        group.main==="OTHER"
+      )return;
+
+
+      const code=
+        getField(
+          acc,
+          "accountCode",
+          "code"
+        );
+
+
+      const name=
+        getField(
+          acc,
+          "accountName",
+          "name"
+        );
+
+
+      if(
+        !grouped[
+          group.main
+        ][
+          group.sub
+        ]
+      ){
+
+        grouped[
+          group.main
+        ][
+          group.sub
+        ]=[];
+
+      }
+
+
+      grouped[
+        group.main
+      ][
+        group.sub
+      ].push({
+
+        code,
+        name,
+
+        balance:
+          balances[code]||0
+
+      });
+
+    });
+
+
+    /* =====================================================
+       NET INCOME
+    ===================================================== */
+
+    let totalRevenue=0;
+
+    let totalExpense=0;
+
+
+    accounts.forEach(acc=>{
+
+      const code=
+        getField(
+          acc,
+          "accountCode",
+          "code"
+        );
+
+
+      const type=
+        (
+          getField(
+            acc,
+            "accountType",
+            "type"
+          )||""
+        )
+        .toLowerCase();
+
+
+      const bal=
+        balances[code]||0;
+
+
+      if(
+        type==="revenue"||
+        type==="income"
+      ){
+
+        totalRevenue+=
+          bal;
+
+      }
+
+
+      if(
+        type==="expense"
+      ){
+
+        totalExpense+=
+          bal;
+
+      }
+
+    });
+
+
+    const netIncome=
+      totalRevenue-
+      totalExpense;
+
+
+    /* =====================================================
+       RETAINED EARNINGS
+    ===================================================== */
+
+    if(
+      !grouped
+        .EQUITY[
+          "Retained Earnings"
+        ]
+    ){
+
+      grouped
+        .EQUITY[
+          "Retained Earnings"
+        ]=[];
+
+    }
+
+
+    grouped
+      .EQUITY[
+        "Retained Earnings"
+      ]
+      .push({
+
+        code:"RE",
+
+        name:
+          "Retained Earnings",
+
+        balance:
+          netIncome,
+
+        isRE:true
+
+      });
+
+
+    /* =====================================================
+       RENDER
+    ===================================================== */
+
+    const assets=
+      renderSection(
+        "ASSETS",
+        grouped.ASSETS,
+        transactionsMap
+      );
+
+
+    const liabilities=
+      renderSection(
+        "LIABILITIES",
+        grouped.LIABILITIES,
+        transactionsMap
+      );
+
+
+    const equity=
+      renderSection(
+        "EQUITY",
+        grouped.EQUITY,
+        transactionsMap
+      );
+
+
+    document
+      .getElementById(
+        "assetsColumn"
+      )
+      .innerHTML=
+        assets.html;
+
+
+    document
+      .getElementById(
+        "liabEquityColumn"
+      )
+      .innerHTML=
+        liabilities.html+
+        equity.html+
+        `
+        <div
+          class="bs-row total"
+          style="
+            background:#d1e7dd"
+        >
+
+          <div class="row-left">
+
+            <span>
+              TOTAL LIABILITIES + EQUITY
+            </span>
+
+          </div>
+
+          <span class="amount">
+
+            ${money(
+              liabilities.total+
+              equity.total
+            )}
+
+          </span>
+
+        </div>
+        `;
+
+  }catch(err){
+
+    console.error(
+      "BALANCE SHEET ERROR:",
+      err
+    );
+
+
+    errorAlert.innerText=
+      "Error: "+
+      err.message;
+
+
+    errorAlert.style.display=
+      "block";
+
+  }finally{
+
+    loader.classList.add(
+      "hidden"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+document
+  .getElementById(
+    "applyFilterBtn"
+  )
+  .onclick=
+    loadBalanceSheet;
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+loadBalanceSheet();
+
+</script>
+
+</body>
+</html>

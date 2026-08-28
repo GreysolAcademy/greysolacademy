@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receipts List | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
+
+:root{
+  --navy:#001f3f;
+  --navy2:#003366;
+  --blue:#1769aa;
+  --green:#1f9d55;
+  --red:#c0392b;
+  --orange:#f39c12;
+  --purple:#6f42c1;
+  --teal:#008c95;
+  --light:#f4f7fb;
+  --border:#e5e9ef;
+  --muted:#6b7280;
+  --white:#fff;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--light);
+}
+
+body{
+  overflow:hidden;
+  color:#1f2937;
+}
+
+
+/* =========================================================
+   SIDEBAR - SAME AS CHART OF ACCOUNTS
+========================================================= */
+
+.sidebar{
+  width:270px;
+  height:100vh;
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:1100;
+  background:var(--navy);
+  color:#fff;
+  overflow-y:auto;
+  overflow-x:hidden;
+  transition:width .25s ease,left .25s ease;
+
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+
+.sidebar::-webkit-scrollbar{
+  display:none;
+}
+
+.logo{
+  padding:18px 15px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+
+.logo img{
+  width:66px;
+  height:66px;
+  object-fit:contain;
+}
+
+.logo h2{
+  font-size:17px;
+  margin:8px 0 3px;
+}
+
+.logo p{
+  margin:0;
+  font-size:12px;
+  opacity:.7;
+}
+
+.menu{
+  padding:8px 0 20px;
+}
+
+.section-label{
+  padding:15px 24px 6px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1.1px;
+  opacity:.5;
+}
+
+.menu a,
+.menu-header{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:12px 22px;
+  color:#fff;
+  text-decoration:none;
+  cursor:pointer;
+  font-size:13px;
+  min-height:46px;
+}
+
+.menu a i,
+.menu-header > i:first-child{
+  width:18px;
+  text-align:center;
+}
+
+.menu a:hover,
+.menu-header:hover{
+  background:rgba(255,255,255,.08);
+}
+
+.menu a.active{
+  background:rgba(255,255,255,.13);
+  border-left:4px solid var(--green);
+  padding-left:18px;
+}
+
+.arrow{
+  margin-left:auto!important;
+  width:auto!important;
+  font-size:11px!important;
+  transition:transform .25s ease;
+}
+
+.submenu{
+  max-height:0;
+  overflow:hidden;
+  background:rgba(0,0,0,.17);
+  transition:max-height .3s ease;
+}
+
+.menu-group.active .submenu{
+  max-height:700px;
+}
+
+.menu-group.active .arrow{
+  transform:rotate(180deg);
+}
+
+.submenu a{
+  padding-left:54px;
+  font-size:12px;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+  margin-left:270px;
+  width:calc(100% - 270px);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  transition:margin-left .25s ease,width .25s ease;
+  position:relative;
+}
+
+
+/* =========================================================
+   TOPBAR - SAME AS COA
+========================================================= */
+
+.topbar{
+  height:70px;
+  flex:0 0 70px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px;
+  box-shadow:0 2px 10px rgba(0,0,0,.07);
+  z-index:900;
+}
+
+.top-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.topbar h2{
+  margin:0;
+  color:var(--navy);
+  font-size:20px;
+}
+
+.hamburger{
+  font-size:21px;
+  color:var(--navy);
+  cursor:pointer;
+}
+
+.mobile-menu{
+  display:none;
+}
+
+
+/* =========================================================
+   USER AVATAR - SAME AS COA
+========================================================= */
+
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.user-avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--navy);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  flex-shrink:0;
+}
+
+.user-text{
+  text-align:right;
+}
+
+.user-text strong{
+  display:block;
+  font-size:13px;
+  color:var(--navy);
+}
+
+.user-text span{
+  font-size:11px;
+  color:var(--muted);
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content{
+  flex:1;
+  overflow-y:auto;
+  padding:22px 25px 35px;
+
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+
+.content::-webkit-scrollbar{
+  display:none;
+}
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+.main-loader{
+  position:fixed;
+  inset:0;
+  background:rgba(244,247,251,.92);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  color:var(--navy);
+  z-index:3000;
+  transition:.3s;
+}
+
+.main-loader.hidden{
+  opacity:0;
+  pointer-events:none;
+}
+
+.spinner{
+  width:50px;
+  height:50px;
+  border:4px solid rgba(0,31,63,.25);
+  border-top:4px solid var(--navy);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   BOXES
+========================================================= */
+
+.box{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  margin-bottom:16px;
+}
+
+
+/* =========================================================
+   PAGE TITLE
+========================================================= */
+
+.page-title{
+  color:var(--navy);
+  font-size:22px;
+  margin:0 0 20px;
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  margin-bottom:16px;
+}
+
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+.card h4{
+  color:var(--muted);
+  margin:0;
+  font-size:12px;
+  font-weight:600;
+}
+
+.card h1{
+  margin:12px 0 0;
+  color:var(--navy);
+  font-size:23px;
+}
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+.filter-title{
+  margin:0 0 14px;
+  color:var(--navy);
+  font-size:15px;
+}
+
+.filters{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1.2fr auto auto;
+  gap:10px;
+  align-items:center;
+}
+
+.filters input,
+.filters select{
+  width:100%;
+  padding:10px 11px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  color:#27364a;
+  outline:none;
+  font-size:12px;
+}
+
+.filters input:focus,
+.filters select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 2px rgba(23,105,170,.08);
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn{
+  background:var(--navy);
+  color:#fff;
+  border:none;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  white-space:nowrap;
+  font-size:12px;
+  transition:.2s;
+}
+
+.btn:hover{
+  background:var(--navy2);
+  transform:translateY(-1px);
+}
+
+.btn.new{
+  background:var(--green);
+}
+
+.btn.new:hover{
+  background:#178a49;
+}
+
+.btn-edit{
+  background:var(--green);
+  color:#fff;
+  border:none;
+  padding:7px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:11px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+
+.btn-edit:hover{
+  background:#178a49;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+}
+
+th{
+  background:#f5f7fa;
+  color:#536174;
+  text-align:left;
+  padding:11px 10px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+
+td{
+  padding:11px 10px;
+  font-size:11px;
+  border-bottom:1px solid #eef1f4;
+  white-space:nowrap;
+}
+
+tr:hover{
+  background:#f8fafc;
+}
+
+.empty-row{
+  text-align:center;
+  color:var(--muted);
+  padding:30px;
+}
+
+
+/* =========================================================
+   PAYMENT METHOD BADGES
+========================================================= */
+
+.badge{
+  padding:5px 10px;
+  border-radius:15px;
+  font-size:10px;
+  color:white;
+  display:inline-block;
+}
+
+.cash{
+  background:#27ae60;
+}
+
+.bank{
+  background:#2980b9;
+}
+
+.mobilemoney{
+  background:#8e44ad;
+}
+
+
+/* =========================================================
+   MOBILE OVERLAY
+========================================================= */
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  z-index:1050;
+}
+
+.overlay.show{
+  display:block;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1100px){
+
+  .sidebar{
+    left:-270px;
+  }
+
+  .sidebar.open{
+    left:0;
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  .mobile-menu{
+    display:block;
+  }
+
+  .topbar{
+    padding:0 15px;
+  }
+
+  .content{
+    padding:15px;
+  }
+
+  .filters{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:650px){
+
+  .topbar h2{
+    font-size:17px;
+  }
+
+  .user-text{
+    display:none;
+  }
+
+  .filters{
+    grid-template-columns:1fr;
+  }
+
+  .cards{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .card{
+    padding:15px;
+  }
+
+  .card h1{
+    font-size:18px;
+  }
+}
+
+@media(max-width:450px){
+
+  .cards{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     OVERLAY
+========================================================= -->
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+
+<!-- =========================================================
+     ACCOUNTING SIDEBAR
+     SAME STRUCTURE/STYLING AS COA
+========================================================= -->
+
+<aside class="sidebar" id="sidebar">
+
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+    <h2>GREYSOL ACADEMY</h2>
+    <p id="portalRole">Accountant Portal</p>
+  </div>
+
+  <div class="menu">
+
+    <!-- DASHBOARD -->
+    <a href="accounting-dashboard.html">
+      <i class="fa-solid fa-gauge"></i>
+      <span>Dashboard</span>
+    </a>
+    <a href="staff-profile.html">
+      <i class="fa-solid fa-user"></i>
+      <span>Staff Profile</span>
+    </a>
+
+
+    <!-- ================= OPERATIONS ================= -->
+
+    <div class="section-label">Operations</div>
+
+
+    <!-- SALES & RECEIVABLES -->
+    <div class="menu-group">
+
+      <div class="menu-header">
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+        <span>Sales & Receivables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+
+      <div class="submenu">
+
+        <a href="students.html">
+          <i class="fa-solid fa-user-graduate"></i>
+          Students / Customers
+        </a>
+
+        <a href="quotations.html">
+          <i class="fa-solid fa-file-signature"></i>
+          Quotations
+        </a>
+
+        <a href="invoice-list.html">
+          <i class="fa-solid fa-file-invoice"></i>
+          Invoices
+        </a>
+
+        <a href="credit-notes.html">
+          <i class="fa-solid fa-file-circle-minus"></i>
+          Credit Notes
+        </a>
+
+        <a href="receipts-list.html" class="active">
+          <i class="fa-solid fa-money-bill-wave"></i>
+          Customer Payments
+        </a>
+
+        <a href="customer-statements.html">
+          <i class="fa-solid fa-file-lines"></i>
+          Customer Statements
+        </a>
+
+        <a href="accounts-receivable.html">
+          <i class="fa-solid fa-hand-holding-dollar"></i>
+          Accounts Receivable
+        </a>
+
+        <a href="receivables-aging.html">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          Receivables Aging
+        </a>
+
+      </div>
+    </div>
+
+
+    <!-- PURCHASES & PAYABLES -->
+    <div class="menu-group">
+
+      <div class="menu-header">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Purchases & Payables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+
+      <div class="submenu">
+
+        <a href="suppliers.html">
+          <i class="fa-solid fa-truck-field"></i>
+          Suppliers
+        </a>
+
+        <a href="purchase-orders.html">
+          <i class="fa-solid fa-clipboard-list"></i>
+          Purchase Orders
+        </a>
+
+        <a href="bills.html">
+          <i class="fa-solid fa-file-invoice"></i>
+          Bills
+        </a>
+
+        <a href="supplier-payments.html">
+          <i class="fa-solid fa-money-check-dollar"></i>
+          Supplier Payments
+        </a>
+
+        <a href="supplier-statements.html">
+          <i class="fa-solid fa-file-lines"></i>
+          Supplier Statements
+        </a>
+
+        <a href="accounts-payable.html">
+          <i class="fa-solid fa-money-bill-transfer"></i>
+          Accounts Payable
+        </a>
+
+        <a href="payables-aging.html">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          Payables Aging
+        </a>
+
+      </div>
+    </div>
+
+
+    <!-- ================= CASH MANAGEMENT ================= -->
+
+    <div class="section-label">Cash Management</div>
+
+
+    <!-- BANKING -->
+    <div class="menu-group">
+
+      <div class="menu-header">
+        <i class="fa-solid fa-building-columns"></i>
+        <span>Banking</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+
+      <div class="submenu">
+
+        <a href="bank-accounts.html">
+          <i class="fa-solid fa-building-columns"></i>
+          Bank Accounts
+        </a>
+
+        <a href="cash-accounts.html">
+          <i class="fa-solid fa-wallet"></i>
+          Cash Accounts
+        </a>
+
+        <a href="bank-transactions.html">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          Bank Transactions
+        </a>
+
+        <a href="bank-transfer.html">
+          <i class="fa-solid fa-right-left"></i>
+          Transfers
+        </a>
+
+        <a href="bank-reconciliation.html">
+          <i class="fa-solid fa-scale-balanced"></i>
+          Bank Reconciliation
+        </a>
+
+        <a href="reconciliation-history.html">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          Reconciliation History
+        </a>
+
+      </div>
+    </div>
+
+
+    <!-- ================= GENERAL ACCOUNTING ================= -->
+
+    <div class="section-label">General Accounting</div>
+
+
+    <!-- ACCOUNTING -->
+    <div class="menu-group">
+
+      <div class="menu-header">
+        <i class="fa-solid fa-book"></i>
+        <span>Accounting</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+
+      <div class="submenu">
+
+        <a href="chart-of-accounts.html">
+          <i class="fa-solid fa-list"></i>
+          Chart of Accounts
+        </a>
+
+        <a href="journal-entry.html">
+          <i class="fa-solid fa-book-journal-whills"></i>
+          Journal Entry
+        </a>
+
+        <a href="journal-list.html">
+          <i class="fa-solid fa-list-check"></i>
+          Journal List
+        </a>
+
+        <a href="general-ledger.html">
+          <i class="fa-solid fa-book-open"></i>
+          General Ledger
+        </a>
+
+        <a href="account-ledger.html">
+          <i class="fa-solid fa-table-list"></i>
+          Account Ledger
+        </a>
+
+        <a href="recurring-journals.html">
+          <i class="fa-solid fa-repeat"></i>
+          Recurring Journals
+        </a>
+
+        <a href="period-closing.html">
+          <i class="fa-solid fa-lock"></i>
+          Period Closing
+        </a>
+
+      </div>
+    </div>
+
+
+    <!-- EXPENSES -->
+    <div class="menu-group">
+
+      <div class="menu-header">
+        <i class="fa-solid fa-receipt"></i>
+        <span>Expenses</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+
+      <div class="submenu">
+
+        <a href="expenses.html">
+          <i class="fa-solid fa-file-circle-plus"></i>
+          Expense Entry
+        </a>
+
+        <a href="expense-list.html">
+          <i class="fa-solid fa-list"></i>
+          Expense List
+        </a>
+
+        <a href="expense-categories.html">
+          <i class="fa-solid fa-tags"></i>
+          Expense Categories
+        </a>
+
+        <a href="expense-claims.html">
+          <i class="fa-solid fa-hand-holding-dollar"></i>
+          Expense Claims
+        </a>
+
+      </div>
+    </div>
+
+
+    <!-- ================= PEOPLE & STATUTORY ================= -->
+
+    <div class="section-label">People & Statutory</div>
+
+
+    <!-- HR & PAYROLL -->
+    <div class="menu-group">
+
+      <div class="menu-header">
+        <i class="fa-solid fa-users-gear"></i>
+        <span>HR & Payroll</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+
+      <div class="submenu">
+
+        <a href="employees.html">
+          <i class="fa-solid fa-users"></i>
+          Employees
+        </a>
+
+        <a href="employee-categories.html">
+          <i class="fa-solid fa-user-tag"></i>
+          Employee Categories
+        </a>
+
+        <a href="attendance.html">
+          <i class="fa-solid fa-calendar-check"></i>
+          Attendance
+        </a>
+
+        <a href="payroll-settings.html">
+          <i class="fa-solid fa-gears"></i>
+          Payroll Settings
+        </a>
+
+        <a href="payroll-run.html">
+          <i class="fa-solid fa-money-check-dollar"></i>
+          Run Payroll
+        </a>
+
+        <a href="payslips.html">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+          Payslips
+        </a>
+
+        <a href="payroll-history.html">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          Payroll History
+        </a>
+
+        <a href="payroll-journal.html">
+          <i class="fa-solid fa-book"></i>
+          Payroll Journal
+        </a>
+
+        <a href="payroll-reports.html">
+          <i class="fa-solid fa-chart-column"></i>
+          Payroll Reports
+        </a>
+
+      </div>
+    </div>
+
+
+    <!-- TAXES -->
+    <div class="menu-group">
+
+      <div class="menu-header">
+        <i class="fa-solid fa-percent"></i>
+        <span>Taxes</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+
+      <div class="submenu">
+
+        <a href="vat.html">
+          <i class="fa-solid fa-percent"></i>
+          VAT
+        </a>
+
+        <a href="vat-transactions.html">
+          <i class="fa-solid fa-receipt"></i>
+          VAT Transactions
+        </a>
+
+        <a href="vat-return.html">
+          <i class="fa-solid fa-file-circle-check"></i>
+          VAT Return
+        </a>
+
+        <a href="withholding-tax.html">
+          <i class="fa-solid fa-file-invoice"></i>
+          Withholding Tax
+        </a>
+
+        <a href="paye.html">
+          <i class="fa-solid fa-user-shield"></i>
+          PAYE
+        </a>
+
+        <a href="tax-reports.html">
+          <i class="fa-solid fa-chart-column"></i>
+          Tax Reports
+        </a>
+
+      </div>
+    </div>
+
+
+    <!-- ================= REPORTING ================= -->
+
+    <div class="section-label">Reporting</div>
+
+
+    <!-- REPORTS -->
+    <div class="menu-group">
+
+      <div class="menu-header">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>Reports</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+
+      <div class="submenu">
+
+        <a href="report-trial-balance.html">
+          <i class="fa-solid fa-scale-balanced"></i>
+          Trial Balance
+        </a>
+
+        <a href="general-ledger.html">
+          <i class="fa-solid fa-book-open"></i>
+          General Ledger
+        </a>
+
+        <a href="report-income-statement.html">
+          <i class="fa-solid fa-chart-line"></i>
+          Income Statement
+        </a>
+
+        <a href="report-balance-sheet.html">
+          <i class="fa-solid fa-building-columns"></i>
+          Balance Sheet
+        </a>
+
+        <a href="report-cash-flow.html">
+          <i class="fa-solid fa-water"></i>
+          Cash Flow Statement
+        </a>
+
+        <a href="receivables-aging.html">
+          <i class="fa-solid fa-user-clock"></i>
+          AR Aging
+        </a>
+
+        <a href="payables-aging.html">
+          <i class="fa-solid fa-file-circle-exclamation"></i>
+          AP Aging
+        </a>
+
+        <a href="customer-statements.html">
+          <i class="fa-solid fa-file-lines"></i>
+          Customer Statements
+        </a>
+
+        <a href="supplier-statements.html">
+          <i class="fa-solid fa-file-lines"></i>
+          Supplier Statements
+        </a>
+
+        <a href="expense-report.html">
+          <i class="fa-solid fa-receipt"></i>
+          Expense Report
+        </a>
+
+        <a href="revenue-report.html">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+          Revenue Report
+        </a>
+
+        <a href="tax-reports.html">
+          <i class="fa-solid fa-percent"></i>
+          Tax Reports
+        </a>
+
+        <a href="payroll-reports.html">
+          <i class="fa-solid fa-users"></i>
+          Payroll Reports
+        </a>
+
+        <a href="audit-trail.html">
+          <i class="fa-solid fa-shield-halved"></i>
+          Audit Trail
+        </a>
+
+      </div>
+    </div>
+
+
+    <!-- ================= ADMINISTRATION ================= -->
+
+    <div class="section-label">Administration</div>
+
+
+    <!-- ADMINISTRATION -->
+    <div class="menu-group">
+
+      <div class="menu-header">
+        <i class="fa-solid fa-user-shield"></i>
+        <span>Administration</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+
+      <div class="submenu">
+
+        <a href="userlist.html">
+          <i class="fa-solid fa-users"></i>
+          Users
+        </a>
+
+        <a href="roles-permissions.html">
+          <i class="fa-solid fa-key"></i>
+          Roles & Permissions
+        </a>
+
+        <a href="audit-trail.html">
+          <i class="fa-solid fa-shield-halved"></i>
+          Audit Trail
+        </a>
+
+        <a href="approval-workflows.html">
+          <i class="fa-solid fa-check-double"></i>
+          Approval Workflows
+        </a>
+
+        <a href="system-logs.html">
+          <i class="fa-solid fa-terminal"></i>
+          System Logs
+        </a>
+
+      </div>
+    </div>
+
+
+    <!-- SETTINGS -->
+    <div class="menu-group">
+
+      <div class="menu-header">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+
+      <div class="submenu">
+
+        <a href="company-profile.html">
+          <i class="fa-solid fa-building"></i>
+          Company Profile
+        </a>
+
+        <a href="financial-year.html">
+          <i class="fa-solid fa-calendar-days"></i>
+          Financial Year
+        </a>
+
+        <a href="accounting-periods.html">
+          <i class="fa-solid fa-calendar-check"></i>
+          Accounting Periods
+        </a>
+
+        <a href="tax-settings.html">
+          <i class="fa-solid fa-percent"></i>
+          Tax Settings
+        </a>
+
+        <a href="numbering-settings.html">
+          <i class="fa-solid fa-hashtag"></i>
+          Numbering
+        </a>
+
+        <a href="system-settings.html">
+          <i class="fa-solid fa-sliders"></i>
+          System Settings
+        </a>
+
+      </div>
+    </div>
+
+
+    <!-- LOGOUT -->
+    <a href="#" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span>Logout</span>
+    </a>
+
+  </div>
+</aside>
+
+
+<!-- =========================================================
+     MAIN CONTENT
+========================================================= -->
+
+<div class="main">
+
+  <!-- LOADER -->
+  <div class="main-loader" id="mainLoader">
+    <div class="spinner"></div>
+    <p style="margin-top:15px">Loading Receipts...</p>
+  </div>
+
+
+  <!-- =======================================================
+       TOPBAR
+  ======================================================== -->
+
+  <header class="topbar">
+
+    <div class="top-left">
+
+      <i
+        class="fa-solid fa-bars hamburger mobile-menu"
+        onclick="toggleSidebar()">
+      </i>
+
+      <h2>Receipts Management</h2>
+
+    </div>
+
+
+    <!-- USER -->
+    <div class="user-info">
+
+      <div class="user-text">
+        <strong id="staffName">Loading...</strong>
+        <span id="staffRole">Accountant</span>
+      </div>
+
+      <div class="user-avatar" id="avatar">
+        A
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =======================================================
+       PAGE CONTENT
+  ======================================================== -->
+
+  <section class="content">
+
+    <h1 class="page-title">
+      All Receipts
+    </h1>
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+    ====================================================== -->
+
+    <div class="cards">
+
+      <div class="card">
+        <h4>Total Receipts</h4>
+        <h1 id="totalReceipts">0</h1>
+      </div>
+
+      <div class="card">
+        <h4>Total Collected</h4>
+        <h1 id="totalCollected">MWK 0</h1>
+      </div>
+
+      <div class="card">
+        <h4>Cash</h4>
+        <h1 id="totalCash">MWK 0</h1>
+      </div>
+
+      <div class="card">
+        <h4>Bank / Mobile</h4>
+        <h1 id="totalBank">MWK 0</h1>
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SEARCH & FILTER
+    ====================================================== -->
+
+    <div class="box">
+
+      <h3 class="filter-title">
+        Search & Filter
+      </h3>
+
+      <div class="filters">
+
+        <input
+          id="searchReceipt"
+          placeholder="Search Receipt No, Student, Ref">
+
+        <input
+          type="date"
+          id="fromDate">
+
+        <input
+          type="date"
+          id="toDate">
+
+        <select id="methodFilter">
+
+          <option value="">
+            All Methods
+          </option>
+
+          <option value="Cash">
+            Cash
+          </option>
+
+          <option value="Bank">
+            Bank
+          </option>
+
+          <option value="Mobile Money">
+            Mobile Money
+          </option>
+
+        </select>
+
+
+        <button
+          class="btn"
+          id="filterBtn">
+
+          <i class="fas fa-search"></i>
+          Search
+
+        </button>
+
+
+        <button
+          class="btn new"
+          onclick="window.location.href='payments.html'">
+
+          <i class="fas fa-plus"></i>
+          New Receipt
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RECEIPTS TABLE
+    ====================================================== -->
+
+    <div class="box">
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>Receipt No</th>
+
+              <th>Date</th>
+
+              <th>Student</th>
+
+              <th>Method</th>
+
+              <th>Reference</th>
+
+              <th>Amount</th>
+
+              <th>Action</th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="receiptTable">
+
+            <tr>
+              <td colspan="7" class="empty-row">
+                Loading receipts...
+              </td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<!-- =========================================================
+     SIDEBAR + USER JAVASCRIPT
+========================================================= -->
+
+<script>
+
+// ============================================================
+// USER / ROLE
+// ============================================================
+
+const loggedUser =
+  JSON.parse(localStorage.getItem("loggedUser"));
+
+const allowedRoles = [
+  "administrator",
+  "bursar",
+  "accountant"
+];
+
+const userRole =
+  (loggedUser?.role || "")
+  .toString()
+  .trim()
+  .toLowerCase();
+
+
+if(
+  !loggedUser ||
+  !allowedRoles.includes(userRole)
+){
+
+  alert(
+    "Access Denied. This page is for Administrator, Bursar and Accountant only."
+  );
+
+  window.location.href =
+    "staff-login.html";
+}
+
+
+// USER NAME
+document.getElementById("staffName").textContent =
+  loggedUser?.username || "Accountant";
+
+
+// USER ROLE
+document.getElementById("staffRole").textContent =
+  loggedUser?.role || "Accountant";
+
+
+// SIDEBAR PORTAL ROLE
+document.getElementById("portalRole").textContent =
+  (loggedUser?.role || "Accountant") +
+  " Portal";
+
+
+// AVATAR
+document.getElementById("avatar").textContent =
+  (loggedUser?.username || "A")
+  .charAt(0)
+  .toUpperCase();
+
+
+// ============================================================
+// SIDEBAR SUBMENU
+// ONLY ONE SUBMENU OPEN AT A TIME
+// ============================================================
+
+document
+  .querySelectorAll(".menu-header")
+  .forEach(header => {
+
+    header.addEventListener("click", () => {
+
+      const clickedGroup =
+        header.parentElement;
+
+      document
+        .querySelectorAll(".menu-group")
+        .forEach(group => {
+
+          if(group !== clickedGroup){
+
+            group.classList.remove("active");
+
+          }
+
+        });
+
+      clickedGroup.classList.toggle("active");
+
+    });
+
+  });
+
+
+// ============================================================
+// MOBILE SIDEBAR
+// ============================================================
+
+function toggleSidebar(){
+
+  const sidebar =
+    document.getElementById("sidebar");
+
+  const overlay =
+    document.getElementById("overlay");
+
+  sidebar.classList.toggle("open");
+
+  overlay.classList.toggle("show");
+
+}
+
+
+// ============================================================
+// LOGOUT
+// ============================================================
+
+document
+  .getElementById("logoutBtn")
+  .addEventListener("click", e => {
+
+    e.preventDefault();
+
+    localStorage.removeItem("loggedUser");
+
+    window.location.href =
+      "staff-login.html";
+
+  });
+
+</script>
+
+
+<!-- =========================================================
+     FIREBASE
+========================================================= -->
+
+<script type="module">
+
+import {
+  initializeApp
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const app = initializeApp({
+
+  apiKey:
+    "AIzaSyAgoW4eu_hvrWHSxJciw0QWeUXOr-msgw",
+
+  projectId:
+    "greysol-academy"
+
+});
+
+const db =
+  getFirestore(app);
+
+
+const loader =
+  document.getElementById("mainLoader");
+
+
+let allReceipts = [];
+
+
+// ============================================================
+// LOAD RECEIPTS
+// ============================================================
+
+async function loadReceipts(){
+
+  loader.classList.remove("hidden");
+
+  try{
+
+    const receiptSnap =
+      await getDocs(
+        collection(db,"receipts")
+      );
+
+
+    allReceipts =
+      receiptSnap.docs.map(
+        d => ({
+          id:d.id,
+          ...d.data()
+        })
+      );
+
+
+    allReceipts.sort(
+      (a,b) =>
+        (b.paymentDate?.toMillis() || 0) -
+        (a.paymentDate?.toMillis() || 0)
+    );
+
+
+    calculateTotals();
+
+    displayReceipts(
+      allReceipts
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    document.getElementById(
+      "receiptTable"
+    ).innerHTML = `
+
+      <tr>
+
+        <td
+          colspan="7"
+          style="
+            color:red;
+            text-align:center;
+            padding:30px;
+          "
+        >
+
+          Error: ${error.message}
+
+        </td>
+
+      </tr>
+
+    `;
+
+  }finally{
+
+    loader.classList.add("hidden");
+
+  }
+
+}
+
+
+// ============================================================
+// CALCULATE TOTALS
+// ============================================================
+
+function calculateTotals(){
+
+  let total = 0;
+
+  let cash = 0;
+
+  let bank = 0;
+
+
+  allReceipts.forEach(receipt => {
+
+    const amount =
+      Number(receipt.amount || 0);
+
+
+    total += amount;
+
+
+    if(
+      receipt.paymentMethod === "Cash"
+    ){
+
+      cash += amount;
+
+    }else{
+
+      bank += amount;
+
+    }
+
+  });
+
+
+  document.getElementById(
+    "totalReceipts"
+  ).textContent =
+    allReceipts.length;
+
+
+  document.getElementById(
+    "totalCollected"
+  ).textContent =
+    "MWK " +
+    total.toLocaleString();
+
+
+  document.getElementById(
+    "totalCash"
+  ).textContent =
+    "MWK " +
+    cash.toLocaleString();
+
+
+  document.getElementById(
+    "totalBank"
+  ).textContent =
+    "MWK " +
+    bank.toLocaleString();
+
+}
+
+
+// ============================================================
+// DISPLAY RECEIPTS
+// ============================================================
+
+function displayReceipts(data){
+
+  const table =
+    document.getElementById(
+      "receiptTable"
+    );
+
+
+  table.innerHTML = "";
+
+
+  if(data.length === 0){
+
+    table.innerHTML = `
+
+      <tr>
+
+        <td
+          colspan="7"
+          class="empty-row"
+        >
+
+          No receipts found
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  data.forEach(receipt => {
+
+
+    const date =
+      receipt.paymentDate?.toDate?.() ||
+      new Date(receipt.paymentDate);
+
+
+    const studentNames =
+      receipt.allocations
+      ?.map(a => a.studentName)
+      .join(", ") ||
+      "-";
+
+
+    const methodClass =
+      (receipt.paymentMethod || "")
+      .toLowerCase()
+      .replace(/\s/g,"");
+
+
+    table.innerHTML += `
+
+      <tr
+        ondblclick="printReceipt('${receipt.id}')"
+        title="Double-click to print receipt"
+      >
+
+        <td>
+
+          <b>
+            ${receipt.receiptNo || "-"}
+          </b>
+
+        </td>
+
+
+        <td>
+
+          ${
+            isNaN(date.getTime())
+            ? "-"
+            : date.toLocaleDateString("en-GB")
+          }
+
+        </td>
+
+
+        <td>
+
+          ${studentNames}
+
+        </td>
+
+
+        <td>
+
+          <span
+            class="badge ${methodClass}"
+          >
+
+            ${receipt.paymentMethod || "-"}
+
+          </span>
+
+        </td>
+
+
+        <td>
+
+          ${receipt.reference || "-"}
+
+        </td>
+
+
+        <td>
+
+          <b>
+
+            MWK
+            ${Number(
+              receipt.amount || 0
+            ).toLocaleString()}
+
+          </b>
+
+        </td>
+
+
+        <td>
+
+          <button
+            class="btn-edit"
+            onclick="
+              event.stopPropagation();
+              editReceipt('${receipt.id}')
+            "
+          >
+
+            <i class="fas fa-edit"></i>
+
+            Edit
+
+          </button>
+
+        </td>
+
+      </tr>
+
+    `;
+
+  });
+
+}
+
+
+// ============================================================
+// FILTER
+// ============================================================
+
+document
+  .getElementById("filterBtn")
+  .onclick = function(){
+
+
+    const search =
+      document
+        .getElementById("searchReceipt")
+        .value
+        .toLowerCase();
+
+
+    const method =
+      document
+        .getElementById("methodFilter")
+        .value;
+
+
+    const from =
+      document
+        .getElementById("fromDate")
+        .value;
+
+
+    const to =
+      document
+        .getElementById("toDate")
+        .value;
+
+
+    const filtered =
+      allReceipts.filter(receipt => {
+
+
+        const studentNames =
+          receipt.allocations
+          ?.map(a => a.studentName)
+          .join(" ")
+          .toLowerCase() ||
+          "";
+
+
+        const matchesSearch =
+
+          (receipt.receiptNo || "")
+          .toLowerCase()
+          .includes(search)
+
+          ||
+
+          (receipt.reference || "")
+          .toLowerCase()
+          .includes(search)
+
+          ||
+
+          studentNames.includes(search);
+
+
+        const matchesMethod =
+          method === "" ||
+          receipt.paymentMethod === method;
+
+
+        let dateMatches = true;
+
+
+        if(
+          from &&
+          receipt.paymentDate?.toDate
+        ){
+
+          const fromDate =
+            new Date(from);
+
+          fromDate.setHours(
+            0,0,0,0
+          );
+
+          dateMatches =
+            dateMatches &&
+            receipt.paymentDate.toDate() >=
+            fromDate;
+
+        }
+
+
+        if(
+          to &&
+          receipt.paymentDate?.toDate
+        ){
+
+          const toDate =
+            new Date(to);
+
+          toDate.setHours(
+            23,59,59,999
+          );
+
+          dateMatches =
+            dateMatches &&
+            receipt.paymentDate.toDate() <=
+            toDate;
+
+        }
+
+
+        return (
+          matchesSearch &&
+          matchesMethod &&
+          dateMatches
+        );
+
+      });
+
+
+    displayReceipts(filtered);
+
+  };
+
+
+// ============================================================
+// EDIT RECEIPT
+// ============================================================
+
+window.editReceipt = function(id){
+
+  window.location.href =
+    "payments.html?edit=" + id;
+
+};
+
+
+// ============================================================
+// PRINT RECEIPT
+// ============================================================
+
+window.printReceipt = function(id){
+
+  window.open(
+    "receipt-print.html?id=" + id,
+    "_blank"
+  );
+
+};
+
+
+// ============================================================
+// INITIAL LOAD
+// ============================================================
+
+loadReceipts();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Invoice | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{--navy:#001f3f;--light:#f4f7fb;--green:#27ae60;--red:#c0392b;--blue:#003366;--border:#e2e6ea}
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{margin:0;background:var(--light);color:#333}
+header{background:var(--navy);color:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:999;box-shadow:0 3px 10px rgba(0,0,0,.1)}
+header h2{margin:0;font-size:20px}
+.user-info{color:white;font-weight:bold;text-align:right}
+.user-info small{display:block;font-weight:normal;font-size:12px;opacity:.8}
+.container{padding:30px;max-width:1200px;margin:auto}
+.card{background:white;padding:25px;border-radius:12px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.card-title{font-size:16px;font-weight:bold;color:var(--navy);margin:0 0 20px;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--light);padding-bottom:12px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px}
+.grid-4{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end}
+label{font-size:12px;color:#666;font-weight:600;display:block;margin-bottom:6px}
+input,select{padding:10px 12px;border-radius:8px;border:1px solid var(--border);width:100%;font-size:14px;transition:.2s}
+input:focus,select:focus{border-color:var(--navy);outline:none;box-shadow:0 0 0 3px rgba(0,31,63,.1)}
+.btn{padding:11px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:bold;font-size:14px;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--navy);color:white}
+.btn-primary:hover{background:#003366}
+.btn-success{background:var(--green);color:white}
+.btn-success:hover{background:#219150}
+.btn-secondary{background:#7f8c8d;color:white}
+.btn-secondary:hover{background:#6c7a7d}
+.btn-danger{background:var(--red);color:white;padding:10px}
+.btn-danger:hover{background:#a93226}
+.mode-group{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+.mode-group label{background:var(--light);padding:10px 15px;border-radius:8px;cursor:pointer;border:2px solid transparent;font-size:13px}
+.mode-group input:checked + span{background:var(--navy);color:white;padding:10px 15px;border-radius:8px}
+.mode-group input{display:none}
+#studentsList{margin-top:15px;max-height:300px;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:10px;background:#fafafa;display:none}
+#studentsList.show{display:block}
+.student{padding:10px;background:white;margin-bottom:8px;border-radius:6px;border:1px solid var(--border);cursor:pointer;transition:.2s}
+.student:hover{background:#f0f7ff;border-color:var(--navy)}
+.student input{width:auto;margin-right:10px}
+.item-header,.item-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:center}
+.item-header{background:var(--navy);color:white;padding:12px;border-radius:8px;font-size:12px;font-weight:bold;margin-bottom:10px}
+.item-row{margin-bottom:10px}
+.summary-box{background:var(--light);padding:20px;border-radius:10px;margin-top:20px}
+.summary-row{display:flex;justify-content:space-between;margin:10px 0;font-size:14px}
+.summary-row.total{font-size:20px;font-weight:bold;color:var(--navy);border-top:2px solid var(--border);padding-top:15px;margin-top:15px}
+.invoice-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.invoice-header img{width:70px}
+.invoice-meta{text-align:right}
+.invoice-meta h1{margin:0;color:var(--navy);font-size:28px}
+.invoice-meta p{margin:3px 0;font-size:13px;color:#666}
+.btn-group{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;justify-content:flex-end}
+.alert{padding:12px;border-radius:8px;margin-bottom:15px;background:#fff3cd;color:#856404;border:1px solid #ffeeba}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<header>
+  <h2><i class="fa-solid fa-file-invoice"></i> GREYSOL ACADEMY</h2>
+  <div class="user-info">
+    <span id="staffName">Loading...</span>
+    <small id="staffRole">-</small>
+  </div>
+</header>
+
+<div class="container">
+  <div class="card" id="studentSelectionCard">
+    <div class="alert hidden" id="settingsAlert">Please configure Accounting Settings first</div>
+    <div class="card-title"><i class="fa-solid fa-users"></i> Select Student(s)</div>
+
+    <div class="mode-group">
+      <label><input type="radio" name="mode" value="single" checked><span>Single Student</span></label>
+      <label><input type="radio" name="mode" value="class"><span>By Class</span></label>
+      <label><input type="radio" name="mode" value="multiple"><span>Multiple Students</span></label>
+      <label><input type="radio" name="mode" value="all"><span>All Students</span></label>
+    </div>
+
+    <div id="singleArea">
+      <label>Search Student</label>
+      <input type="text" id="searchStudent" placeholder="Type student name or ID to search...">
+    </div>
+
+    <div id="classArea" class="hidden">
+      <label>Select Class</label>
+      <select id="classSelect">
+        <option value="">Select Class</option>
+        <option>Form 1</option><option>Form 2</option><option>Form 3</option><option>Form 4</option>
+      </select>
+    </div>
+
+    <div id="studentsList"></div>
+  </div>
+
+  <div class="card" id="formTitle">
+    <div class="invoice-header">
+      <div>
+        <img src="../images/logo1 - Copy.png">
+        <h3 style="margin:10px 0 0;color:var(--navy)">GREYSOL ACADEMY</h3>
+        <p style="margin:0;font-size:12px">Blantyre, Malawi</p>
+      </div>
+      <div class="invoice-meta">
+        <h1>INVOICE</h1>
+        <p><b>Invoice No:</b> <span id="invoiceNoPreview">AUTO</span></p>
+        <p><b>Date:</b> <input type="date" id="invoiceDate" style="width:150px"></p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <label>Academic Year</label>
+        <input id="year" value="2026">
+      </div>
+      <div>
+        <label>Term</label>
+        <select id="term">
+          <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card-title" style="margin-top:30px"><i class="fa-solid fa-list"></i> Invoice Items</div>
+    <div class="item-header">
+      <div>Description</div>
+      <div>Amount MWK</div>
+      <div></div>
+      <div>Action</div>
+    </div>
+    <div id="items">
+      <div class="item-row">
+        <input class="description" placeholder="Tuition Fees">
+        <input class="amount" type="number" placeholder="0.00">
+        <div></div>
+        <button type="button" class="btn btn-danger removeItem"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>
+    <button id="addItem" type="button" class="btn btn-primary" style="margin-top:10px"><i class="fa-solid fa-plus"></i> Add Item</button>
+
+    <div class="card-title" style="margin-top:30px"><i class="fa-solid fa-calculator"></i> Discount & Tax</div>
+    <div class="grid-3">
+      <div>
+        <label>Discount Type</label>
+        <select id="discountType">
+          <option value="percent">Percentage %</option>
+          <option value="fixed">Fixed Amount MWK</option>
+        </select>
+      </div>
+      <div>
+        <label>Discount Value</label>
+        <input id="discountValue" type="number" value="0" min="0" placeholder="0">
+      </div>
+      <div>
+        <label>Apply Discount</label>
+        <select id="discountApply">
+          <option value="before">Before VAT</option>
+          <option value="after">After VAT</option>
+        </select>
+      </div>
+    </div>
+    <div style="max-width:300px;margin-top:15px">
+      <label>VAT Rate (%) <small style="color:#666">Set to 0 for VAT Exempt</small></label>
+      <input id="vatPercent" type="number" value="16.5" min="0" step="0.1">
+    </div>
+
+    <div class="summary-box">
+      <div class="summary-row"><span>Subtotal:</span> <span id="subTotal">MWK 0</span></div>
+      <div class="summary-row"><span>Discount:</span> <span id="discountAmount">MWK 0</span></div>
+      <div class="summary-row"><span>VAT:</span> <span id="vatAmount">MWK 0</span></div>
+      <div class="summary-row total"><span>TOTAL DUE:</span> <span id="total">MWK 0</span></div>
+    </div>
+
+    <div class="btn-group">
+      <button id="cancelBtn" class="btn btn-secondary"><i class="fa-solid fa-xmark"></i> Cancel</button>
+      <button id="saveAndNew" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Save & New</button>
+      <button id="saveAndClose" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Save & Close</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, doc, getDoc, Timestamp, query, orderBy, limit, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey: "AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",projectId: "greysol-academy"};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ROLE CHECK
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+const allowedRoles = ["administrator", "bursar", "accountant"];
+const userRole = (loggedUser?.role || "").toString().trim().toLowerCase();
+if(!loggedUser ||!allowedRoles.includes(userRole)){
+  alert("Access Denied. This page is for Administrator, Bursar and Accountant only.");
+  window.location.href = "staff-login.html";
+}
+document.getElementById("staffName").innerHTML = loggedUser.username;
+document.getElementById("staffRole").innerHTML = userRole;
+document.getElementById("invoiceDate").value = new Date().toISOString().split('T')[0];
+
+// EDIT MODE
+const urlParams = new URLSearchParams(window.location.search);
+const editId = urlParams.get('edit');
+let isEditMode = false;
+let currentInvoiceData = null;
+let currentJournalId = null;
+if(editId){
+  isEditMode = true;
+  document.getElementById("formTitle").querySelector(".card-title").innerText = "Edit Invoice";
+  document.getElementById("studentSelectionCard").classList.add("hidden");
+  document.getElementById("saveAndNew").classList.add("hidden");
+  loadInvoiceForEdit(editId);
+}
+
+let students=[];
+let settings={};
+let chartOfAccounts={};
+
+// LOAD SETTINGS + COA
+async function loadInitData(){
+  const [settingsSnap, coaSnap] = await Promise.all([
+    getDoc(doc(db,"settings","accounting")),
+    getDocs(collection(db,"chartOfAccounts"))
+  ]);
+  if(settingsSnap.exists()) {
+    settings = settingsSnap.data();
+    document.getElementById("vatPercent").value = settings.vatRate || 16.5;
+  }
+  else document.getElementById("settingsAlert").classList.remove("hidden");
+  coaSnap.forEach(d=> chartOfAccounts[d.data().accountCode] = d.data().accountName);
+}
+loadInitData();
+
+// LOAD STUDENTS
+async function loadStudents(){
+  const snapshot = await getDocs(collection(db,"students"));
+  students=[];
+  snapshot.forEach(doc=>{students.push({id:doc.id,...doc.data()});});
+}
+if(!isEditMode) loadStudents();
+
+// LOAD INVOICE FOR EDIT
+async function loadInvoiceForEdit(id){
+  const invDoc = await getDoc(doc(db,"invoices",id));
+  if(!invDoc.exists()){ alert("Invoice not found"); return; }
+  currentInvoiceData = {id: invDoc.id,...invDoc.data()};
+  document.getElementById("year").value = currentInvoiceData.academicYear || "2026";
+  document.getElementById("term").value = currentInvoiceData.term || "Term 1";
+  document.getElementById("invoiceDate").value = currentInvoiceData.invoiceDate?.toDate().toISOString().split('T')[0];
+  document.getElementById("discountType").value = currentInvoiceData.discountType || "percent";
+  document.getElementById("discountValue").value = currentInvoiceData.discountValue || 0;
+  document.getElementById("discountApply").value = currentInvoiceData.discountApply || "before";
+  document.getElementById("vatPercent").value = currentInvoiceData.vatPercent || 16.5;
+  document.getElementById("items").innerHTML = "";
+  currentInvoiceData.items?.forEach(item=>{
+    let row=document.createElement("div");
+    row.className="item-row";
+    row.innerHTML=`<input class="description" value="${item.description}"><input class="amount" type="number" value="${item.amount}"><div></div><button type="button" class="btn btn-danger removeItem"><i class="fa-solid fa-trash"></i></button>`;
+    document.getElementById("items").appendChild(row);
+  });
+  calculateTotal();
+  const journalSnap = await getDocs(query(collection(db,"journalEntries")));
+  journalSnap.forEach(d=>{ if(d.data().reference === currentInvoiceData.invoiceNo){ currentJournalId = d.id; } });
+}
+
+// DISPLAY STUDENTS
+function displayStudents(list){
+  const container = document.getElementById("studentsList");
+  container.innerHTML="";
+  if(list.length === 0){ container.classList.remove("show"); return; }
+  container.classList.add("show");
+  let mode = document.querySelector("input[name='mode']:checked").value;
+  list.forEach(student=>{
+    let inputType = mode==="single"? "radio" : "checkbox";
+    container.innerHTML += `
+    <div class="student">
+      <input type="${inputType}" class="studentCheck" value="${student.studentID || ''}">
+      <b>${student.studentID || 'NO ID'}</b> - ${student.firstName || ''} ${student.surname || ''}
+      <br><small style="color:#666">${student.classApplying || "Not Assigned"}</small>
+    </div>`;
+  });
+}
+
+// SEARCH + CLASS FILTER + MODE CHANGE
+document.getElementById("searchStudent")?.addEventListener("keyup",function(){
+  let text = this.value.toLowerCase();
+  if(text.length < 2){ document.getElementById("studentsList").classList.remove("show"); return; }
+  let filtered = students.filter(s=> (s.studentID||"").toLowerCase().includes(text) || (s.firstName||"").toLowerCase().includes(text) || (s.surname||"").toLowerCase().includes(text));
+  displayStudents(filtered);
+});
+document.getElementById("classSelect")?.addEventListener("change",function(){
+  let filtered = students.filter(s=> s.classApplying === this.value);
+  displayStudents(filtered);
+});
+document.querySelectorAll("input[name='mode']").forEach(option=>{
+  option.addEventListener("change",function(){
+    document.getElementById("singleArea").classList.add("hidden");
+    document.getElementById("classArea").classList.add("hidden");
+    document.getElementById("studentsList").classList.remove("show");
+    if(this.value==="single"){document.getElementById("singleArea").classList.remove("hidden");}
+    if(this.value==="class"){document.getElementById("classArea").classList.remove("hidden");}
+    if(this.value==="multiple"){displayStudents(students);}
+    if(this.value==="all"){
+      displayStudents(students);
+      setTimeout(()=>{document.querySelectorAll(".studentCheck").forEach(check=>{check.checked=true;});},200);
+    }
+  });
+});
+
+// ITEMS + CALCULATIONS
+function createItemRow(){
+  let row=document.createElement("div");
+  row.className="item-row";
+  row.innerHTML=`<input class="description" placeholder="Description"><input class="amount" type="number" placeholder="0.00"><div></div><button type="button" class="btn btn-danger removeItem"><i class="fa-solid fa-trash"></i></button>`;
+  return row;
+}
+document.getElementById("addItem").onclick=function(){document.getElementById("items").appendChild(createItemRow());};
+document.getElementById("items").addEventListener("click",function(e){
+  if(e.target.closest(".removeItem")){e.target.closest(".item-row").remove(); calculateTotal();}
+});
+
+function calculateTotal(){
+  let subTotal=0;
+  document.querySelectorAll(".amount").forEach(input=>{subTotal += Number(input.value) || 0;});
+  let discountType = document.getElementById("discountType").value;
+  let discountValue = Number(document.getElementById("discountValue").value) || 0;
+  let discountApply = document.getElementById("discountApply").value;
+  let vatPercent = Number(document.getElementById("vatPercent").value) || 0;
+
+  let discountAmount = discountType === "percent"? (subTotal * discountValue) / 100 : discountValue;
+  let vatAmount = 0; let total = 0;
+
+  if(discountApply === "before"){
+    let afterDiscount = subTotal - discountAmount;
+    vatAmount = (afterDiscount * vatPercent) / 100;
+    total = afterDiscount + vatAmount;
+  } else {
+    vatAmount = (subTotal * vatPercent) / 100;
+    let afterVat = subTotal + vatAmount;
+    total = afterVat - discountAmount;
+  }
+
+  document.getElementById("subTotal").innerHTML = "MWK " + subTotal.toLocaleString();
+  document.getElementById("discountAmount").innerHTML = "MWK " + discountAmount.toLocaleString();
+  document.getElementById("vatAmount").innerHTML = "MWK " + vatAmount.toLocaleString();
+  document.getElementById("total").innerHTML = "MWK " + total.toLocaleString();
+}
+document.getElementById("items").addEventListener("input",function(e){if(e.target.classList.contains("amount")){calculateTotal();}});
+document.getElementById("discountValue").addEventListener("input", calculateTotal);
+document.getElementById("discountType").addEventListener("change", calculateTotal);
+document.getElementById("discountApply").addEventListener("change", calculateTotal);
+document.getElementById("vatPercent").addEventListener("input", calculateTotal);
+
+// NUMBERS + SAVE LOGIC
+async function generateInvoiceNumber(){
+  const q = query(collection(db,"invoices"), orderBy("createdAt","desc"), limit(1));
+  const snap = await getDocs(q);
+  let number = 1;
+  if(!snap.empty) number = Number(snap.docs[0].data().invoiceNo.replace("INV","")) + 1;
+  return "INV" + String(number).padStart(5,"0");
+}
+async function generateJournalNumber(){
+  const q = query(collection(db,"journalEntries"), orderBy("createdAt","desc"), limit(1));
+  const snap = await getDocs(q);
+  let number = 1;
+  if(!snap.empty) number = Number(snap.docs[0].data().journalNo.replace("JV","")) + 1;
+  return "JV" + String(number).padStart(5,"0");
+}
+function getCalcValues(){
+  let subTotal=0; document.querySelectorAll(".amount").forEach(input=>{subTotal += Number(input.value) || 0;});
+  let discountType = document.getElementById("discountType").value;
+  let discountValue = Number(document.getElementById("discountValue").value) || 0;
+  let discountApply = document.getElementById("discountApply").value;
+  let vatPercent = Number(document.getElementById("vatPercent").value) || 0;
+  let discountAmount = discountType === "percent"? (subTotal * discountValue) / 100 : discountValue;
+  let vatAmount = 0; let revenueAmount = subTotal; let totalAmount = 0;
+  if(discountApply === "before"){
+    revenueAmount = subTotal - discountAmount;
+    vatAmount = (revenueAmount * vatPercent) / 100;
+    totalAmount = revenueAmount + vatAmount;
+  } else {
+    vatAmount = (subTotal * vatPercent) / 100;
+    totalAmount = subTotal + vatAmount - discountAmount;
+  }
+  return {subTotal, discountAmount, vatAmount, revenueAmount, totalAmount, discountType, discountValue, discountApply, vatPercent};
+}
+
+async function saveInvoiceData(){
+  let items=[];
+  document.querySelectorAll(".item-row").forEach(row=>{
+    let description = row.querySelector(".description").value.trim();
+    let amount = Number(row.querySelector(".amount").value);
+    if(description && amount>0){items.push({description, amount});}
+  });
+  if(items.length===0){alert("Please add invoice items"); return false;}
+
+  const calc = getCalcValues();
+  let invoiceDate = new Date(document.getElementById("invoiceDate").value);
+
+  const receivableAcc = settings.receivableAccount || "";
+  const revenueAcc = settings.revenueAccount || "";
+  const vatAcc = settings.vatAccount || "";
+  const discountAcc = settings.discountAccount || ""; // NEW
+
+  if(!receivableAcc ||!revenueAcc){alert("Please configure Accounting Settings: Receivable and Revenue accounts"); return false;}
+
+  if(isEditMode){
+    if(!currentInvoiceData){alert("No invoice loaded"); return false;}
+    const invoiceRef = doc(db,"invoices", currentInvoiceData.id);
+    const journalRef = doc(db,"journalEntries", currentJournalId);
+
+    // UPDATED JOURNAL LINES WITH DISCOUNT
+    let lines = [
+      {accountCode: receivableAcc, accountName: chartOfAccounts[receivableAcc] || "Accounts Receivable", debit: calc.totalAmount, credit: 0},
+      {accountCode: revenueAcc, accountName: chartOfAccounts[revenueAcc] || "Tuition Revenue", debit: 0, credit: calc.revenueAmount}
+    ];
+    if(calc.vatAmount > 0 && vatAcc){
+      lines.push({accountCode: vatAcc, accountName: chartOfAccounts[vatAcc] || "VAT Payable", debit: 0, credit: calc.vatAmount});
+    }
+    if(calc.discountAmount > 0 && discountAcc){
+      lines.push({accountCode: discountAcc, accountName: chartOfAccounts[discountAcc] || "Sales Discount", debit: calc.discountAmount, credit: 0});
+    }
+
+    const journalDescription = `Invoice ${currentInvoiceData.invoiceNo} to ${currentInvoiceData.studentName} - ${currentInvoiceData.class}`;
+
+    await updateDoc(invoiceRef, {
+      items, subTotal: calc.subTotal, discountType: calc.discountType, discountValue: calc.discountValue,
+      discountApply: calc.discountApply, discountAmount: calc.discountAmount, vatPercent: calc.vatPercent,
+      vatAmount: calc.vatAmount, totalAmount: calc.totalAmount, balance: calc.totalAmount - Number(currentInvoiceData.amountPaid || 0),
+      academicYear: document.getElementById("year").value, term: document.getElementById("term").value,
+      invoiceDate: Timestamp.fromDate(invoiceDate), updatedAt: Timestamp.now()
+    });
+
+    await updateDoc(journalRef, {
+      date: Timestamp.fromDate(invoiceDate), lines, totalDebit: calc.totalAmount + calc.discountAmount, totalCredit: calc.totalAmount + calc.discountAmount,
+      description: journalDescription, updatedAt: Timestamp.now()
+    });
+
+    alert("Invoice and Journal Updated Successfully"); return true;
+  }else{
+    let selected = document.querySelectorAll(".studentCheck:checked");
+    if(selected.length===0){alert("Please select students first"); return false;}
+    let successCount = 0;
+    for(let checkbox of selected){
+      let student = students.find(s=> s.studentID === checkbox.value);
+      if(!student){continue;}
+      try{
+        await runTransaction(db, async (transaction) => {
+          const invoiceNo = await generateInvoiceNumber();
+          const journalNo = await generateJournalNumber();
+          const invoiceRef = doc(collection(db,"invoices"));
+          const journalRef = doc(collection(db,"journalEntries"));
+
+          // UPDATED JOURNAL LINES WITH DISCOUNT
+          let lines = [
+            {accountCode: receivableAcc, accountName: chartOfAccounts[receivableAcc] || "Accounts Receivable", debit: calc.totalAmount, credit: 0},
+            {accountCode: revenueAcc, accountName: chartOfAccounts[revenueAcc] || "Tuition Revenue", debit: 0, credit: calc.revenueAmount}
+          ];
+          if(calc.vatAmount > 0 && vatAcc){
+            lines.push({accountCode: vatAcc, accountName: chartOfAccounts[vatAcc] || "VAT Payable", debit: 0, credit: calc.vatAmount});
+          }
+          if(calc.discountAmount > 0 && discountAcc){
+            lines.push({accountCode: discountAcc, accountName: chartOfAccounts[discountAcc] || "Sales Discount", debit: calc.discountAmount, credit: 0});
+          }
+
+          const studentName = `${student.firstName || ""} ${student.surname || ""}`.trim();
+          const studentClass = student.classApplying || "Not Assigned";
+          const journalDescription = `Invoice ${invoiceNo} to ${studentName} - ${studentClass}`;
+
+          transaction.set(invoiceRef, {
+            invoiceNo,
+            studentID: student.studentID || "",
+            studentName: studentName,
+            class: studentClass,
+            academicYear: document.getElementById("year").value || "2026",
+            term: document.getElementById("term").value || "",
+            invoiceDate: Timestamp.fromDate(invoiceDate),
+            items,
+            subTotal: calc.subTotal,
+            discountType: calc.discountType,
+            discountValue: calc.discountValue,
+            discountApply: calc.discountApply,
+            discountAmount: calc.discountAmount,
+            vatPercent: calc.vatPercent,
+            vatAmount: calc.vatAmount,
+            totalAmount: calc.totalAmount,
+            amountPaid: 0,
+            balance: calc.totalAmount,
+            status: "Unpaid",
+            createdBy: loggedUser.username,
+            createdAt: Timestamp.now()
+          });
+
+          transaction.set(journalRef, {
+            journalNo,
+            date: Timestamp.fromDate(invoiceDate),
+            reference: invoiceNo,
+            description: journalDescription,
+            lines,
+            totalDebit: calc.totalAmount + calc.discountAmount, // Updated
+            totalCredit: calc.totalAmount + calc.discountAmount, // Updated
+            source: "Invoice",
+            sourceId: invoiceRef.id,
+            createdBy: loggedUser.username,
+            createdAt: Timestamp.now(),
+            postedBy: loggedUser.username,
+            postedAt: Timestamp.now()
+          });
+        });
+        successCount++;
+      }catch(e){console.error("Error for student", student.studentID, e); alert("Error: " + e.message)}
+    }
+    alert(`${successCount} invoice(s) and journal(s) created successfully`); return true;
+  }
+}
+
+async function handleSave(action){
+  const btns = document.querySelectorAll(".btn-group button");
+  btns.forEach(b=>{b.disabled=true; b.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';});
+  try{
+    let success = await saveInvoiceData();
+    if(success){
+      if(action === "close"){ window.location.href = "invoice-list.html"; }
+      else if(action === "new"){
+        document.querySelectorAll(".studentCheck").forEach(c=>c.checked=false);
+        document.getElementById("items").innerHTML = '';
+        document.getElementById("items").appendChild(createItemRow());
+        document.getElementById("discountValue").value = 0;
+        document.getElementById("vatPercent").value = settings.vatRate || 16.5;
+        document.getElementById("invoiceDate").value = new Date().toISOString().split('T')[0];
+        document.getElementById("studentsList").classList.remove("show");
+        calculateTotal();
+      }
+    }
+  }catch(error){console.error(error); alert(error.message);}
+  finally{
+    btns.forEach(b=>{b.disabled=false;});
+    document.getElementById("saveAndClose").innerHTML='<i class="fa-solid fa-floppy-disk"></i> Save & Close';
+    document.getElementById("saveAndNew").innerHTML='<i class="fa-solid fa-plus"></i> Save & New';
+  }
+}
+
+document.getElementById("saveAndClose").onclick = ()=> handleSave("close");
+document.getElementById("saveAndNew").onclick = ()=> handleSave("new");
+document.getElementById("cancelBtn").onclick = ()=> { if(confirm("Discard changes and go back?")){ window.location.href = "invoice-list.html"; } }
+</script>
+</body>
+</html>

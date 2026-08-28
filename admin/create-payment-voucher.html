@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Create Payment Voucher | Greysol Academy</title>
+
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+
+*{
+    box-sizing:border-box;
+    font-family:"Segoe UI",Arial,sans-serif
+}
+
+:root{
+    --navy:#001f3f;
+    --navy2:#003366;
+    --blue:#1769aa;
+    --green:#1f9d55;
+    --red:#c0392b;
+    --orange:#f39c12;
+    --purple:#6f42c1;
+    --teal:#008c95;
+    --light:#f4f7fb;
+    --border:#e5e9ef;
+    --muted:#6b7280;
+    --white:#fff
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:var(--light)
+}
+
+body{
+    overflow:hidden;
+    color:#1f2937
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    width:270px;
+    height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    z-index:1100;
+    background:var(--navy);
+    color:#fff;
+    overflow-y:auto;
+    transition:width .25s ease,left .25s ease
+}
+
+.logo{
+    padding:18px 15px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.14)
+}
+
+.logo img{
+    width:66px;
+    height:66px;
+    object-fit:contain
+}
+
+.logo h2{
+    font-size:17px;
+    margin:8px 0 3px
+}
+
+.logo p{
+    margin:0;
+    font-size:12px;
+    opacity:.7
+}
+
+.menu{
+    padding:8px 0 20px
+}
+
+.section-label{
+    padding:15px 24px 6px;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1.1px;
+    opacity:.5
+}
+
+.menu a,
+.menu-header{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:12px 22px;
+    color:#fff;
+    text-decoration:none;
+    cursor:pointer;
+    font-size:13px;
+    min-height:46px
+}
+
+.menu a i,
+.menu-header>i:first-child{
+    width:18px;
+    text-align:center
+}
+
+.menu a:hover,
+.menu-header:hover{
+    background:rgba(255,255,255,.08)
+}
+
+.menu a.active{
+    background:rgba(255,255,255,.13);
+    border-left:4px solid var(--green);
+    padding-left:18px
+}
+
+.arrow{
+    margin-left:auto!important;
+    width:auto!important;
+    font-size:11px!important;
+    transition:transform .25s ease
+}
+
+.submenu{
+    max-height:0;
+    overflow:hidden;
+    background:rgba(0,0,0,.17);
+    transition:max-height .3s ease
+}
+
+.menu-group.active .submenu{
+    max-height:800px
+}
+
+.menu-group.active .arrow{
+    transform:rotate(180deg)
+}
+
+.submenu a{
+    padding-left:54px;
+    font-size:12px
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    margin-left:270px;
+    width:calc(100% - 270px);
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    transition:margin-left .25s ease,width .25s ease
+}
+
+.topbar{
+    height:70px;
+    flex:0 0 70px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+    box-shadow:0 2px 10px rgba(0,0,0,.07);
+    z-index:900
+}
+
+.top-left{
+    display:flex;
+    align-items:center;
+    gap:14px
+}
+
+.topbar h2{
+    margin:0;
+    color:var(--navy);
+    font-size:20px
+}
+
+.hamburger{
+    font-size:21px;
+    color:var(--navy);
+    cursor:pointer
+}
+
+.mobile-menu{
+    display:none
+}
+
+/* USER */
+
+.user-info{
+    display:flex;
+    align-items:center;
+    gap:12px
+}
+
+.user-avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:var(--navy);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700
+}
+
+.user-text{
+    text-align:right
+}
+
+.user-text strong{
+    display:block;
+    font-size:13px;
+    color:var(--navy)
+}
+
+.user-text span{
+    font-size:11px;
+    color:var(--muted)
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+    flex:1;
+    overflow-y:auto;
+    padding:22px 25px 35px
+}
+
+.page-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:15px;
+    margin-bottom:18px
+}
+
+.page-head h1{
+    font-size:21px;
+    color:var(--navy);
+    margin:0 0 4px
+}
+
+.page-head p{
+    margin:0;
+    color:var(--muted);
+    font-size:12px
+}
+
+.card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
+    margin-bottom:16px
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px
+}
+
+.card-header h3{
+    margin:0;
+    font-size:14px;
+    color:var(--navy)
+}
+
+.card-header span{
+    color:var(--muted);
+    font-size:11px
+}
+
+/* ================= FIELDS ================= */
+
+.grid-4{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    gap:14px
+}
+
+.grid-3{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:14px
+}
+
+.field label{
+    display:block;
+    font-size:10px;
+    font-weight:700;
+    color:#536174;
+    margin-bottom:5px
+}
+
+.field input,
+.field select,
+.field textarea{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:9px 10px;
+    font-size:11px;
+    outline:none;
+    background:#fff
+}
+
+.field input{
+    height:38px
+}
+
+.field select{
+    height:38px
+}
+
+.field textarea{
+    resize:vertical;
+    min-height:75px
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 2px rgba(23,105,170,.08)
+}
+
+/* ================= BUTTONS ================= */
+
+.btn{
+    border:0;
+    border-radius:8px;
+    padding:10px 14px;
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    text-decoration:none
+}
+
+.btn-primary{
+    background:var(--navy);
+    color:#fff
+}
+
+.btn-primary:hover{
+    background:var(--navy2)
+}
+
+.btn-green{
+    background:var(--green);
+    color:#fff
+}
+
+.btn-red{
+    background:var(--red);
+    color:#fff
+}
+
+.btn-secondary{
+    background:#fff;
+    border:1px solid var(--border);
+    color:#344054
+}
+
+.btn-add{
+    background:var(--blue);
+    color:#fff
+}
+
+.btn:disabled{
+    opacity:.55;
+    cursor:not-allowed
+}
+
+/* ================= BILL SUMMARY ================= */
+
+.bill-summary{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    gap:12px
+}
+
+.summary-box{
+    background:#f8fafc;
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:13px
+}
+
+.summary-box span{
+    display:block;
+    color:var(--muted);
+    font-size:10px;
+    margin-bottom:5px
+}
+
+.summary-box strong{
+    display:block;
+    color:var(--navy);
+    font-size:15px
+}
+
+.summary-box.outstanding{
+    background:#fff8e8;
+    border-color:#f5d99a
+}
+
+.summary-box.outstanding strong{
+    color:#a76600
+}
+
+/* ================= INFO ================= */
+
+.info-alert{
+    background:#e8f1fb;
+    border:1px solid #1769aa;
+    padding:11px;
+    border-radius:8px;
+    font-size:11px;
+    margin-bottom:15px;
+    color:#174d78
+}
+
+.warning-alert{
+    background:#fff4df;
+    border:1px solid #f1c36d;
+    padding:11px;
+    border-radius:8px;
+    font-size:11px;
+    margin-bottom:15px;
+    color:#8a5b00
+}
+
+.error-alert{
+    background:#fdecea;
+    border:1px solid #e5a39d;
+    padding:11px;
+    border-radius:8px;
+    font-size:11px;
+    margin-bottom:15px;
+    color:#9d2f24
+}
+
+/* ================= LINES ================= */
+
+.lines-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:18px 0 10px
+}
+
+.lines-header h4{
+    margin:0;
+    color:var(--navy);
+    font-size:13px
+}
+
+.table-wrap{
+    overflow-x:auto
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:900px
+}
+
+th{
+    background:#f5f7fa;
+    color:#536174;
+    text-align:left;
+    padding:11px 10px;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+    border-bottom:1px solid var(--border)
+}
+
+td{
+    padding:10px;
+    font-size:11px;
+    border-bottom:1px solid #eef1f4;
+    color:#344054;
+    vertical-align:middle
+}
+
+.line-input{
+    width:100%;
+    height:34px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:0 8px;
+    font-size:11px;
+    outline:none
+}
+
+.line-input:focus{
+    border-color:var(--blue)
+}
+
+.account-cell{
+    position:relative
+}
+
+.account-dropdown{
+    position:absolute;
+    top:35px;
+    left:0;
+    right:0;
+    background:#fff;
+    border:1px solid var(--border);
+    max-height:220px;
+    overflow-y:auto;
+    z-index:2600;
+    display:none;
+    border-radius:0 0 8px 8px;
+    box-shadow:0 8px 16px rgba(0,0,0,.1)
+}
+
+.account-dropdown.show{
+    display:block
+}
+
+.account-option{
+    padding:9px 10px;
+    font-size:11px;
+    cursor:pointer;
+    border-bottom:1px solid #f1f3f5
+}
+
+.account-option:hover{
+    background:#f5f7fa
+}
+
+.account-option strong{
+    color:var(--navy)
+}
+
+.account-option small{
+    color:var(--muted);
+    display:block;
+    margin-top:2px
+}
+
+.remove-btn{
+    background:var(--red);
+    color:#fff;
+    border:none;
+    padding:6px 8px;
+    border-radius:6px;
+    cursor:pointer
+}
+
+.amount-input{
+    text-align:right
+}
+
+.remaining-text{
+    font-size:9px;
+    color:var(--muted);
+    margin-top:3px
+}
+
+.total-row td{
+    font-weight:700;
+    background:#f5f7fa;
+    color:var(--navy)
+}
+
+.total-amount{
+    text-align:right
+}
+
+.balance-status{
+    font-weight:700
+}
+
+.balanced{
+    color:var(--green)!important
+}
+
+.error{
+    color:var(--red)!important
+}
+
+.warning{
+    color:#a76600!important
+}
+
+/* ================= FOOTER ================= */
+
+.form-footer{
+    display:flex;
+    justify-content:flex-end;
+    gap:9px;
+    padding-top:5px
+}
+
+/* ================= LOADER ================= */
+
+#pageLoader{
+    position:fixed;
+    inset:0;
+    background:rgba(244,247,251,.92);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:3000
+}
+
+#pageLoader i{
+    font-size:42px;
+    color:var(--navy);
+    animation:spin 1s linear infinite
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+/* ================= SIDEBAR OVERLAY ================= */
+
+.overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.4);
+    z-index:1050
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1200px){
+
+    .grid-4{
+        grid-template-columns:1fr 1fr
+    }
+
+    .bill-summary{
+        grid-template-columns:1fr 1fr
+    }
+
+}
+
+@media(max-width:992px){
+
+    .sidebar{
+        left:-270px
+    }
+
+    .sidebar.open{
+        left:0
+    }
+
+    .main{
+        margin-left:0;
+        width:100%
+    }
+
+    .mobile-menu{
+        display:block
+    }
+
+    .overlay.show{
+        display:block
+    }
+
+}
+
+@media(max-width:700px){
+
+    .grid-3,
+    .grid-4,
+    .bill-summary{
+        grid-template-columns:1fr
+    }
+
+    .content{
+        padding:15px
+    }
+
+    .topbar{
+        padding:0 15px
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+    <h2>GREYSOL ACADEMY</h2>
+    <p id="portalRole">Accountant Portal</p>
+  </div>
+
+  <div class="menu">
+    <a href="accounting-dashboard.html">
+      <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+    </a>
+
+    <div class="section-label">Operations</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Sales & Receivables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="students.html"><i class="fa-solid fa-user-graduate"></i> Students / Customers</a>
+        <a href="quotations.html"><i class="fa-solid fa-file-signature"></i> Quotations</a>
+        <a href="invoice-list.html"><i class="fa-solid fa-file-invoice"></i> Invoices</a>
+        <a href="credit-notes.html"><i class="fa-solid fa-file-circle-minus"></i> Credit Notes</a>
+        <a href="receipts-list.html"><i class="fa-solid fa-money-bill-wave"></i> Customer Payments</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="accounts-receivable.html"><i class="fa-solid fa-hand-holding-dollar"></i> Accounts Receivable</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Receivables Aging</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-cart-shopping"></i><span>Purchases & Payables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="suppliers.html"><i class="fa-solid fa-truck-field"></i> Suppliers</a>
+        <a href="requisitions.html"><i class="fa-solid fa-file-circle-plus"></i> Purchase Requisitions</a>
+        <a href="requisition-create.html"><i class="fa-solid fa-plus"></i> Create Requisition</a>
+        <a href="purchase-orders.html"><i class="fa-solid fa-clipboard-list"></i> Purchase Orders</a>
+        <a href="goods-received.html"><i class="fa-solid fa-box-open"></i> Goods Received</a>
+        <a href="bills.html" class="active"><i class="fa-solid fa-file-invoice"></i> Bills</a>
+        <a href="supplier-payments.html"><i class="fa-solid fa-money-check-dollar"></i> Supplier Payments</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="accounts-payable.html"><i class="fa-solid fa-money-bill-transfer"></i> Accounts Payable</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Payables Aging</a>
+      </div>
+    </div>
+
+    <div class="section-label">Cash Management</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-building-columns"></i><span>Banking</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="bank-accounts.html"><i class="fa-solid fa-building-columns"></i> Bank Accounts</a>
+        <a href="cash-accounts.html"><i class="fa-solid fa-wallet"></i> Cash Accounts</a>
+        <a href="bank-transactions.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Bank Transactions</a>
+        <a href="bank-transfer.html"><i class="fa-solid fa-right-left"></i> Transfers</a>
+        <a href="bank-reconciliation.html"><i class="fa-solid fa-scale-balanced"></i> Bank Reconciliation</a>
+        <a href="reconciliation-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Reconciliation History</a>
+      </div>
+    </div>
+
+    <div class="section-label">General Accounting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-book"></i><span>Accounting</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="chart-of-accounts.html"><i class="fa-solid fa-list"></i> Chart of Accounts</a>
+        <a href="journal-entry.html"><i class="fa-solid fa-book-journal-whills"></i> Journal Entry</a>
+        <a href="journal-list.html"><i class="fa-solid fa-list-check"></i> Journal List</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="ledger.html"><i class="fa-solid fa-table-list"></i> Account Ledger</a>
+        <a href="#"><i class="fa-solid fa-repeat"></i> Recurring Journals</a>
+        <a href="#"><i class="fa-solid fa-lock"></i> Period Closing</a>
+        <a href="accounting-settings.html"><i class="fa-solid fa-gear"></i>Settings</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-receipt"></i><span>Expenses</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="expenses.html"><i class="fa-solid fa-file-circle-plus"></i> Expense Entry</a>
+        <a href="expense-list.html"><i class="fa-solid fa-list"></i> Expense List</a>
+        <a href="expense-categories.html"><i class="fa-solid fa-tags"></i> Expense Categories</a>
+        <a href="expense-claims.html"><i class="fa-solid fa-hand-holding-dollar"></i> Expense Claims</a>
+      </div>
+    </div>
+
+    <div class="section-label">People & Statutory</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-users-gear"></i><span>HR & Payroll</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="employees.html"><i class="fa-solid fa-users"></i> Employees</a>
+        <a href="#"><i class="fa-solid fa-user-tag"></i> Employee Categories</a>
+        <a href="attendance.html"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="payroll-settings.html"><i class="fa-solid fa-gears"></i> Payroll Settings</a>
+        <a href="payroll-run.html"><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</a>
+        <a href="payslips.html"><i class="fa-solid fa-file-invoice-dollar"></i> Payslips</a>
+        <a href="payroll-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Payroll History</a>
+        <a href="payroll-journal.html"><i class="fa-solid fa-book"></i> Payroll Journal</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-chart-column"></i> Payroll Reports</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-percent"></i><span>Taxes</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="vat.html"><i class="fa-solid fa-percent"></i> VAT</a>
+        <a href="vat-transactions.html"><i class="fa-solid fa-receipt"></i> VAT Transactions</a>
+        <a href="vat-return.html"><i class="fa-solid fa-file-circle-check"></i> VAT Return</a>
+        <a href="#"><i class="fa-solid fa-file-invoice"></i> Withholding Tax</a>
+        <a href="paye.html"><i class="fa-solid fa-user-shield"></i> PAYE</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-chart-column"></i> Tax Reports</a>
+      </div>
+    </div>
+
+    <div class="section-label">Reporting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-chart-pie"></i><span>Reports</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-user-clock"></i> AR Aging</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-file-circle-exclamation"></i> AP Aging</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="expense-report.html"><i class="fa-solid fa-receipt"></i> Expense Report</a>
+        <a href="revenue-report.html"><i class="fa-solid fa-arrow-trend-up"></i> Revenue Report</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-percent"></i> Tax Reports</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-users"></i> Payroll Reports</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+      </div>
+    </div>
+
+    <div class="section-label">Administration</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-user-shield"></i><span>Administration</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="userlist.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="#"><i class="fa-solid fa-key"></i> Roles & Permissions</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+        <a href="#"><i class="fa-solid fa-check-double"></i> Approval Workflows</a>
+        <a href="#"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="#"><i class="fa-solid fa-building"></i> Company Profile</a>
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> Financial Year</a>
+        <a href="#"><i class="fa-solid fa-calendar-check"></i> Accounting Periods</a>
+        <a href="#"><i class="fa-solid fa-percent"></i> Tax Settings</a>
+        <a href="#"><i class="fa-solid fa-hashtag"></i> Numbering</a>
+        <a href="#"><i class="fa-solid fa-sliders"></i> System Settings</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+    </a>
+  </div>
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+<header class="topbar">
+
+    <div class="top-left">
+
+        <i class="fa-solid fa-bars hamburger mobile-menu"
+           onclick="toggleSidebar()"></i>
+
+        <h2>Create Payment Voucher</h2>
+
+    </div>
+
+    <div class="user-info">
+
+        <div class="user-text">
+            <strong id="staffName">Loading...</strong>
+            <span id="staffRole">Accountant</span>
+        </div>
+
+        <div class="user-avatar" id="avatar">A</div>
+
+    </div>
+
+</header>
+
+
+<section class="content">
+
+    <div class="page-head">
+
+        <div>
+
+            <h1>
+                <i class="fa-solid fa-money-check-dollar"></i>
+                Create Payment Voucher
+            </h1>
+
+            <p>
+                Record payment against an outstanding supplier bill.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= BILL INFORMATION ================= -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h3>
+                <i class="fa-solid fa-file-invoice"></i>
+                Bill Information
+            </h3>
+
+            <span id="billStatus">Loading...</span>
+
+        </div>
+
+
+        <div class="bill-summary">
+
+            <div class="summary-box">
+
+                <span>Bill Number</span>
+
+                <strong id="billNo">—</strong>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <span>Supplier</span>
+
+                <strong id="supplierName">—</strong>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <span>Bill Total</span>
+
+                <strong id="billTotal">MWK 0.00</strong>
+
+            </div>
+
+
+            <div class="summary-box outstanding">
+
+                <span>Outstanding Balance</span>
+
+                <strong id="billBalance">MWK 0.00</strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= PAYMENT DETAILS ================= -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h3>
+                <i class="fa-solid fa-file-circle-plus"></i>
+                Payment Voucher Details
+            </h3>
+
+        </div>
+
+
+        <div class="grid-4">
+
+            <div class="field">
+
+                <label>Payment Voucher No.</label>
+
+                <input
+                    type="text"
+                    id="voucherNo"
+                    readonly>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>Payment Date</label>
+
+                <input
+                    type="date"
+                    id="paymentDate">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>Reference / Cheque No.</label>
+
+                <input
+                    type="text"
+                    id="paymentReference"
+                    placeholder="Optional">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>Payment Description</label>
+
+                <input
+                    type="text"
+                    id="description"
+                    placeholder="Supplier payment">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= ALLOCATION ================= -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h3>
+                <i class="fa-solid fa-scale-balanced"></i>
+                Payment Allocation
+            </h3>
+
+        </div>
+
+
+        <div class="info-alert">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            <strong>Important:</strong>
+            Debit accounts are taken directly from the accounts that were
+            credited on the original bill. Each account can only be debited
+            up to its remaining unpaid amount.
+
+        </div>
+
+
+        <div class="warning-alert">
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+            A partial payment is allowed. Previously paid amounts are
+            automatically deducted from each bill account when another
+            payment voucher is created.
+
+        </div>
+
+
+        <!-- DEBIT LINES -->
+
+        <div class="lines-header">
+
+            <h4>
+                <i class="fa-solid fa-arrow-down"></i>
+                Accounts Being Settled
+            </h4>
+
+            <button
+                class="btn btn-add"
+                onclick="addDebitLine()">
+
+                <i class="fa-solid fa-plus"></i>
+                Add Debit Line
+
+            </button>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width:45%">
+                            Account
+                        </th>
+
+                        <th style="width:25%">
+                            Original Credited
+                        </th>
+
+                        <th style="width:20%">
+                            Payment Amount
+                        </th>
+
+                        <th style="width:10%">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="debitLines">
+
+                </tbody>
+
+
+                <tfoot>
+
+                    <tr class="total-row">
+
+                        <td colspan="2">
+                            TOTAL DEBIT
+                        </td>
+
+                        <td
+                            class="total-amount"
+                            id="totalDebit">
+
+                            MWK 0.00
+
+                        </td>
+
+                        <td></td>
+
+                    </tr>
+
+                </tfoot>
+
+            </table>
+
+        </div>
+
+
+        <!-- PAYMENT ACCOUNTS -->
+
+        <div class="lines-header">
+
+            <h4>
+                <i class="fa-solid fa-arrow-up"></i>
+                Payment Accounts
+            </h4>
+
+            <button
+                class="btn btn-add"
+                onclick="addPaymentLine()">
+
+                <i class="fa-solid fa-plus"></i>
+                Add Payment Account
+
+            </button>
+
+        </div>
+
+
+        <div class="info-alert">
+
+            <i class="fa-solid fa-building-columns"></i>
+
+            Only <strong>Cash</strong> and <strong>Bank</strong> accounts
+            can be used as payment accounts.
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width:65%">
+                            Cash / Bank Account
+                        </th>
+
+                        <th style="width:25%">
+                            Payment Amount
+                        </th>
+
+                        <th style="width:10%">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="paymentLines">
+
+                </tbody>
+
+
+                <tfoot>
+
+                    <tr class="total-row">
+
+                        <td>
+                            TOTAL CREDIT
+                        </td>
+
+                        <td
+                            class="total-amount"
+                            id="totalCredit">
+
+                            MWK 0.00
+
+                        </td>
+
+                        <td></td>
+
+                    </tr>
+
+                </tfoot>
+
+            </table>
+
+        </div>
+
+
+        <!-- BALANCE -->
+
+        <div style="
+            display:flex;
+            justify-content:flex-end;
+            margin-top:15px;
+        ">
+
+            <div style="
+                min-width:300px;
+                border:1px solid var(--border);
+                border-radius:9px;
+                padding:13px;
+                background:#f8fafc;
+            ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    margin-bottom:7px;
+                    font-size:11px;
+                ">
+
+                    <span>Total Debit</span>
+
+                    <strong id="summaryDebit">
+                        MWK 0.00
+                    </strong>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    margin-bottom:7px;
+                    font-size:11px;
+                ">
+
+                    <span>Total Credit</span>
+
+                    <strong id="summaryCredit">
+                        MWK 0.00
+                    </strong>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    padding-top:8px;
+                    border-top:1px solid var(--border);
+                    font-size:12px;
+                ">
+
+                    <strong>Difference</strong>
+
+                    <strong
+                        id="difference"
+                        class="error">
+
+                        MWK 0.00
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div id="validationMessage"
+             style="margin-top:15px">
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="form-footer">
+
+            <a
+                href="accounts-payable.html"
+                class="btn btn-secondary">
+
+                <i class="fa-solid fa-xmark"></i>
+                Cancel
+
+            </a>
+
+
+            <button
+                class="btn btn-green"
+                id="postPaymentBtn"
+                onclick="postPayment()">
+
+                <i class="fa-solid fa-check"></i>
+                Post Payment
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- ================= LOADER ================= -->
+
+<div id="pageLoader">
+
+    <i class="fa-solid fa-circle-notch"></i>
+
+    <p>Loading payment voucher...</p>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, Timestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+const app = initializeApp({ apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw", projectId:"greysol-academy" });
+const db = getFirestore(app);
+
+/* =========================================================
+   LOGGED USER
+========================================================= */
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+if(!loggedUser || loggedUser.role!== "Accountant"){ alert("Access Denied"); window.location.href = "staff-login.html"; }
+document.getElementById("staffName").textContent = loggedUser.username;
+document.getElementById("staffRole").textContent = loggedUser.role;
+document.getElementById("avatar").textContent = loggedUser.username.charAt(0).toUpperCase();
+document.getElementById("portalRole").textContent = loggedUser.role + " Portal";
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+document.querySelectorAll(".menu-header").forEach(header => { header.addEventListener("click", () => { header.parentElement.classList.toggle("active"); }); });
+window.toggleSidebar = function(){ document.getElementById("sidebar").classList.toggle("open"); document.getElementById("overlay").classList.toggle("show"); };
+document.getElementById("logoutBtn").onclick = e => { e.preventDefault(); localStorage.removeItem("loggedUser"); window.location.href = "staff-login.html"; };
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+let bill = null;
+let billJournal = null;
+let chartOfAccounts = [];
+let debitLines = [];
+let paymentLines = [];
+let debitCounter = 0;
+let paymentCounter = 0;
+
+/* =========================================================
+   HELPERS
+========================================================= */
+const num = value => Number(value || 0);
+const fmt = value => "MWK " + Number(value || 0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const escapeHtml = value => String(value?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+
+/* =========================================================
+   GET BILL ID
+========================================================= */
+const params = new URLSearchParams(window.location.search);
+const billId = params.get("billId");
+if(!billId){ alert("No bill was selected for payment."); window.location.href = "accounts-payable.html"; }
+
+/* =========================================================
+   GENERATE PAYMENT VOUCHER NUMBER
+========================================================= */
+async function generateVoucherNo(){
+    const q = query(collection(db,"paymentVouchers"), orderBy("createdAt","desc"), limit(1));
+    const snap = await getDocs(q);
+    let number = 1;
+    if(!snap.empty){
+        const last = snap.docs[0].data();
+        const lastNo = last.voucherNo || "";
+        const match = lastNo.match(/(\d+)$/);
+        if(match){ number = Number(match[1]) + 1; }
+    }
+    return "PV-" + String(number).padStart(5,"0");
+}
+
+/* =========================================================
+   GENERATE JOURNAL NUMBER
+========================================================= */
+async function generateJournalNo(){
+    const q = query(collection(db,"journalEntries"), orderBy("createdAt","desc"), limit(1));
+    const snap = await getDocs(q);
+    let number = 1;
+    if(!snap.empty){
+        const last = snap.docs[0].data();
+        const lastNo = last.journalNo || "";
+        const match = lastNo.match(/(\d+)$/);
+        if(match){ number = Number(match[1]) + 1; }
+    }
+    return "JV" + String(number).padStart(5,"0");
+}
+
+/* =========================================================
+   LOAD CHART OF ACCOUNTS
+========================================================= */
+async function loadChartOfAccounts(){
+    const snap = await getDocs(collection(db,"chartOfAccounts"));
+    chartOfAccounts = snap.docs.map(d => ({ id:d.id,...d.data() })).map(a => ({...a, accountCode: a.accountCode || a.code, accountName: a.accountName || a.name, accountType: a.accountType || a.type || "" }));
+}
+
+/* =========================================================
+   LOAD BILL
+========================================================= */
+async function loadBill(){
+    const billRef = doc(db,"bills", billId);
+    const snap = await getDoc(billRef);
+    if(!snap.exists()){ throw new Error("The selected bill could not be found."); }
+    bill = { id:snap.id,...snap.data() };
+
+    if(bill.status === "Paid" || num(bill.balance) <= 0){ throw new Error("This bill has already been fully paid."); }
+    if(!bill.journalNo){ throw new Error("This bill does not have a journal reference."); }
+
+    const journalQuery = query(collection(db,"journalEntries"));
+    const journalSnap = await getDocs(journalQuery);
+    const journalDoc = journalSnap.docs.find(d => d.data().journalNo === bill.journalNo);
+    if(!journalDoc){ throw new Error("The original bill journal could not be found."); }
+    billJournal = { id:journalDoc.id,...journalDoc.data() };
+
+    renderBill();
+    await buildDebitAllocations();
+}
+
+/* =========================================================
+   BUILD ACCOUNT-LEVEL OUTSTANDING BALANCES
+========================================================= */
+async function buildDebitAllocations(){
+    const creditLines = (billJournal.lines || []).filter(line => num(line.credit) > 0);
+    const paymentSnap = await getDocs(collection(db,"paymentVouchers"));
+    const previousPayments = paymentSnap.docs.map(d => ({ id:d.id,...d.data() })).filter(p => p.billId === bill.id && p.status!== "Cancelled");
+
+    debitLines = creditLines.map((line,index) => {
+        const code = line.accountCode;
+        const name = line.accountName || "";
+        const original = num(line.credit);
+        let alreadyPaid = 0;
+        previousPayments.forEach(payment => {
+            if(Array.isArray(payment.allocations)){
+                payment.allocations.forEach(a => { if(String(a.accountCode) === String(code)){ alreadyPaid += num(a.amount); } });
+            }
+        });
+        const remaining = Math.max(0, original - alreadyPaid);
+        return { id:"account-" + index, accountCode:code, accountName:name, originalAmount:original, alreadyPaid, remaining };
+    }).filter(line => line.remaining > 0.005);
+
+    if(debitLines.length === 0){ throw new Error("There are no outstanding credited accounts remaining on this bill."); }
+    renderDebitLines();
+    addPaymentLine();
+}
+
+/* =========================================================
+   RENDER BILL
+========================================================= */
+function renderBill(){
+    document.getElementById("billNo").textContent = bill.billNo || "—";
+    document.getElementById("supplierName").textContent = bill.supplierName || "—";
+    document.getElementById("billTotal").textContent = fmt(bill.totalAmount);
+    document.getElementById("billBalance").textContent = fmt(bill.balance);
+    document.getElementById("billStatus").textContent = bill.status || "Unpaid";
+    document.getElementById("voucherNo").value = "Generating...";
+    document.getElementById("paymentDate").value = new Date().toISOString().split("T")[0];
+    document.getElementById("description").value = `Payment for Bill ${bill.billNo} - ${bill.supplierName}`;
+}
+
+/* =========================================================
+   RENDER DEBIT LINES
+========================================================= */
+function renderDebitLines(){
+    const body = document.getElementById("debitLines");
+    body.innerHTML = "";
+    debitLines.forEach((line,index) => {
+        body.insertAdjacentHTML("beforeend",`
+        <tr id="debit-row-${index}">
+            <td><div style="font-weight:700;color:var(--navy);">${escapeHtml(line.accountCode)} - ${escapeHtml(line.accountName)}</div><div class="remaining-text">Remaining: ${fmt(line.remaining)}</div></td>
+            <td>${fmt(line.originalAmount)}</td>
+            <td><input type="number" class="line-input amount-input debit-amount" min="0" max="${line.remaining}" step="0.01" data-index="${index}" value="0" oninput="validateDebitAmount(${index})"><div class="remaining-text" id="debit-limit-${index}">Maximum: ${fmt(line.remaining)}</div></td>
+            <td><button class="remove-btn" onclick="removeDebitLine(${index})"><i class="fa-solid fa-trash"></i></button></td>
+        </tr>`);
+    });
+    calculateTotals();
+}
+
+/* =========================================================
+   ADD DEBIT LINE
+========================================================= */
+window.addDebitLine = function(){
+    const used = new Set([...document.querySelectorAll(".debit-amount")].map(input => Number(input.dataset.index)));
+    const next = debitLines.findIndex((_,index) =>!used.has(index));
+    if(next === -1){ alert("All outstanding bill accounts have already been added."); return; }
+    const input = document.querySelector(`.debit-amount[data-index="${next}"]`);
+    if(input){ input.focus(); }
+};
+
+/* =========================================================
+   REMOVE DEBIT LINE
+========================================================= */
+window.removeDebitLine = function(index){ const input = document.querySelector(`.debit-amount[data-index="${index}"]`); if(input){ input.value = 0; } calculateTotals(); };
+
+/* =========================================================
+   VALIDATE DEBIT AMOUNT
+========================================================= */
+window.validateDebitAmount = function(index){
+    const input = document.querySelector(`.debit-amount[data-index="${index}"]`);
+    if(!input) return;
+    const max = debitLines[index].remaining;
+    let value = num(input.value);
+    if(value < 0){ value = 0; }
+    if(value > max){ value = max; input.value = max.toFixed(2); alert(`${debitLines[index].accountCode} - ${debitLines[index].accountName} can only be paid up to ${fmt(max)}.`); }
+    calculateTotals();
+};
+
+/* =========================================================
+   GET PAYMENT ACCOUNTS
+========================================================= */
+function getPaymentAccounts(){
+    return chartOfAccounts.filter(account => {
+        const type = String(account.accountType || "").toLowerCase();
+        const name = String(account.accountName || "").toLowerCase();
+        return type === "cash" || type === "bank" || type.includes("cash") || type.includes("bank") || name.includes("cash") || name.includes("bank");
+    });
+}
+
+/* =========================================================
+   ADD PAYMENT LINE
+========================================================= */
+window.addPaymentLine = function(){
+    paymentCounter++;
+    const id = paymentCounter;
+    const body = document.getElementById("paymentLines");
+    body.insertAdjacentHTML("beforeend",`
+    <tr id="payment-row-${id}">
+        <td><div class="account-cell"><input type="text" class="line-input payment-account-input" placeholder="Type cash or bank account..." autocomplete="off" data-id="${id}"><div class="account-dropdown" id="payment-dropdown-${id}"></div></div></td>
+        <td><input type="number" class="line-input amount-input payment-amount" min="0" step="0.01" value="0" oninput="calculateTotals()"></td>
+        <td><button class="remove-btn" onclick="removePaymentLine(${id})"><i class="fa-solid fa-trash"></i></button></td>
+    </tr>`);
+    setupPaymentAccountSearch(id);
+};
+
+/* =========================================================
+   PAYMENT ACCOUNT SEARCH
+========================================================= */
+function setupPaymentAccountSearch(id){
+    const input = document.querySelector(`.payment-account-input[data-id="${id}"]`);
+    const dropdown = document.getElementById(`payment-dropdown-${id}`);
+    input.addEventListener("input", () => {
+        const value = input.value.toLowerCase().trim();
+        if(!value){ dropdown.classList.remove("show"); return; }
+        const accounts = getPaymentAccounts().filter(account => { const searchable = `${account.accountCode} ${account.accountName}`.toLowerCase(); return searchable.includes(value); }).slice(0,20);
+        dropdown.innerHTML = accounts.length? accounts.map(account => `<div class="account-option" onclick="selectPaymentAccount(${id},'${String(account.accountCode).replace(/'/g,"\\'")}', '${String(account.accountName).replace(/'/g,"\\'")}')"><strong>${escapeHtml(account.accountCode)} - ${escapeHtml(account.accountName)}</strong><small>Type: ${escapeHtml(account.accountType)}</small></div>`).join("") : `<div class="account-option">No Cash or Bank account found.</div>`;
+        dropdown.classList.add("show");
+    });
+    document.addEventListener("click", e => { if(!e.target.closest(`#payment-row-${id}`)){ dropdown.classList.remove("show"); } });
+}
+
+/* =========================================================
+   SELECT PAYMENT ACCOUNT
+========================================================= */
+window.selectPaymentAccount = function(id, code, name){
+    const input = document.querySelector(`.payment-account-input[data-id="${id}"]`);
+    input.value = `${code} - ${name}`;
+    input.dataset.code = code;
+    document.getElementById(`payment-dropdown-${id}`).classList.remove("show");
+};
+
+/* =========================================================
+   REMOVE PAYMENT LINE
+========================================================= */
+window.removePaymentLine = function(id){ const row = document.getElementById(`payment-row-${id}`); if(row){ row.remove(); } calculateTotals(); };
+
+/* =========================================================
+   CALCULATE TOTALS
+========================================================= */
+window.calculateTotals = function(){
+    let debit = 0; let credit = 0;
+    document.querySelectorAll(".debit-amount").forEach(input => { debit += num(input.value); });
+    document.querySelectorAll(".payment-amount").forEach(input => { credit += num(input.value); });
+    document.getElementById("totalDebit").textContent = fmt(debit);
+    document.getElementById("totalCredit").textContent = fmt(credit);
+    document.getElementById("summaryDebit").textContent = fmt(debit);
+    document.getElementById("summaryCredit").textContent = fmt(credit);
+    const difference = Math.abs(debit - credit);
+    const differenceEl = document.getElementById("difference");
+    differenceEl.textContent = fmt(difference);
+    if(difference <= 0.01 && debit > 0){ differenceEl.className = "balanced"; } else { differenceEl.className = "error"; }
+};
+
+/* =========================================================
+   COLLECT DEBIT ALLOCATIONS
+========================================================= */
+function collectDebitAllocations(){
+    const allocations = [];
+    document.querySelectorAll(".debit-amount").forEach(input => {
+        const index = Number(input.dataset.index);
+        const amount = num(input.value);
+        if(amount <= 0){ return; }
+        const account = debitLines[index];
+        allocations.push({ accountCode: account.accountCode, accountName: account.accountName, amount, originalAmount: account.originalAmount, previouslyPaid: account.alreadyPaid, remainingBeforePayment: account.remaining });
+    });
+    return allocations;
+}
+
+/* =========================================================
+   COLLECT PAYMENT ACCOUNTS
+========================================================= */
+function collectPaymentLines(){
+    const lines = [];
+    document.querySelectorAll("#paymentLines tr").forEach(row => {
+        const input = row.querySelector(".payment-account-input");
+        const amountInput = row.querySelector(".payment-amount");
+        if(!input){ return; }
+        const code = input.dataset.code || "";
+        const amount = num(amountInput.value);
+        if(code && amount > 0){
+            const account = chartOfAccounts.find(a => String(a.accountCode) === String(code));
+            lines.push({ accountCode:code, accountName: account?.accountName || "", amount });
+        }
+    });
+    return lines;
+}
+
+/* =========================================================
+   VALIDATE PAYMENT ACCOUNTS
+========================================================= */
+function validatePaymentAccounts(lines){
+    const allowed = getPaymentAccounts().map(a => String(a.accountCode));
+    for(const line of lines){
+        if(!allowed.includes(String(line.accountCode))){ throw new Error(`${line.accountCode} is not a valid Cash or Bank payment account.`); }
+    }
+}
+
+/* =========================================================
+   POST PAYMENT
+========================================================= */
+window.postPayment = async function(){
+    const button = document.getElementById("postPaymentBtn");
+    button.disabled = true;
+    button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Posting...`;
+    try{
+        const freshBillSnap = await getDoc(doc(db,"bills",bill.id));
+        if(!freshBillSnap.exists()){ throw new Error("Bill no longer exists."); }
+        const freshBill = freshBillSnap.data();
+        const currentBalance = num(freshBill.balance);
+        if(currentBalance <= 0){ throw new Error("This bill has already been fully paid."); }
+
+        const allocations = collectDebitAllocations();
+        const payments = collectPaymentLines();
+        const totalDebit = allocations.reduce((sum,line) => sum + num(line.amount),0);
+        const totalCredit = payments.reduce((sum,line) => sum + num(line.amount),0);
+
+        if(allocations.length === 0){ throw new Error("Add at least one debit account and payment amount."); }
+        if(payments.length === 0){ throw new Error("Add at least one Cash or Bank payment account."); }
+        if(totalDebit <= 0){ throw new Error("Payment amount must be greater than zero."); }
+        if(totalCredit <= 0){ throw new Error("Payment account amount must be greater than zero."); }
+        if(Math.abs(totalDebit - totalCredit) > 0.01){ throw new Error(`Debit ${fmt(totalDebit)} and Credit ${fmt(totalCredit)} must balance.`); }
+        if(totalDebit > currentBalance + 0.01){ throw new Error(`Payment ${fmt(totalDebit)} cannot exceed the outstanding bill balance of ${fmt(currentBalance)}.`); }
+
+        for(const allocation of allocations){
+            const originalLine = debitLines.find(line => String(line.accountCode) === String(allocation.accountCode));
+            if(!originalLine){ throw new Error(`Account ${allocation.accountCode} was not found in the original bill.`); }
+            const allowed = num(originalLine.remaining);
+            if(allocation.amount > allowed + 0.01){ throw new Error(`${allocation.accountCode} - ${allocation.accountName} can only be paid up to ${fmt(allowed)}.`); }
+        }
+
+        validatePaymentAccounts(payments);
+        const voucherNo = await generateVoucherNo();
+        const journalNo = await generateJournalNo();
+        const journalLines = [];
+        allocations.forEach(allocation => { journalLines.push({ accountCode: allocation.accountCode, accountName: allocation.accountName, debit: num(allocation.amount), credit:0 }); });
+        payments.forEach(payment => { journalLines.push({ accountCode: payment.accountCode, accountName: payment.accountName, debit:0, credit: num(payment.amount) }); });
+
+        const paymentDate = document.getElementById("paymentDate").value;
+        const paymentReference = document.getElementById("paymentReference").value.trim();
+        const description = document.getElementById("description").value.trim();
+
+        // SAVE JOURNAL
+        await addDoc(collection(db,"journalEntries"),{ journalNo, date: Timestamp.fromDate(new Date(paymentDate)), reference: voucherNo, description: description || `Payment for Bill ${bill.billNo}`, lines: journalLines, totalDebit, totalCredit, createdBy: loggedUser.username, createdAt: Timestamp.now(), source: "Supplier Payment", sourceRef: bill.billNo, billId: bill.id, billNo: bill.billNo, supplierName: bill.supplierName });
+
+        // SAVE PAYMENT VOUCHER - NOW WITH SUPPLIERCODE
+        await addDoc(collection(db,"paymentVouchers"),{
+            voucherNo,
+            billId: bill.id,
+            billNo: bill.billNo,
+            supplierCode: bill.supplierCode || "", // NEW - THIS IS THE KEY
+            supplierName: bill.supplierName,
+            paymentDate,
+            paymentReference,
+            description: description || `Payment for Bill ${bill.billNo}`,
+            amount: totalDebit,
+            allocations,
+            paymentAccounts: payments,
+            totalDebit,
+            totalCredit,
+            journalNo,
+            status: "Posted",
+            createdBy: loggedUser.username,
+            createdAt: Timestamp.now()
+        });
+
+        // UPDATE BILL
+        const newBalance = Math.max(0, currentBalance - totalDebit);
+        let newStatus = "Partially Paid";
+        if(newBalance <= 0.01){ newStatus = "Paid"; }
+        await updateDoc(doc(db,"bills",bill.id),{ balance: newBalance, status: newStatus, lastPaymentVoucher: voucherNo, lastPaymentDate: paymentDate, updatedAt: Timestamp.now() });
+
+        alert(`Payment ${voucherNo} posted successfully.\n\nAmount: ${fmt(totalDebit)}\nRemaining Bill Balance: ${fmt(newBalance)}`);
+        window.location.href = "accounts-payable.html";
+
+    }catch(error){
+        console.error("Payment error:",error);
+        alert(error.message || "Unable to post payment.");
+    }finally{
+        button.disabled = false;
+        button.innerHTML = `<i class="fa-solid fa-check"></i> Post Payment`;
+    }
+};
+
+/* =========================================================
+   INITIALISE
+========================================================= */
+async function initialise(){
+    try{
+        await loadChartOfAccounts();
+        await loadBill();
+        const voucherNo = await generateVoucherNo();
+        document.getElementById("voucherNo").value = voucherNo;
+    }catch(error){
+        console.error(error);
+        alert(error.message);
+        window.location.href = "accounts-payable.html";
+    }finally{
+        document.getElementById("pageLoader").style.display = "none";
+    }
+}
+initialise();
+</script>
+</body>
+</html>

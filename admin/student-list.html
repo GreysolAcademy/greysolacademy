@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Students | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--blue:#003366;--gold:#f4b400;--green:#16a085;--red:#e74c3c;--light:#f4f7fb;--white:#ffffff;--shadow:0 5px 15px rgba(0,0,0,.08)}
+body{background:var(--light);display:flex;height:100vh;overflow:hidden}
+
+/* LOADER */
+.main-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(244,247,251,.95);display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:99999;color:var(--navy);transition:.3s}
+.main-loader.hidden{opacity:0;pointer-events:none}
+.spinner{width:50px;height:50px;border:4px solid rgba(0,31,63,.2);border-top:4px solid var(--navy);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* SIDEBAR */
+.sidebar{width:270px;background:var(--navy);color:#fff;overflow-y:auto;overflow-x:hidden;transition:.3s;z-index:1000;scrollbar-width:none;-ms-overflow-style:none}
+.sidebar::-webkit-scrollbar{width:0;height:0;display:none}
+.logo{padding:25px;text-align:center;border-bottom:1px solid rgba(255,255,255,.15)}
+.logo img{width:80px;margin-bottom:10px}
+.logo h2{font-size:22px;margin-bottom:5px}
+.logo p{font-size:13px;opacity:.8}
+.menu{padding:15px 0}
+.menu a{display:flex;align-items:center;gap:15px;padding:14px 25px;color:white;text-decoration:none;transition:.25s}
+.menu a:hover{background:rgba(255,255,255,.12);padding-left:35px}
+.menu a.active{background:rgba(255,255,255,.18);padding-left:35px}
+.menu i{width:22px;text-align:center}
+
+/* ACCORDION SIDEBAR */
+.menu-group{border-bottom:1px solid rgba(255,255,255,.08)}
+.menu-header{display:flex;align-items:center;gap:15px;padding:14px 25px;cursor:pointer;color:white;transition:.3s}
+.menu-header:hover{background:rgba(255,255,255,.12)}
+.menu-header i:first-child{width:22px;text-align:center}
+.arrow{
+    margin-left:auto;
+    font-size:12px;
+    transition:transform .3s ease;
+}
+
+.menu-group.active .arrow{
+    transform:rotate(180deg);
+}
+.menu-group.active .arrow{transform:rotate(180deg)}
+.submenu{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:max-height .35s ease, opacity .25s ease;
+    background:rgba(0,0,0,.15);
+}
+
+/* Open submenu */
+.menu-group.active .submenu{
+    max-height:700px;
+    opacity:1;
+}
+.submenu a{display:flex;align-items:center;gap:12px;padding:12px 25px 12px 55px;font-size:14px;color:#ddd;text-decoration:none;transition:.3s}
+.submenu a:hover{background:rgba(255,255,255,.12);color:white;padding-left:65px}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:75px;background:white;display:flex;justify-content:space-between;align-items:center;padding:0 30px;box-shadow:var(--shadow)}
+.left-top{display:flex;align-items:center;gap:20px}
+#menuBtn{font-size:24px;cursor:pointer;color:var(--navy);display:none}
+.search{position:relative}
+.search input{width:320px;padding:11px 15px 11px 42px;border-radius:30px;border:1px solid #ddd}
+.search i{position:absolute;left:15px;top:12px;color:#777}
+.admin{display:flex;align-items:center;gap:15px;text-align:right}
+.admin span{color:var(--navy);font-weight:bold}
+.admin small{display:block;font-weight:normal;font-size:12px;opacity:.7}
+.admin img{width:45px;height:45px;border-radius:50%}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999}
+.overlay.show{display:block}
+
+/* CONTENT */
+.content{padding:30px;overflow:auto;overflow-x:hidden;flex:1;scrollbar-width:none;-ms-overflow-style:none}
+.content::-webkit-scrollbar{width:0;height:0;display:none}
+.page-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.page-title h1{color:var(--navy)}
+.btn{background:var(--navy);color:white;border:none;padding:12px 20px;border-radius:10px;cursor:pointer;font-weight:bold;transition:.25s}
+.btn:hover{background:var(--blue)}
+.box{background:white;padding:20px;border-radius:15px;box-shadow:var(--shadow);margin-bottom:20px}
+.box h3{margin-bottom:20px;color:var(--navy)}
+.table-wrapper{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th{background:var(--navy);color:white;padding:12px;text-align:left;font-size:14px}
+td{padding:12px;border-bottom:1px solid #eee;font-size:14px}
+tbody tr:hover{background:#f9f9f9}
+.badge{padding:5px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+.badge.active{background:#d1e7dd;color:var(--green)}
+.badge.inactive{background:#f8d7da;color:var(--red)}
+.empty{text-align:center;padding:40px;color:#888}
+
+@media(max-width:900px){
+.sidebar{position:absolute;left:-270px;height:100%;z-index:1000}
+.sidebar.active{left:0}
+#menuBtn{display:block}
+.search input{width:180px}
+}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="main-loader" id="mainLoader">
+  <div class="spinner"></div>
+  <p style="margin-top:15px">Loading Students...</p>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png">
+    <h2>GREYSOL ACADEMY</h2>
+    <p>School Management System</p>
+  </div>
+
+  <div class="menu">
+    <a href="admin-dashboard.html"><i class="fas fa-gauge"></i><span>Dashboard</span></a>
+
+    <!-- STUDENTS -->
+    <div class="menu-group active">
+      <div class="menu-header"><i class="fas fa-user-graduate"></i><span>Students</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="registration.html"><i class="fas fa-user-plus"></i>Register Student</a>
+        <a href="manage-students.html" class="active"><i class="fas fa-users"></i>Student List</a>
+        <a href="student-statement.html"><i class="fas fa-file-invoice"></i>Student Statement</a>
+        <a href="#"><i class="fas fa-arrow-up"></i>Promotion</a>
+      </div>
+    </div>
+
+    <!-- FEES -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-money-bill-wave"></i><span>Fees Management</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="invoice.html"><i class="fas fa-file-circle-plus"></i>Create Invoice</a>
+        <a href="invoice-list.html"><i class="fas fa-file-lines"></i>Invoice List</a>
+        <a href="payment.html"><i class="fas fa-cash-register"></i>Receive Payment</a>
+        <a href="#"><i class="fas fa-receipt"></i>Receipts</a>
+        <a href="student-statement.html"><i class="fas fa-file-invoice-dollar"></i>Fee Statements</a>
+      </div>
+    </div>
+
+    <!-- ACCOUNTING -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-calculator"></i><span>Accounting</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="fee-balances.html"><i class="fas fa-wallet"></i>Student Fee Balances</a>
+        <a href="#"><i class="fas fa-list"></i>Chart of Accounts</a>
+        <a href="#"><i class="fas fa-book"></i>Journal Entries</a>
+        <a href="#"><i class="fas fa-book-open"></i>General Ledger</a>
+        <a href="#"><i class="fas fa-scale-balanced"></i>Trial Balance</a>
+        <a href="#"><i class="fas fa-chart-line"></i>Income Statement</a>
+        <a href="#"><i class="fas fa-landmark"></i>Balance Sheet</a>
+        <a href="#"><i class="fas fa-money-check"></i>Cash Book</a>
+        <a href="#"><i class="fas fa-boxes-stacked"></i>Fixed Assets</a>
+        <a href="#"><i class="fas fa-receipt"></i>Expense Tracker</a>
+      </div>
+    </div>
+
+    <!-- ACADEMICS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-school"></i><span>Academics</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="#"><i class="fas fa-chalkboard"></i>Classes</a>
+        <a href="#"><i class="fas fa-book"></i>Subjects</a>
+        <a href="#"><i class="fas fa-calendar"></i>Timetable</a>
+        <a href="#"><i class="fas fa-chart-column"></i>Results</a>
+        <a href="#"><i class="fas fa-user-check"></i>Attendance</a>
+      </div>
+    </div>
+
+    <!-- STAFF -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-users"></i><span>Staff</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="staff-list.html"><i class="fas fa-user-tie"></i>Staff List</a>
+        <a href="#"><i class="fas fa-money-check-dollar"></i>Payroll</a>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-chart-pie"></i><span>Reports</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="#"><i class="fas fa-file"></i>Fee Reports</a>
+        <a href="#"><i class="fas fa-chart-line"></i>Financial Reports</a>
+        <a href="#"><i class="fas fa-user-graduate"></i>Student Reports</a>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-cog"></i><span>Settings</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="#"><i class="fas fa-school"></i>School Information</a>
+        <a href="#"><i class="fas fa-calendar-days"></i>Academic Year</a>
+        <a href="#"><i class="fas fa-user-shield"></i>User Management</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn"><i class="fas fa-right-from-bracket"></i>Logout</a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="left-top">
+      <i class="fas fa-bars" id="menuBtn"></i>
+      <h2>Manage Students</h2>
+    </div>
+    <div class="admin">
+      <div>
+        <span id="adminName">Loading...</span>
+        <small id="adminRole">-</small>
+      </div>
+      <img src="../images/user.png">
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-title">
+      <h1>Student List</h1>
+      <button class="btn" onclick="location.href='registration.html'"><i class="fa-solid fa-plus"></i> Add Student</button>
+    </div>
+
+    <div class="box">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Full Name</th>
+              <th>Class</th>
+              <th>Gender</th>
+              <th>Parent/Guardian</th>
+              <th>Contact</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="studentsTable">
+            <tr><td colspan="7" class="empty">Loading students...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",projectId:"greysol-academy"});
+const db = getFirestore(app);
+const loader = document.getElementById("mainLoader");
+
+// 1. ADMIN ONLY CHECK
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+const userRole = (loggedUser?.role || "").toString().trim().toLowerCase();
+
+if(!loggedUser || userRole!== "administrator"){
+  alert("Access Denied. Administrator only.");
+  window.location.href = "staff-login.html";
+}
+
+// 2. SHOW LOGGED IN USER
+document.getElementById("adminName").innerText = loggedUser.username;
+document.getElementById("adminRole").innerText = loggedUser.role.toUpperCase();
+
+// 3. LOGOUT
+document.getElementById("logoutBtn").onclick = (e) => {
+  e.preventDefault();
+  localStorage.removeItem("loggedUser");
+  window.location.href = "staff-login.html";
+}
+
+// 4. HAMBURGER + OVERLAY
+document.getElementById("menuBtn").onclick = function(){
+  document.getElementById("sidebar").classList.add("active");
+  document.getElementById("overlay").classList.add("show");
+};
+document.getElementById("overlay").onclick = function(){
+  document.getElementById("sidebar").classList.remove("active");
+  document.getElementById("overlay").classList.remove("show");
+}
+
+// 5. SIDEBAR ACCORDION
+const groups = document.querySelectorAll(".menu-group");
+groups.forEach(group => {
+  const header = group.querySelector(".menu-header");
+  header.addEventListener("click", () => {
+    groups.forEach(item => { if(item !== group){ item.classList.remove("active"); } });
+    group.classList.toggle("active");
+  });
+});
+
+// 6. LOAD STUDENTS
+async function loadStudents(){
+  loader.classList.remove("hidden");
+  try{
+    const q = query(collection(db,"students"), orderBy("createdAt","desc"));
+    const snapshot = await getDocs(q);
+    const tbody = document.getElementById("studentsTable");
+    tbody.innerHTML = "";
+
+    if(snapshot.empty){
+      tbody.innerHTML = `<tr><td colspan="7" class="empty">No students found</td></tr>`;
+      return;
+    }
+
+    snapshot.forEach(doc=>{
+      const s = doc.data();
+      const fullName = `${s.firstName || ''} ${s.surname || ''}`.trim();
+      const statusClass = (s.status || 'Active').toLowerCase() === 'active' ? 'active' : 'inactive';
+      
+      tbody.innerHTML += `
+        <tr>
+          <td>${s.studentID || '-'}</td>
+          <td>${fullName || '-'}</td>
+          <td>${s.classApplying || s.class || '-'}</td>
+          <td>${s.gender || '-'}</td>
+          <td>${s.parentName || s.guardianName || '-'}</td>
+          <td>${s.parentContact || s.contact || '-'}</td>
+          <td><span class="badge ${statusClass}">${s.status || 'Active'}</span></td>
+        </tr>
+      `;
+    });
+
+  }catch(error){
+    alert("Error loading students: " + error.message);
+  }
+  finally{
+    loader.classList.add("hidden");
+  }
+}
+
+loadStudents();
+</script>
+</body>
+</html>

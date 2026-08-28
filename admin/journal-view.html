@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>View Journal | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--light:#f4f7fb;--green:#27ae60;--red:#c0392b}
+html,body{margin:0;background:var(--light);height:100%;overflow:hidden}
+body{display:flex}
+
+.main-loader{
+    position:absolute;
+    inset:0;
+    background:rgba(244,247,251,.9);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    color:var(--navy);
+    z-index:100;
+    transition:.3s;
+}
+.main-loader.hidden{opacity:0;pointer-events:none}
+.spinner{
+    width:50px;
+    height:50px;
+    border:4px solid rgba(0,31,63,.25);
+    border-top:4px solid var(--navy);
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.sidebar{width:270px;background:var(--navy);color:white;height:100vh;overflow:auto;position:fixed;left:0;z-index:1000;transition:.3s;scrollbar-width:none;-ms-overflow-style:none}
+.sidebar::-webkit-scrollbar{display:none}
+.logo{padding:20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.2)}
+.logo img{width:80px}.logo h2{margin:10px 0 5px;font-size:18px}.logo p{margin:0;opacity:.8;font-size:13px}
+
+.menu{padding:10px 0}
+.menu a,.menu-header{display:flex;align-items:center;gap:15px;padding:15px 25px;color:white;text-decoration:none;cursor:pointer;transition:.25s}
+.menu a:hover,.menu-header:hover{background:rgba(255,255,255,.12)}
+.menu a.active{background:rgba(255,255,255,.2)}
+
+.arrow{margin-left:auto;transition:.3s}
+.menu-group.active .arrow{transform:rotate(180deg)}
+.submenu{max-height:0;overflow:hidden;background:rgba(0,0,0,.15);transition:max-height.35s}
+.menu-group.active .submenu{max-height:700px}
+.submenu a{padding-left:55px;font-size:14px}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999}
+.overlay.show{display:block}
+.menu-toggle{display:none;font-size:24px;cursor:pointer;color:var(--navy)}
+
+.main{flex:1;display:flex;flex-direction:column;margin-left:270px;height:100vh;overflow:hidden;position:relative}
+.topbar{height:75px;background:white;display:flex;align-items:center;justify-content:space-between;padding:0 30px;box-shadow:0 3px 10px rgba(0,0,0,.1);flex-shrink:0}
+.user-info{color:var(--navy);font-weight:bold;text-align:right}
+.user-info small{display:block;font-weight:normal;font-size:12px;opacity:.7}
+.content{flex:1;padding:30px;overflow:auto}
+
+.box{background:white;padding:30px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.1);margin-bottom:20px}
+
+.journal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--navy);padding-bottom:15px;margin-bottom:20px}
+.school-info{display:flex;gap:15px;align-items:center}
+.school-info img{width:70px;height:70px;object-fit:contain}
+.school-info h1{margin:0;font-size:22px;color:var(--navy)}
+.school-info p{margin:2px 0;font-size:13px;color:#555}
+.journal-title{text-align:right}
+.journal-title h2{margin:0;color:var(--navy)}
+.journal-title p{margin:3px 0;font-size:14px}
+
+.btn{padding:10px 18px;border-radius:8px;border:none;cursor:pointer;font-weight:bold;display:inline-flex;align-items:center;gap:8px}
+.btn-back{background:#7f8c8d;color:white}
+.btn-print{background:var(--navy);color:white}
+.btn-pdf{background:var(--red);color:white}
+.info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:25px}
+.info-item label{font-size:12px;color:#777;display:block}
+.info-item p{margin:5px 0;font-weight:bold;color:var(--navy)}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th{background:var(--navy);color:white;padding:12px;text-align:left}
+td{padding:12px;border-bottom:1px solid #ddd}
+.text-right{text-align:right}
+.amount-debit{color:var(--green);font-weight:bold}
+.amount-credit{color:var(--red);font-weight:bold}
+.total-row td{font-weight:bold;background:#f4f7fb}
+.footer-note{margin-top:40px;font-size:12px;color:#666;border-top:1px dashed #ccc;padding-top:15px}
+
+@media print{
+.sidebar,.topbar,.no-print,.overlay{display:none!important}
+.main{margin-left:0!important}
+.box{box-shadow:none!important;padding:0!important}
+body{background:white!important}
+th{background:#001f3f!important;color:white!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+}
+@media(max-width:1100px){
+  .sidebar{left:-270px}
+  .sidebar.show{left:0}
+  .main{margin-left:0}
+  .menu-toggle{display:block}
+  .topbar{padding:0 15px}
+  .content{padding:15px}
+  .info-grid{grid-template-columns:1fr}
+  .journal-header{flex-direction:column;align-items:flex-start;gap:10px}
+  .journal-title{text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay"></div>
+
+<div class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png">
+    <h2>GREYSOL ACADEMY</h2>
+    <p>Accountant Portal</p>
+  </div>
+  <div class="menu">
+    <a href="accountant-dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+    <a href="chart-of-accounts.html"><i class="fa-solid fa-book"></i> Chart of Accounts</a>
+    <a href="journal-list.html" class="active"><i class="fa-solid fa-book-journal-whills"></i> Journal Entries</a>
+    <a href="invoice-list.html"><i class="fa-solid fa-file-invoice-dollar"></i> Invoices</a>
+    <a href="expenses.html"><i class="fa-solid fa-receipt"></i> Expenses</a>
+    <a href="payments-list.html"><i class="fa-solid fa-credit-card"></i> Payments</a>
+    <a href="receipts-list.html"><i class="fa-solid fa-file-invoice"></i> Receipts</a>
+
+    <div class="menu-group" id="reportsGroup">
+      <div class="menu-header" id="reportsHeader">
+        <i class="fa-solid fa-chart-pie"></i> Reports
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+        <a href="report-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="report-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Accounts Receivable Aging</a>
+        <a href="report-payables.html"><i class="fa-solid fa-hand-holding-dollar"></i> Accounts Payable</a>
+      </div>
+    </div>
+
+    <a href="accounting-settings.html"><i class="fa-solid fa-gear"></i> Accounting Settings</a>
+    <a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="main-loader" id="mainLoader">
+    <div class="spinner"></div>
+    <p style="margin-top:15px">Loading Journal...</p>
+  </div>
+
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:15px">
+      <i class="fa-solid fa-bars menu-toggle" id="menuToggle"></i>
+      <h2>Journal Voucher</h2>
+    </div>
+    <div class="user-info">
+      <span id="staffName">Loading...</span>
+      <small id="staffRole">-</small>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="box" id="printArea">
+      <div class="journal-header">
+        <div class="school-info">
+          <img src="../images/logo1 - Copy.png" alt="Greysol Logo">
+          <div>
+            <h1>GREYSOL ACADEMY</h1>
+            <p>Accountant Portal</p>
+            <p>Blantyre, Malawi</p>
+          </div>
+        </div>
+        <div class="journal-title">
+          <h2>JOURNAL VOUCHER</h2>
+          <p><b>No:</b> <span id="journalNo">Loading...</span></p>
+          <p><b>Journal Date:</b> <span id="journalDateTop">-</span></p>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item"><label>Journal Date</label><p id="journalDate">-</p></div>
+        <div class="info-item"><label>Reference</label><p id="reference">-</p></div>
+        <div class="info-item"><label>Posted By</label><p id="postedBy">-</p></div>
+        <div class="info-item" style="grid-column: span 2;"><label>Description / Narration</label><p id="description">-</p></div>
+        <div class="info-item"><label>Posted Date</label><p id="postedAt">-</p></div>
+      </div>
+
+      <h3>Journal Lines</h3>
+      <table id="linesTable">
+        <thead>
+          <tr>
+            <th style="width:5%">#</th>
+            <th style="width:15%">Account Code</th>
+            <th>Account Name</th>
+            <th class="text-right" style="width:15%">Debit MWK</th>
+            <th class="text-right" style="width:15%">Credit MWK</th>
+          </tr>
+        </thead>
+        <tbody id="linesBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="3">TOTAL</td>
+            <td class="text-right amount-debit" id="totalDebit">MWK 0</td>
+            <td class="text-right amount-credit" id="totalCredit">MWK 0</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="footer-note">
+        <p><b>Prepared By:</b> ____________________ &nbsp;&nbsp; <b>Posted By:</b> <span id="postedByFooter">-</span> &nbsp;&nbsp; <b>Approved By:</b> ____________________</p>
+        <p>This is a system generated journal voucher.</p>
+      </div>
+
+      <div class="no-print" style="margin-top:20px;display:flex;gap:10px">
+        <button class="btn btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button>
+        <button class="btn btn-pdf" onclick="downloadPDF()"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+        <button class="btn btn-back" id="backBtn"><i class="fa-solid fa-arrow-left"></i> Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// SIDEBAR TOGGLE
+document.getElementById("reportsHeader").addEventListener("click", function () {
+    document.getElementById("reportsGroup").classList.toggle("active");
+});
+document.getElementById("menuToggle").onclick = () => {
+  document.getElementById("sidebar").classList.add("show");
+  document.getElementById("overlay").classList.add("show");
+}
+document.getElementById("overlay").onclick = () => {
+  document.getElementById("sidebar").classList.remove("show");
+  document.getElementById("overlay").classList.remove("show");
+}
+
+// SMART BACK BUTTON
+document.getElementById("backBtn").onclick = function(){
+  if(document.referrer && document.referrer.includes(window.location.hostname)){
+    window.history.back();
+  } else {
+    window.location.href = 'journal-list.html';
+  }
+}
+
+// DOWNLOAD PDF FUNCTION
+async function downloadPDF(){
+const { jsPDF } = window.jspdf;
+const area = document.getElementById("printArea");
+const btns = document.querySelector(".no-print");
+btns.style.display = "none";
+
+const canvas = await html2canvas(area,{scale:2,useCORS:true,backgroundColor:"#ffffff"});
+btns.style.display = "flex";
+
+const pdf = new jsPDF("p","mm","a4");
+const imgWidth = 210;
+const imgHeight = (canvas.height * imgWidth) / canvas.width;
+pdf.addImage(canvas.toDataURL("image/png"),"PNG",0,0,imgWidth,imgHeight);
+pdf.save("Journal-"+document.getElementById("journalNo").innerText+".pdf")
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",projectId:"greysol-academy"});
+const db = getFirestore(app);
+const loader = document.getElementById("mainLoader");
+
+// ROLE CHECK
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+const userRole = (loggedUser?.role || "").toString().trim().toLowerCase();
+
+if(!loggedUser || userRole!== "accountant"){
+  alert("Access Denied. This page is for Accountants only.");
+  window.location.href = "staff-login.html";
+}
+document.getElementById("staffName").innerHTML = loggedUser.username;
+document.getElementById("staffRole").innerHTML = loggedUser.role;
+
+document.getElementById("logoutBtn").onclick = (e) => {
+  e.preventDefault();
+  localStorage.removeItem("loggedUser");
+  window.location.href = "staff-login.html";
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+const journalId = urlParams.get('id');
+
+if(!journalId){
+  alert("No Journal ID provided");
+  window.location.href = "journal-list.html";
+}
+
+async function loadJournal(){
+  loader.classList.remove("hidden");
+  try{
+    const docRef = doc(db,"journalEntries", journalId);
+    const docSnap = await getDoc(docRef);
+
+    if(!docSnap.exists()){
+      alert("Journal not found");
+      window.location.href = "journal-list.html";
+      return;
+    }
+
+    const j = docSnap.data();
+
+    document.getElementById("journalNo").innerText = j.journalNo || journalId;
+    document.getElementById("journalDate").innerText = formatDate(j.date);
+    document.getElementById("journalDateTop").innerText = formatDate(j.date);
+    document.getElementById("reference").innerText = j.reference || '-';
+    document.getElementById("description").innerText = j.description || '-';
+    document.getElementById("postedBy").innerText = j.postedBy || j.createdBy || 'System';
+    document.getElementById("postedByFooter").innerText = j.postedBy || j.createdBy || 'System';
+    document.getElementById("postedAt").innerText = formatDateTime(j.postedAt || j.createdAt);
+
+    const tbody = document.getElementById("linesBody");
+    tbody.innerHTML = "";
+    let totalDebit = 0;
+    let totalCredit = 0;
+
+    j.lines.forEach((line, index)=>{
+      totalDebit += Number(line.debit || 0);
+      totalCredit += Number(line.credit || 0);
+
+      tbody.innerHTML += `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${line.accountCode}</td>
+        <td>${line.accountName}</td>
+        <td class="text-right amount-debit">${line.debit > 0 ? Number(line.debit).toLocaleString() : '-'}</td>
+        <td class="text-right amount-credit">${line.credit > 0 ? Number(line.credit).toLocaleString() : '-'}</td>
+      </tr>`;
+    });
+
+    document.getElementById("totalDebit").innerText = "MWK " + totalDebit.toLocaleString();
+    document.getElementById("totalCredit").innerText = "MWK " + totalCredit.toLocaleString();
+
+  }catch(error){
+    console.error(error);
+    alert("Error loading journal: " + error.message);
+  }finally{
+    loader.classList.add("hidden");
+  }
+}
+
+function formatDate(timestamp){
+  if(!timestamp) return "-";
+  const date = timestamp.toDate? timestamp.toDate() : new Date(timestamp);
+  return date.toLocaleDateString("en-GB", {day:'2-digit', month:'long', year:'numeric'});
+}
+function formatDateTime(timestamp){
+  if(!timestamp) return "-";
+  const date = timestamp.toDate? timestamp.toDate() : new Date(timestamp);
+  return date.toLocaleDateString("en-GB") + " " + date.toLocaleTimeString("en-GB",{hour:'2-digit',minute:'2-digit'}); // FIXED HERE
+}
+
+loadJournal();
+</script>
+</body>
+</html>

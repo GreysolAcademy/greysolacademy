@@ -1,0 +1,5259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Payment Requisition | Greysol Academy</title>
+
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
+
+:root{
+  --navy:#001f3f;
+  --navy2:#003366;
+  --blue:#1769aa;
+  --green:#1f9d55;
+  --red:#c0392b;
+  --orange:#f39c12;
+  --purple:#6f42c1;
+  --teal:#008c95;
+  --light:#f4f7fb;
+  --border:#e5e9ef;
+  --muted:#6b7280;
+  --white:#fff;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--light);
+}
+
+body{
+  overflow:hidden;
+  color:#1f2937;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+  width:270px;
+  height:100vh;
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:1100;
+  background:var(--navy);
+  color:#fff;
+  overflow-y:auto;
+  transition:.25s ease;
+}
+
+.logo{
+  padding:18px 15px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+
+.logo img{
+  width:66px;
+  height:66px;
+  object-fit:contain;
+}
+
+.logo h2{
+  font-size:17px;
+  margin:8px 0 3px;
+}
+
+.logo p{
+  margin:0;
+  font-size:12px;
+  opacity:.7;
+}
+
+.menu{
+  padding:8px 0 20px;
+}
+
+.section-label{
+  padding:15px 24px 6px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1.1px;
+  opacity:.5;
+}
+
+.menu a,
+.menu-header{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:12px 22px;
+  color:#fff;
+  text-decoration:none;
+  cursor:pointer;
+  font-size:13px;
+  min-height:46px;
+}
+
+.menu a i,
+.menu-header>i:first-child{
+  width:18px;
+  text-align:center;
+}
+
+.menu a:hover,
+.menu-header:hover{
+  background:rgba(255,255,255,.08);
+}
+
+.menu a.active{
+  background:rgba(255,255,255,.13);
+  border-left:4px solid var(--green);
+  padding-left:18px;
+}
+
+.arrow{
+  margin-left:auto!important;
+  width:auto!important;
+  font-size:11px!important;
+  transition:.25s;
+}
+
+.submenu{
+  max-height:0;
+  overflow:hidden;
+  background:rgba(0,0,0,.17);
+  transition:max-height .3s ease;
+}
+
+.menu-group.active .submenu{
+  max-height:900px;
+}
+
+.menu-group.active .arrow{
+  transform:rotate(180deg);
+}
+
+.submenu a{
+  padding-left:54px;
+  font-size:12px;
+}
+
+.submenu a.active{
+  padding-left:50px;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+  margin-left:270px;
+  width:calc(100% - 270px);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  height:70px;
+  flex:0 0 70px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px;
+  box-shadow:0 2px 10px rgba(0,0,0,.07);
+}
+
+.top-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.topbar h2{
+  margin:0;
+  color:var(--navy);
+  font-size:20px;
+}
+
+.mobile-menu{
+  display:none;
+  font-size:21px;
+  color:var(--navy);
+  cursor:pointer;
+}
+
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.user-avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--navy);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+}
+
+.user-text{
+  text-align:right;
+}
+
+.user-text strong{
+  display:block;
+  font-size:13px;
+  color:var(--navy);
+}
+
+.user-text span{
+  font-size:11px;
+  color:var(--muted);
+}
+
+.content{
+  flex:1;
+  overflow-y:auto;
+  padding:22px 25px 40px;
+}
+
+/* ================= PAGE HEADER ================= */
+
+.page-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:15px;
+  margin-bottom:18px;
+}
+
+.page-head h1{
+  margin:0 0 5px;
+  font-size:22px;
+  color:var(--navy);
+}
+
+.page-head p{
+  margin:0;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.header-actions{
+  display:flex;
+  gap:9px;
+}
+
+.btn{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+
+.btn-primary{
+  background:var(--navy);
+  color:#fff;
+}
+
+.btn-primary:hover{
+  background:var(--navy2);
+}
+
+.btn-success{
+  background:var(--green);
+  color:#fff;
+}
+
+.btn-danger{
+  background:var(--red);
+  color:#fff;
+}
+
+.btn-light{
+  background:#fff;
+  border:1px solid var(--border);
+  color:#344054;
+}
+
+.btn-warning{
+  background:var(--orange);
+  color:#fff;
+}
+
+.btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+/* ================= SUMMARY ================= */
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.summary-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:11px;
+  padding:15px;
+}
+
+.summary-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.summary-title{
+  font-size:10px;
+  font-weight:700;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+
+.summary-icon{
+  width:34px;
+  height:34px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.icon-blue{
+  background:#e8f1fb;
+  color:var(--blue);
+}
+
+.icon-orange{
+  background:#fff4df;
+  color:var(--orange);
+}
+
+.icon-green{
+  background:#e8f7ef;
+  color:var(--green);
+}
+
+.icon-red{
+  background:#fbeceb;
+  color:var(--red);
+}
+
+.summary-value{
+  margin-top:11px;
+  font-size:20px;
+  font-weight:800;
+  color:var(--navy);
+}
+
+/* ================= CARD ================= */
+
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  margin-bottom:18px;
+}
+
+.card-header{
+  padding:16px 18px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.card-header h3{
+  margin:0;
+  color:var(--navy);
+  font-size:14px;
+}
+
+.card-header span{
+  font-size:11px;
+  color:var(--muted);
+}
+
+/* ================= FORM ================= */
+
+.form-body{
+  padding:20px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.form-grid.two{
+  grid-template-columns:repeat(2,1fr);
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.field.full{
+  grid-column:1 / -1;
+}
+
+.field label{
+  font-size:10px;
+  color:var(--muted);
+  font-weight:700;
+}
+
+.field label .required{
+  color:var(--red);
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:10px;
+  outline:none;
+  font-size:11px;
+  color:#27364a;
+  background:#fff;
+}
+
+.field textarea{
+  resize:vertical;
+  min-height:80px;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 2px rgba(23,105,170,.08);
+}
+
+.field small{
+  color:var(--muted);
+  font-size:9px;
+}
+
+/* ================= PAYMENT LINES ================= */
+
+.lines-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+}
+
+.lines-header h3{
+  margin:0;
+  font-size:13px;
+  color:var(--navy);
+}
+
+.lines-header span{
+  font-size:10px;
+  color:var(--muted);
+}
+
+.line-table{
+  overflow-x:auto;
+}
+
+.line-table table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.line-table th{
+  background:#f5f7fa;
+  color:#536174;
+  text-align:left;
+  padding:10px;
+  font-size:10px;
+  text-transform:uppercase;
+  border-bottom:1px solid var(--border);
+}
+
+.line-table td{
+  padding:9px;
+  border-bottom:1px solid #eef1f4;
+}
+
+.line-table input,
+.line-table select{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:8px;
+  font-size:11px;
+  outline:none;
+}
+
+.line-number{
+  width:38px;
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+}
+
+.remove-line{
+  width:30px;
+  height:30px;
+  border:1px solid #f0d5d2;
+  background:#fff;
+  color:var(--red);
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.remove-line:hover{
+  background:#fbeceb;
+}
+
+.add-line{
+  margin:12px 16px;
+}
+
+/* ================= TOTAL ================= */
+
+.total-area{
+  display:flex;
+  justify-content:flex-end;
+  padding:18px;
+}
+
+.total-box{
+  width:330px;
+  border-top:2px solid var(--navy);
+  padding-top:10px;
+}
+
+.total-line{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  font-size:12px;
+}
+
+.total-line.grand{
+  border-top:1px solid var(--border);
+  margin-top:5px;
+  padding-top:10px;
+  font-size:16px;
+  font-weight:800;
+  color:var(--navy);
+}
+
+/* ================= NOTICE ================= */
+
+.notice{
+  padding:12px 14px;
+  border-radius:8px;
+  font-size:11px;
+  margin-bottom:16px;
+}
+
+.notice-blue{
+  background:#eaf3fb;
+  color:#14598e;
+  border:1px solid #d7e8f7;
+}
+
+.notice-orange{
+  background:#fff5e3;
+  color:#8a5a00;
+  border:1px solid #f3dfb8;
+}
+
+/* ================= TABLE ================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  background:#f5f7fa;
+  color:#536174;
+  text-align:left;
+  padding:11px 10px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+  border-bottom:1px solid var(--border);
+}
+
+td{
+  padding:11px 10px;
+  font-size:11px;
+  border-bottom:1px solid #eef1f4;
+  color:#344054;
+}
+
+tr:last-child td{
+  border-bottom:0;
+}
+
+.ref{
+  color:var(--blue);
+  font-weight:800;
+}
+
+.amount{
+  text-align:right;
+  font-weight:750;
+  color:var(--navy);
+}
+
+.badge{
+  display:inline-flex;
+  padding:4px 8px;
+  border-radius:20px;
+  font-size:9px;
+  font-weight:700;
+}
+
+.badge-green{
+  background:#e8f7ef;
+  color:#187844;
+}
+
+.badge-orange{
+  background:#fff4df;
+  color:#a76600;
+}
+
+.badge-red{
+  background:#fbeceb;
+  color:#a83227;
+}
+
+.badge-blue{
+  background:#e8f1fb;
+  color:#14598e;
+}
+
+.badge-purple{
+  background:#f0eafb;
+  color:#633bb0;
+}
+
+.action-btn{
+  border:1px solid var(--border);
+  background:#fff;
+  width:30px;
+  height:30px;
+  border-radius:6px;
+  cursor:pointer;
+  color:var(--navy);
+}
+
+.action-btn:hover{
+  background:#f4f7fb;
+}
+
+/* ================= FILTERS ================= */
+
+.filters{
+  padding:14px 18px;
+  display:grid;
+  grid-template-columns:1.5fr 1fr 1fr 1fr auto;
+  gap:10px;
+  border-bottom:1px solid var(--border);
+}
+
+.filter-field{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.filter-field label{
+  font-size:10px;
+  color:var(--muted);
+  font-weight:700;
+}
+
+.filter-field input,
+.filter-field select{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:9px 10px;
+  outline:none;
+  font-size:11px;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.48);
+  z-index:2000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  background:#fff;
+  width:min(1100px,100%);
+  max-height:92vh;
+  overflow-y:auto;
+  border-radius:13px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.modal-header{
+  padding:17px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--border);
+}
+
+.modal-header h2{
+  margin:0;
+  color:var(--navy);
+  font-size:17px;
+}
+
+.close{
+  border:0;
+  background:transparent;
+  font-size:20px;
+  cursor:pointer;
+  color:var(--muted);
+}
+
+.modal-body{
+  padding:20px;
+}
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.info-box{
+  background:#f8fafc;
+  border:1px solid #edf0f4;
+  border-radius:8px;
+  padding:11px;
+}
+
+.info-box label{
+  display:block;
+  font-size:9px;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.info-box strong{
+  font-size:12px;
+  color:var(--navy);
+}
+
+.modal-footer{
+  padding:15px 20px;
+  border-top:1px solid var(--border);
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+}
+
+/* ================= EMPTY ================= */
+
+.empty{
+  padding:30px 10px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.empty i{
+  display:block;
+  font-size:28px;
+  margin-bottom:8px;
+  opacity:.45;
+}
+
+/* ================= LOADER ================= */
+
+#pageLoader{
+  position:fixed;
+  inset:0;
+  background:rgba(244,247,251,.94);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  z-index:3000;
+}
+
+#pageLoader i{
+  font-size:40px;
+  color:var(--navy);
+  animation:spin 1s linear infinite;
+}
+
+#pageLoader p{
+  font-size:12px;
+  color:var(--muted);
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* ================= MOBILE ================= */
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  z-index:1050;
+}
+
+@media(max-width:1100px){
+
+  .summary-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .filters{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .info-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:992px){
+
+  .sidebar{
+    left:-270px;
+  }
+
+  .sidebar.open{
+    left:0;
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  .mobile-menu{
+    display:block;
+  }
+
+  .overlay.show{
+    display:block;
+  }
+}
+
+@media(max-width:650px){
+
+  .content{
+    padding:15px;
+  }
+
+  .topbar{
+    padding:0 15px;
+  }
+
+  .user-text{
+    display:none;
+  }
+
+  .page-head{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+
+  .filters,
+  .form-grid,
+  .form-grid.two,
+  .info-grid{
+    grid-template-columns:1fr;
+  }
+
+  .field.full{
+    grid-column:auto;
+  }
+
+  .total-box{
+    width:100%;
+  }
+
+  .header-actions{
+    width:100%;
+  }
+
+  .header-actions .btn{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside class="sidebar" id="sidebar">
+
+  <div class="logo">
+
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+
+    <h2>GREYSOL ACADEMY</h2>
+
+    <p id="portalRole">Accountant Portal</p>
+
+  </div>
+
+
+  <div class="menu">
+
+    <a href="accountant-dashboard.html">
+
+      <i class="fa-solid fa-gauge"></i>
+
+      <span>Dashboard</span>
+
+    </a>
+
+
+    <div class="section-label">Operations</div>
+
+
+    <!-- SALES -->
+
+    <div class="menu-group">
+
+      <div class="menu-header">
+
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+
+        <span>Sales & Receivables</span>
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+      <div class="submenu">
+
+        <a href="students.html">
+          <i class="fa-solid fa-user-graduate"></i>
+          Students / Customers
+        </a>
+
+        <a href="quotations.html">
+          <i class="fa-solid fa-file-signature"></i>
+          Quotations
+        </a>
+
+        <a href="invoice-list.html">
+          <i class="fa-solid fa-file-invoice"></i>
+          Invoices
+        </a>
+
+        <a href="credit-notes.html">
+          <i class="fa-solid fa-file-circle-minus"></i>
+          Credit Notes
+        </a>
+
+        <a href="receipts-list.html">
+          <i class="fa-solid fa-money-bill-wave"></i>
+          Customer Payments
+        </a>
+
+        <a href="customer-statements.html">
+          <i class="fa-solid fa-file-lines"></i>
+          Customer Statements
+        </a>
+
+        <a href="accounts-receivable.html">
+          <i class="fa-solid fa-hand-holding-dollar"></i>
+          Accounts Receivable
+        </a>
+
+        <a href="receivables-aging.html">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          Receivables Aging
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- PURCHASES -->
+
+    <div class="menu-group active">
+
+      <div class="menu-header">
+
+        <i class="fa-solid fa-cart-shopping"></i>
+
+        <span>Purchases & Payables</span>
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+
+      <div class="submenu">
+
+        <a href="suppliers.html">
+
+          <i class="fa-solid fa-truck-field"></i>
+
+          Suppliers
+
+        </a>
+
+
+        <a href="purchase-requisitions.html">
+
+          <i class="fa-solid fa-file-circle-plus"></i>
+
+          Purchase Requisition
+
+        </a>
+
+
+        <a href="purchase-orders.html">
+
+          <i class="fa-solid fa-clipboard-list"></i>
+
+          Purchase Orders
+
+        </a>
+
+
+        <a href="goods-received.html">
+
+          <i class="fa-solid fa-box-open"></i>
+
+          Goods Received
+
+        </a>
+
+
+        <a href="bills.html">
+
+          <i class="fa-solid fa-file-invoice"></i>
+
+          Bills
+
+        </a>
+
+
+        <a href="payment-requisition.html"
+           class="active">
+
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+
+          Payment Requisition
+
+        </a>
+
+
+        <a href="payment-authorisation.html">
+
+          <i class="fa-solid fa-check-double"></i>
+
+          Payment Authorisation
+
+        </a>
+
+
+        <a href="payment-posting.html">
+
+          <i class="fa-solid fa-money-check-dollar"></i>
+
+          Payment Posting
+
+        </a>
+
+
+        <a href="payments.html">
+
+          <i class="fa-solid fa-money-bill-transfer"></i>
+
+          Payments
+
+        </a>
+
+
+        <a href="supplier-payments.html">
+
+          <i class="fa-solid fa-money-check-dollar"></i>
+
+          Supplier Payments
+
+        </a>
+
+
+        <a href="supplier-statements.html">
+
+          <i class="fa-solid fa-file-lines"></i>
+
+          Supplier Statements
+
+        </a>
+
+
+        <a href="accounts-payable.html">
+
+          <i class="fa-solid fa-money-bill-transfer"></i>
+
+          Accounts Payable
+
+        </a>
+
+
+        <a href="payables-aging.html">
+
+          <i class="fa-solid fa-clock-rotate-left"></i>
+
+          Payables Aging
+
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="section-label">Cash Management</div>
+
+
+    <!-- BANKING -->
+
+    <div class="menu-group">
+
+      <div class="menu-header">
+
+        <i class="fa-solid fa-building-columns"></i>
+
+        <span>Banking</span>
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+
+      <div class="submenu">
+
+        <a href="bank-accounts.html">
+
+          <i class="fa-solid fa-building-columns"></i>
+
+          Bank Accounts
+
+        </a>
+
+        <a href="cash-accounts.html">
+
+          <i class="fa-solid fa-wallet"></i>
+
+          Cash Accounts
+
+        </a>
+
+        <a href="bank-transactions.html">
+
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+
+          Bank Transactions
+
+        </a>
+
+        <a href="bank-transfer.html">
+
+          <i class="fa-solid fa-right-left"></i>
+
+          Transfers
+
+        </a>
+
+        <a href="bank-reconciliation.html">
+
+          <i class="fa-solid fa-scale-balanced"></i>
+
+          Bank Reconciliation
+
+        </a>
+
+        <a href="reconciliation-history.html">
+
+          <i class="fa-solid fa-clock-rotate-left"></i>
+
+          Reconciliation History
+
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- ACCOUNTING -->
+
+    <div class="section-label">General Accounting</div>
+
+
+    <div class="menu-group">
+
+      <div class="menu-header">
+
+        <i class="fa-solid fa-book"></i>
+
+        <span>Accounting</span>
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+
+      <div class="submenu">
+
+        <a href="chart-of-accounts.html">
+
+          <i class="fa-solid fa-list"></i>
+
+          Chart of Accounts
+
+        </a>
+
+        <a href="journal-entry.html">
+
+          <i class="fa-solid fa-book-journal-whills"></i>
+
+          Journal Entry
+
+        </a>
+
+        <a href="journal-list.html">
+
+          <i class="fa-solid fa-list-check"></i>
+
+          Journal List
+
+        </a>
+
+        <a href="general-ledger.html">
+
+          <i class="fa-solid fa-book-open"></i>
+
+          General Ledger
+
+        </a>
+
+        <a href="account-ledger.html">
+
+          <i class="fa-solid fa-table-list"></i>
+
+          Account Ledger
+
+        </a>
+
+        <a href="recurring-journals.html">
+
+          <i class="fa-solid fa-repeat"></i>
+
+          Recurring Journals
+
+        </a>
+
+        <a href="period-closing.html">
+
+          <i class="fa-solid fa-lock"></i>
+
+          Period Closing
+
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- EXPENSES -->
+
+    <div class="menu-group">
+
+      <div class="menu-header">
+
+        <i class="fa-solid fa-receipt"></i>
+
+        <span>Expenses</span>
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+
+      <div class="submenu">
+
+        <a href="expenses.html">
+
+          <i class="fa-solid fa-file-circle-plus"></i>
+
+          Expense Entry
+
+        </a>
+
+        <a href="expense-list.html">
+
+          <i class="fa-solid fa-list"></i>
+
+          Expense List
+
+        </a>
+
+        <a href="expense-categories.html">
+
+          <i class="fa-solid fa-tags"></i>
+
+          Expense Categories
+
+        </a>
+
+        <a href="expense-claims.html">
+
+          <i class="fa-solid fa-hand-holding-dollar"></i>
+
+          Expense Claims
+
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- HR -->
+
+    <div class="section-label">People & Statutory</div>
+
+
+    <div class="menu-group">
+
+      <div class="menu-header">
+
+        <i class="fa-solid fa-users-gear"></i>
+
+        <span>HR & Payroll</span>
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+
+      <div class="submenu">
+
+        <a href="employees.html">
+          <i class="fa-solid fa-users"></i>
+          Employees
+        </a>
+
+        <a href="employee-categories.html">
+          <i class="fa-solid fa-user-tag"></i>
+          Employee Categories
+        </a>
+
+        <a href="attendance.html">
+          <i class="fa-solid fa-calendar-check"></i>
+          Attendance
+        </a>
+
+        <a href="payroll-settings.html">
+          <i class="fa-solid fa-gears"></i>
+          Payroll Settings
+        </a>
+
+        <a href="payroll-run.html">
+          <i class="fa-solid fa-money-check-dollar"></i>
+          Run Payroll
+        </a>
+
+        <a href="payslips.html">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+          Payslips
+        </a>
+
+        <a href="payroll-history.html">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          Payroll History
+        </a>
+
+        <a href="payroll-journal.html">
+          <i class="fa-solid fa-book"></i>
+          Payroll Journal
+        </a>
+
+        <a href="payroll-reports.html">
+          <i class="fa-solid fa-chart-column"></i>
+          Payroll Reports
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- TAX -->
+
+    <div class="menu-group">
+
+      <div class="menu-header">
+
+        <i class="fa-solid fa-percent"></i>
+
+        <span>Taxes</span>
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+
+      <div class="submenu">
+
+        <a href="vat.html">
+          <i class="fa-solid fa-percent"></i>
+          VAT
+        </a>
+
+        <a href="vat-transactions.html">
+          <i class="fa-solid fa-receipt"></i>
+          VAT Transactions
+        </a>
+
+        <a href="vat-return.html">
+          <i class="fa-solid fa-file-circle-check"></i>
+          VAT Return
+        </a>
+
+        <a href="withholding-tax.html">
+          <i class="fa-solid fa-file-invoice"></i>
+          Withholding Tax
+        </a>
+
+        <a href="paye.html">
+          <i class="fa-solid fa-user-shield"></i>
+          PAYE
+        </a>
+
+        <a href="tax-reports.html">
+          <i class="fa-solid fa-chart-column"></i>
+          Tax Reports
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- REPORTS -->
+
+    <div class="section-label">Reporting</div>
+
+
+    <div class="menu-group">
+
+      <div class="menu-header">
+
+        <i class="fa-solid fa-chart-pie"></i>
+
+        <span>Reports</span>
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+
+      <div class="submenu">
+
+        <a href="report-trial-balance.html">
+          <i class="fa-solid fa-scale-balanced"></i>
+          Trial Balance
+        </a>
+
+        <a href="general-ledger.html">
+          <i class="fa-solid fa-book-open"></i>
+          General Ledger
+        </a>
+
+        <a href="report-income-statement.html">
+          <i class="fa-solid fa-chart-line"></i>
+          Income Statement
+        </a>
+
+        <a href="report-balance-sheet.html">
+          <i class="fa-solid fa-building-columns"></i>
+          Balance Sheet
+        </a>
+
+        <a href="report-cash-flow.html">
+          <i class="fa-solid fa-water"></i>
+          Cash Flow Statement
+        </a>
+
+        <a href="receivables-aging.html">
+          <i class="fa-solid fa-user-clock"></i>
+          AR Aging
+        </a>
+
+        <a href="payables-aging.html">
+          <i class="fa-solid fa-file-circle-exclamation"></i>
+          AP Aging
+        </a>
+
+        <a href="customer-statements.html">
+          <i class="fa-solid fa-file-lines"></i>
+          Customer Statements
+        </a>
+
+        <a href="supplier-statements.html">
+          <i class="fa-solid fa-file-lines"></i>
+          Supplier Statements
+        </a>
+
+        <a href="expense-report.html">
+          <i class="fa-solid fa-receipt"></i>
+          Expense Report
+        </a>
+
+        <a href="revenue-report.html">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+          Revenue Report
+        </a>
+
+        <a href="tax-reports.html">
+          <i class="fa-solid fa-percent"></i>
+          Tax Reports
+        </a>
+
+        <a href="payroll-reports.html">
+          <i class="fa-solid fa-users"></i>
+          Payroll Reports
+        </a>
+
+        <a href="audit-trail.html">
+          <i class="fa-solid fa-shield-halved"></i>
+          Audit Trail
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- ADMINISTRATION -->
+
+    <div class="section-label">Administration</div>
+
+
+    <div class="menu-group">
+
+      <div class="menu-header">
+
+        <i class="fa-solid fa-user-shield"></i>
+
+        <span>Administration</span>
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+
+      <div class="submenu">
+
+        <a href="userlist.html">
+          <i class="fa-solid fa-users"></i>
+          Users
+        </a>
+
+        <a href="roles-permissions.html">
+          <i class="fa-solid fa-key"></i>
+          Roles & Permissions
+        </a>
+
+        <a href="audit-trail.html">
+          <i class="fa-solid fa-shield-halved"></i>
+          Audit Trail
+        </a>
+
+        <a href="approval-workflows.html">
+          <i class="fa-solid fa-check-double"></i>
+          Approval Workflows
+        </a>
+
+        <a href="system-logs.html">
+          <i class="fa-solid fa-terminal"></i>
+          System Logs
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- SETTINGS -->
+
+    <div class="menu-group">
+
+      <div class="menu-header">
+
+        <i class="fa-solid fa-gear"></i>
+
+        <span>Settings</span>
+
+        <i class="fa-solid fa-chevron-down arrow"></i>
+
+      </div>
+
+
+      <div class="submenu">
+
+        <a href="company-profile.html">
+          <i class="fa-solid fa-building"></i>
+          Company Profile
+        </a>
+
+        <a href="financial-year.html">
+          <i class="fa-solid fa-calendar-days"></i>
+          Financial Year
+        </a>
+
+        <a href="accounting-periods.html">
+          <i class="fa-solid fa-calendar-check"></i>
+          Accounting Periods
+        </a>
+
+        <a href="tax-settings.html">
+          <i class="fa-solid fa-percent"></i>
+          Tax Settings
+        </a>
+
+        <a href="numbering-settings.html">
+          <i class="fa-solid fa-hashtag"></i>
+          Numbering
+        </a>
+
+        <a href="system-settings.html">
+          <i class="fa-solid fa-sliders"></i>
+          System Settings
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <a href="#" id="logoutBtn">
+
+      <i class="fa-solid fa-right-from-bracket"></i>
+
+      <span>Logout</span>
+
+    </a>
+
+  </div>
+
+</aside>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main">
+
+<header class="topbar">
+
+  <div class="top-left">
+
+    <i class="fa-solid fa-bars mobile-menu"
+       onclick="toggleSidebar()"></i>
+
+    <h2>Payment Requisition</h2>
+
+  </div>
+
+
+  <div class="user-info">
+
+    <div class="user-text">
+
+      <strong id="staffName">Loading...</strong>
+
+      <span id="staffRole">Accountant</span>
+
+    </div>
+
+
+    <div class="user-avatar" id="avatar">
+      A
+    </div>
+
+  </div>
+
+</header>
+
+
+<section class="content">
+
+<!-- =========================================================
+     PAGE HEADER
+========================================================= -->
+
+<div class="page-head">
+
+  <div>
+
+    <h1>Payment Requisition</h1>
+
+    <p>
+      Prepare and submit payment requests for authorisation.
+    </p>
+
+  </div>
+
+
+  <div class="header-actions">
+
+    <button
+      class="btn btn-light"
+      onclick="loadData()">
+
+      <i class="fa-solid fa-rotate"></i>
+
+      Refresh
+
+    </button>
+
+
+    <button
+      class="btn btn-primary"
+      onclick="openRequisitionModal()">
+
+      <i class="fa-solid fa-plus"></i>
+
+      New Payment Requisition
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     SUMMARY
+========================================================= -->
+
+<div class="summary-grid">
+
+  <div class="summary-card">
+
+    <div class="summary-top">
+
+      <span class="summary-title">
+        Drafts
+      </span>
+
+      <span class="summary-icon icon-blue">
+        <i class="fa-solid fa-file-pen"></i>
+      </span>
+
+    </div>
+
+    <div
+      class="summary-value"
+      id="draftCount">
+      0
+    </div>
+
+  </div>
+
+
+  <div class="summary-card">
+
+    <div class="summary-top">
+
+      <span class="summary-title">
+        Awaiting Authorisation
+      </span>
+
+      <span class="summary-icon icon-orange">
+        <i class="fa-solid fa-hourglass-half"></i>
+      </span>
+
+    </div>
+
+    <div
+      class="summary-value"
+      id="pendingCount">
+      0
+    </div>
+
+  </div>
+
+
+  <div class="summary-card">
+
+    <div class="summary-top">
+
+      <span class="summary-title">
+        Approved
+      </span>
+
+      <span class="summary-icon icon-green">
+        <i class="fa-solid fa-circle-check"></i>
+      </span>
+
+    </div>
+
+    <div
+      class="summary-value"
+      id="approvedCount">
+      0
+    </div>
+
+  </div>
+
+
+  <div class="summary-card">
+
+    <div class="summary-top">
+
+      <span class="summary-title">
+        Requested Amount
+      </span>
+
+      <span class="summary-icon icon-red">
+        <i class="fa-solid fa-money-bill-transfer"></i>
+      </span>
+
+    </div>
+
+    <div
+      class="summary-value"
+      id="requestedTotal">
+      MWK 0.00
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     INFORMATION
+========================================================= -->
+
+<div class="notice notice-blue">
+
+  <i class="fa-solid fa-circle-info"></i>
+
+  Payment requisitions are requests only. Saving or submitting
+  a requisition does <strong>not</strong> create a payment or
+  accounting journal. Payments are created only after
+  authorisation and payment posting.
+
+</div>
+
+
+<!-- =========================================================
+     REQUISITION LIST
+========================================================= -->
+
+<div class="card">
+
+  <div class="card-header">
+
+    <h3>
+      Payment Requisitions
+    </h3>
+
+    <span>
+      Requests created by the accounting team
+    </span>
+
+  </div>
+
+
+  <div class="filters">
+
+    <div class="filter-field">
+
+      <label>Search</label>
+
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="PR number, payee, invoice or description..."
+      >
+
+    </div>
+
+
+    <div class="filter-field">
+
+      <label>Status</label>
+
+      <select id="statusFilter">
+
+        <option value="">
+          All Statuses
+        </option>
+
+        <option value="Draft">
+          Draft
+        </option>
+
+        <option value="Pending Authorisation">
+          Pending Authorisation
+        </option>
+
+        <option value="Approved">
+          Approved
+        </option>
+
+        <option value="Rejected">
+          Rejected
+        </option>
+
+        <option value="Returned">
+          Returned
+        </option>
+
+        <option value="Posted">
+          Posted
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="filter-field">
+
+      <label>From Date</label>
+
+      <input
+        type="date"
+        id="fromDate"
+      >
+
+    </div>
+
+
+    <div class="filter-field">
+
+      <label>To Date</label>
+
+      <input
+        type="date"
+        id="toDate"
+      >
+
+    </div>
+
+
+    <div style="display:flex;align-items:flex-end">
+
+      <button
+        class="btn btn-light"
+        onclick="clearFilters()">
+
+        Clear
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>PR Number</th>
+
+          <th>Payee</th>
+
+          <th>Reference</th>
+
+          <th>Requested Date</th>
+
+          <th>Payment Method</th>
+
+          <th>Status</th>
+
+          <th style="text-align:right">
+            Amount
+          </th>
+
+          <th>Action</th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody id="requisitionTable">
+
+        <tr>
+
+          <td colspan="8">
+
+            <div class="empty">
+
+              <i class="fa-solid fa-spinner fa-spin"></i>
+
+              Loading payment requisitions...
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- =========================================================
+     CREATE REQUISITION MODAL
+========================================================= -->
+
+<div
+  class="modal"
+  id="requisitionModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h2>
+        New Payment Requisition
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeRequisitionModal()">
+
+        <i class="fa-solid fa-xmark"></i>
+
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <div class="notice notice-orange">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        Review all payment details carefully before submitting.
+        Once submitted, the requisition will be available to an
+        authorised user for review.
+
+      </div>
+
+
+      <!-- BASIC INFORMATION -->
+
+      <div class="card">
+
+        <div class="card-header">
+
+          <h3>
+            Payment Details
+          </h3>
+
+          <span>
+            Basic requisition information
+          </span>
+
+        </div>
+
+
+        <div class="form-body">
+
+          <div class="form-grid">
+
+            <div class="field">
+
+              <label>
+                Request Type <span class="required">*</span>
+              </label>
+
+              <select id="requestType">
+
+                <option value="Supplier Payment">
+                  Supplier Payment
+                </option>
+
+                <option value="Expense Payment">
+                  Expense Payment
+                </option>
+
+                <option value="Other Payment">
+                  Other Payment
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Payee Type <span class="required">*</span>
+              </label>
+
+              <select id="payeeType">
+
+                <option value="Supplier">
+                  Supplier
+                </option>
+
+                <option value="Employee">
+                  Employee
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Payee <span class="required">*</span>
+              </label>
+
+              <select id="payee">
+
+                <option value="">
+                  Select Payee
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Requested Payment Date <span class="required">*</span>
+              </label>
+
+              <input
+                type="date"
+                id="requestedDate">
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Payment Method <span class="required">*</span>
+              </label>
+
+              <select id="paymentMethod">
+
+                <option value="Bank Transfer">
+                  Bank Transfer
+                </option>
+
+                <option value="Cheque">
+                  Cheque
+                </option>
+
+                <option value="Cash">
+                  Cash
+                </option>
+
+                <option value="Mobile Money">
+                  Mobile Money
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Payment Account <span class="required">*</span>
+              </label>
+
+              <select id="paymentAccount">
+
+                <option value="">
+                  Select Bank / Cash Account
+                </option>
+
+              </select>
+
+              <small>
+                This is the account from which the payment will eventually be made.
+              </small>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Invoice / Bill Reference
+              </label>
+
+              <input
+                type="text"
+                id="invoiceReference"
+                placeholder="e.g. INV-2026-00015">
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Supplier Bill
+              </label>
+
+              <select id="billReference">
+
+                <option value="">
+                  Select supplier bill if applicable
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                External Reference
+              </label>
+
+              <input
+                type="text"
+                id="externalReference"
+                placeholder="Cheque / invoice / other reference">
+
+            </div>
+
+
+            <div class="field full">
+
+              <label>
+                Purpose / Description <span class="required">*</span>
+              </label>
+
+              <textarea
+                id="description"
+                placeholder="Explain what this payment is for and why it is required..."></textarea>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ACCOUNTING LINES -->
+
+      <div class="card">
+
+        <div class="lines-header">
+
+          <div>
+
+            <h3>
+              Payment Allocation
+            </h3>
+
+            <span>
+              Allocate the requested amount to one or more accounts.
+            </span>
+
+          </div>
+
+          <button
+            class="btn btn-light"
+            onclick="addPaymentLine()">
+
+            <i class="fa-solid fa-plus"></i>
+
+            Add Account
+
+          </button>
+
+        </div>
+
+
+        <div class="line-table">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th style="width:45px">
+                  #
+                </th>
+
+                <th style="min-width:260px">
+                  Account
+                </th>
+
+                <th style="min-width:320px">
+                  Description
+                </th>
+
+                <th style="width:180px;text-align:right">
+                  Amount
+                </th>
+
+                <th style="width:55px">
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody id="paymentLines">
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+
+        <div class="add-line">
+
+          <button
+            class="btn btn-light"
+            onclick="addPaymentLine()">
+
+            <i class="fa-solid fa-plus"></i>
+
+            Add Another Account
+
+          </button>
+
+        </div>
+
+
+        <div class="total-area">
+
+          <div class="total-box">
+
+            <div class="total-line">
+
+              <span>
+                Allocated Amount
+              </span>
+
+              <strong id="allocatedTotal">
+                MWK 0.00
+              </strong>
+
+            </div>
+
+
+            <div class="total-line grand">
+
+              <span>
+                Payment Request
+              </span>
+
+              <strong id="paymentGrandTotal">
+                MWK 0.00
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- NOTES -->
+
+      <div class="card">
+
+        <div class="card-header">
+
+          <h3>
+            Supporting Information
+          </h3>
+
+        </div>
+
+
+        <div class="form-body">
+
+          <div class="form-grid two">
+
+            <div class="field">
+
+              <label>
+                Supporting Document Reference
+              </label>
+
+              <input
+                type="text"
+                id="supportingReference"
+                placeholder="e.g. quotation, invoice, contract">
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Additional Notes
+              </label>
+
+              <input
+                type="text"
+                id="notes"
+                placeholder="Additional information">
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        class="btn btn-light"
+        onclick="closeRequisitionModal()">
+
+        Cancel
+
+      </button>
+
+
+      <button
+        class="btn btn-primary"
+        id="saveDraftBtn"
+        onclick="saveRequisition('Draft')">
+
+        <i class="fa-solid fa-floppy-disk"></i>
+
+        Save Draft
+
+      </button>
+
+
+      <button
+        class="btn btn-success"
+        id="submitBtn"
+        onclick="saveRequisition('Pending Authorisation')">
+
+        <i class="fa-solid fa-paper-plane"></i>
+
+        Submit for Authorisation
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     VIEW REQUISITION MODAL
+========================================================= -->
+
+<div
+  class="modal"
+  id="viewModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h2>
+        Payment Requisition
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeViewModal()">
+
+        <i class="fa-solid fa-xmark"></i>
+
+      </button>
+
+    </div>
+
+
+    <div
+      class="modal-body"
+      id="viewBody">
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     LOADER
+========================================================= -->
+
+<div id="pageLoader">
+
+  <i class="fa-solid fa-circle-notch"></i>
+
+  <p>
+    Loading payment requisitions...
+  </p>
+
+</div>
+
+
+<script type="module">
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+import {
+  initializeApp
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+  apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",
+
+  projectId:"greysol-academy"
+
+};
+
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getFirestore(app);
+
+
+/* =========================================================
+   AUTHENTICATION
+========================================================= */
+
+const loggedUser =
+  JSON.parse(
+    localStorage.getItem("loggedUser")
+  );
+
+
+if(
+  !loggedUser ||
+  String(loggedUser.role || "").toLowerCase() !== "accountant"
+){
+
+  alert(
+    "Access Denied. Accountants Only."
+  );
+
+  window.location.href =
+    "staff-login.html";
+
+}
+
+
+document.getElementById("staffName")
+  .textContent =
+    loggedUser?.username ||
+    "Accountant";
+
+
+document.getElementById("staffRole")
+  .textContent =
+    loggedUser?.role ||
+    "Accountant";
+
+
+document.getElementById("portalRole")
+  .textContent =
+    (
+      loggedUser?.role ||
+      "Accountant"
+    ) +
+    " Portal";
+
+
+document.getElementById("avatar")
+  .textContent =
+    (
+      loggedUser?.username ||
+      "A"
+    )
+    .charAt(0)
+    .toUpperCase();
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+window.toggleSidebar=function(){
+
+  document
+    .getElementById("sidebar")
+    .classList
+    .toggle("open");
+
+  document
+    .getElementById("overlay")
+    .classList
+    .toggle("show");
+
+};
+
+
+document
+  .querySelectorAll(".menu-header")
+  .forEach(header=>{
+
+    header.addEventListener(
+      "click",
+      ()=>{
+
+        header
+          .parentElement
+          .classList
+          .toggle("active");
+
+      }
+    );
+
+  });
+
+
+document
+  .getElementById("logoutBtn")
+  .addEventListener(
+    "click",
+    e=>{
+
+      e.preventDefault();
+
+      localStorage.removeItem(
+        "loggedUser"
+      );
+
+      window.location.href =
+        "staff-login.html";
+
+    }
+  );
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+let requisitions=[];
+let suppliers=[];
+let employees=[];
+let accounts=[];
+let bills=[];
+
+let lineCounter=0;
+
+
+const fmt=n=>
+  "MWK " +
+  Number(n || 0)
+    .toLocaleString(
+      "en-US",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+
+
+const num=v=>
+  Number(v || 0);
+
+
+/* =========================================================
+   DATE HELPERS
+========================================================= */
+
+function dateValue(x){
+
+  const raw =
+    x?.requestedDate ||
+    x?.date ||
+    x?.createdAt ||
+    x?.created;
+
+
+  if(!raw)
+    return new Date();
+
+
+  try{
+
+    if(
+      typeof raw.toDate ===
+      "function"
+    )
+      return raw.toDate();
+
+
+    if(raw.seconds)
+      return new Date(
+        raw.seconds * 1000
+      );
+
+
+    const d =
+      new Date(raw);
+
+
+    return isNaN(d)
+      ? new Date()
+      : d;
+
+  }catch{
+
+    return new Date();
+
+  }
+
+}
+
+
+function dateText(x){
+
+  return dateValue(x)
+    .toLocaleDateString(
+      "en-GB"
+    );
+
+}
+
+
+function inputDate(d){
+
+  const x=d || new Date();
+
+  return new Date(
+    x.getTime() -
+    x.getTimezoneOffset()*60000
+  )
+  .toISOString()
+  .slice(0,10);
+
+}
+
+
+/* =========================================================
+   READ COLLECTION
+========================================================= */
+
+async function readCollection(name){
+
+  try{
+
+    const snap =
+      await getDocs(
+        collection(
+          db,
+          name
+        )
+      );
+
+
+    return snap.docs.map(d=>({
+
+      id:d.id,
+
+      ...d.data()
+
+    }));
+
+  }catch(error){
+
+    console.error(
+      "Error reading",
+      name,
+      error
+    );
+
+    return [];
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD DATA
+========================================================= */
+
+window.loadData=async function(){
+
+  try{
+
+    document.getElementById(
+      "pageLoader"
+    ).style.display="flex";
+
+
+    [
+      requisitions,
+      suppliers,
+      employees,
+      accounts,
+      bills
+
+    ] = await Promise.all([
+
+      readCollection(
+        "paymentRequisitions"
+      ),
+
+      readCollection(
+        "suppliers"
+      ),
+
+      readCollection(
+        "employees"
+      ),
+
+      readCollection(
+        "chartOfAccounts"
+      ),
+
+      readCollection(
+        "bills"
+      )
+
+    ]);
+
+
+    renderPayees();
+
+    renderPaymentAccounts();
+
+    renderBills();
+
+    renderRequisitions();
+
+    updateSummary();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Failed to load payment requisition data."
+    );
+
+  }finally{
+
+    document.getElementById(
+      "pageLoader"
+    ).style.display="none";
+
+  }
+
+};
+
+
+/* =========================================================
+   PAYEES
+========================================================= */
+
+function supplierName(s){
+
+  return (
+    s?.supplierName ||
+    s?.name ||
+    s?.supplier ||
+    s?.companyName ||
+    "Unknown Supplier"
+  );
+
+}
+
+
+function employeeName(e){
+
+  return (
+    e?.employeeName ||
+    e?.name ||
+    e?.fullName ||
+    (
+      (e?.firstName || "") +
+      " " +
+      (e?.lastName || "")
+    ).trim() ||
+    "Employee"
+  );
+
+}
+
+
+function renderPayees(){
+
+  const select =
+    document.getElementById(
+      "payee"
+    );
+
+
+  select.innerHTML =
+    `<option value="">
+      Select Payee
+    </option>`;
+
+
+  suppliers
+    .sort(
+      (a,b)=>
+        supplierName(a)
+          .localeCompare(
+            supplierName(b)
+          )
+    )
+    .forEach(s=>{
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        "supplier:" +
+        s.id;
+
+
+      option.textContent =
+        supplierName(s);
+
+
+      option.dataset.name =
+        supplierName(s);
+
+
+      select.appendChild(
+        option
+      );
+
+    });
+
+
+  employees
+    .sort(
+      (a,b)=>
+        employeeName(a)
+          .localeCompare(
+            employeeName(b)
+          )
+    )
+    .forEach(e=>{
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        "employee:" +
+        e.id;
+
+
+      option.textContent =
+        employeeName(e);
+
+
+      option.dataset.name =
+        employeeName(e);
+
+
+      select.appendChild(
+        option
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   PAYEE TYPE FILTER
+========================================================= */
+
+document
+  .getElementById("payeeType")
+  .addEventListener(
+    "change",
+    renderPayeeByType
+  );
+
+
+function renderPayeeByType(){
+
+  const type =
+    document.getElementById(
+      "payeeType"
+    ).value;
+
+
+  const select =
+    document.getElementById(
+      "payee"
+    );
+
+
+  select.innerHTML =
+    `<option value="">
+      Select Payee
+    </option>`;
+
+
+  if(type==="Supplier"){
+
+    suppliers
+      .sort(
+        (a,b)=>
+          supplierName(a)
+            .localeCompare(
+              supplierName(b)
+            )
+      )
+      .forEach(s=>{
+
+        addPayeeOption(
+          select,
+          "supplier:" + s.id,
+          supplierName(s)
+        );
+
+      });
+
+  }
+
+
+  if(type==="Employee"){
+
+    employees
+      .sort(
+        (a,b)=>
+          employeeName(a)
+            .localeCompare(
+              employeeName(b)
+            )
+      )
+      .forEach(e=>{
+
+        addPayeeOption(
+          select,
+          "employee:" + e.id,
+          employeeName(e)
+        );
+
+      });
+
+  }
+
+
+  if(type==="Other"){
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value="other";
+
+    option.textContent=
+      "Other Payee";
+
+    select.appendChild(
+      option
+    );
+
+  }
+
+}
+
+
+function addPayeeOption(
+  select,
+  value,
+  text
+){
+
+  const option =
+    document.createElement(
+      "option"
+    );
+
+  option.value=value;
+
+  option.textContent=text;
+
+  select.appendChild(
+    option
+  );
+
+}
+
+
+/* =========================================================
+   PAYMENT ACCOUNTS
+========================================================= */
+
+function accountName(a){
+
+  return (
+    a?.accountName ||
+    a?.name ||
+    a?.title ||
+    "Account"
+  );
+
+}
+
+
+function accountCode(a){
+
+  return (
+    a?.accountCode ||
+    a?.code ||
+    a?.accountNo ||
+    ""
+  );
+
+}
+
+
+function accountType(a){
+
+  return String(
+    a?.accountType ||
+    a?.type ||
+    a?.category ||
+    ""
+  ).toLowerCase();
+
+}
+
+
+function isCashBankAccount(a){
+
+  const text =
+    (
+      accountName(a) +
+      " " +
+      accountType(a)
+    ).toLowerCase();
+
+
+  return (
+    text.includes("bank") ||
+    text.includes("cash") ||
+    text.includes("mobile money") ||
+    text.includes("mobile")
+  );
+
+}
+
+
+function renderPaymentAccounts(){
+
+  const select =
+    document.getElementById(
+      "paymentAccount"
+    );
+
+
+  select.innerHTML =
+    `<option value="">
+      Select Bank / Cash Account
+    </option>`;
+
+
+  accounts
+    .filter(
+      isCashBankAccount
+    )
+    .sort(
+      (a,b)=>
+        (
+          accountCode(a) +
+          " " +
+          accountName(a)
+        )
+        .localeCompare(
+          accountCode(b) +
+          " " +
+          accountName(b)
+        )
+    )
+    .forEach(a=>{
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value=a.id;
+
+      option.textContent =
+        accountCode(a)
+          ? `${accountCode(a)} - ${accountName(a)}`
+          : accountName(a);
+
+
+      option.dataset.code =
+        accountCode(a);
+
+      option.dataset.name =
+        accountName(a);
+
+
+      select.appendChild(
+        option
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   SUPPLIER BILLS
+========================================================= */
+
+function renderBills(){
+
+  const select =
+    document.getElementById(
+      "billReference"
+    );
+
+
+  select.innerHTML =
+    `<option value="">
+      Select supplier bill if applicable
+    </option>`;
+
+
+  bills
+    .filter(
+      b=>
+        String(
+          b.status || ""
+        ).toLowerCase()==="posted"
+    )
+    .sort(
+      (a,b)=>
+        dateValue(b)-dateValue(a)
+    )
+    .forEach(b=>{
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value=b.id;
+
+
+      option.textContent =
+        (
+          b.billNo ||
+          b.billNumber ||
+          b.reference ||
+          b.id
+        ) +
+        " — " +
+        (
+          b.supplierName ||
+          "Supplier"
+        ) +
+        " — " +
+        fmt(
+          b.balance ??
+          b.payableAmount ??
+          b.totalAmount ??
+          b.amount
+        );
+
+
+      option.dataset.amount =
+        num(
+          b.balance ??
+          b.payableAmount ??
+          b.totalAmount ??
+          b.amount
+        );
+
+
+      select.appendChild(
+        option
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   ACCOUNT OPTIONS
+========================================================= */
+
+function accountOptions(){
+
+  const valid =
+    accounts
+      .filter(
+        a=>!isCashBankAccount(a)
+      )
+      .sort(
+        (a,b)=>
+          (
+            accountCode(a) +
+            " " +
+            accountName(a)
+          )
+          .localeCompare(
+            accountCode(b) +
+            " " +
+            accountName(b)
+          )
+      );
+
+
+  return valid
+    .map(a=>{
+
+      const label =
+        accountCode(a)
+          ? `${accountCode(a)} - ${accountName(a)}`
+          : accountName(a);
+
+
+      return `
+
+        <option
+          value="${escapeHTML(a.id)}">
+
+          ${escapeHTML(label)}
+
+        </option>
+
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =========================================================
+   PAYMENT LINES
+========================================================= */
+
+function addPaymentLine(
+  accountId="",
+  description="",
+  amount=""
+){
+
+  lineCounter++;
+
+
+  const tbody =
+    document.getElementById(
+      "paymentLines"
+    );
+
+
+  const row =
+    document.createElement(
+      "tr"
+    );
+
+
+  row.dataset.lineId =
+    lineCounter;
+
+
+  row.innerHTML=`
+
+    <td class="line-number">
+      ${lineCounter}
+    </td>
+
+
+    <td>
+
+      <select
+        class="line-account">
+
+        <option value="">
+          Select account
+        </option>
+
+        ${accountOptions()}
+
+      </select>
+
+    </td>
+
+
+    <td>
+
+      <input
+        type="text"
+        class="line-description"
+        placeholder="What is this amount for?"
+        value="${escapeHTML(description)}">
+
+    </td>
+
+
+    <td>
+
+      <input
+        type="number"
+        class="line-amount"
+        min="0"
+        step="0.01"
+        placeholder="0.00"
+        value="${amount}">
+
+    </td>
+
+
+    <td>
+
+      <button
+        type="button"
+        class="remove-line"
+        onclick="removePaymentLine(${lineCounter})">
+
+        <i class="fa-solid fa-trash"></i>
+
+      </button>
+
+    </td>
+
+  `;
+
+
+  tbody.appendChild(
+    row
+  );
+
+
+  if(accountId){
+
+    row.querySelector(
+      ".line-account"
+    ).value=accountId;
+
+  }
+
+
+  row
+    .querySelector(
+      ".line-amount"
+    )
+    .addEventListener(
+      "input",
+      calculateTotal
+    );
+
+
+  calculateTotal();
+
+}
+
+
+window.addPaymentLine =
+  addPaymentLine;
+
+
+window.removePaymentLine=function(
+  id
+){
+
+  const row =
+    document.querySelector(
+      `tr[data-line-id="${id}"]`
+    );
+
+
+  if(!row)
+    return;
+
+
+  const rows =
+    document.querySelectorAll(
+      "#paymentLines tr"
+    );
+
+
+  if(rows.length<=1){
+
+    alert(
+      "A payment requisition must contain at least one payment line."
+    );
+
+    return;
+
+  }
+
+
+  row.remove();
+
+  renumberLines();
+
+  calculateTotal();
+
+};
+
+
+function renumberLines(){
+
+  document
+    .querySelectorAll(
+      "#paymentLines tr"
+    )
+    .forEach(
+      (row,index)=>{
+
+        row.querySelector(
+          ".line-number"
+        ).textContent =
+          index+1;
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+function calculateTotal(){
+
+  let total=0;
+
+
+  document
+    .querySelectorAll(
+      ".line-amount"
+    )
+    .forEach(input=>{
+
+      total +=
+        num(input.value);
+
+    });
+
+
+  document.getElementById(
+    "allocatedTotal"
+  ).textContent =
+    fmt(total);
+
+
+  document.getElementById(
+    "paymentGrandTotal"
+  ).textContent =
+    fmt(total);
+
+
+  return total;
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+window.openRequisitionModal =
+  function(){
+
+    document.getElementById(
+      "requestedDate"
+    ).value =
+      inputDate();
+
+
+    document.getElementById(
+      "invoiceReference"
+    ).value="";
+
+
+    document.getElementById(
+      "externalReference"
+    ).value="";
+
+
+    document.getElementById(
+      "description"
+    ).value="";
+
+
+    document.getElementById(
+      "supportingReference"
+    ).value="";
+
+
+    document.getElementById(
+      "notes"
+    ).value="";
+
+
+    document.getElementById(
+      "paymentAccount"
+    ).value="";
+
+
+    document.getElementById(
+      "billReference"
+    ).value="";
+
+
+    document.getElementById(
+      "payeeType"
+    ).value="Supplier";
+
+
+    renderPayeeByType();
+
+
+    document.getElementById(
+      "paymentLines"
+    ).innerHTML="";
+
+
+    lineCounter=0;
+
+
+    addPaymentLine();
+
+
+    document.getElementById(
+      "requisitionModal"
+    ).classList.add(
+      "show"
+    );
+
+  };
+
+
+window.closeRequisitionModal =
+  function(){
+
+    document.getElementById(
+      "requisitionModal"
+    ).classList.remove(
+      "show"
+    );
+
+  };
+
+
+window.closeViewModal =
+  function(){
+
+    document.getElementById(
+      "viewModal"
+    ).classList.remove(
+      "show"
+    );
+
+  };
+
+
+/* =========================================================
+   GENERATE PR NUMBER
+========================================================= */
+
+async function generatePRNumber(){
+
+  const year =
+    new Date()
+      .getFullYear();
+
+
+  const count =
+    requisitions.filter(
+      r=>
+        String(
+          r.requisitionNo ||
+          ""
+        )
+        .includes(
+          `PR-${year}`
+        )
+    ).length + 1;
+
+
+  return `PR-${year}-${String(count).padStart(5,"0")}`;
+
+}
+
+
+/* =========================================================
+   GET PAYEE
+========================================================= */
+
+function selectedPayee(){
+
+  const select =
+    document.getElementById(
+      "payee"
+    );
+
+
+  const value =
+    select.value;
+
+
+  if(!value)
+    return null;
+
+
+  const [type,id] =
+    value.split(":");
+
+
+  if(type==="supplier"){
+
+    const supplier =
+      suppliers.find(
+        s=>
+          String(s.id)===
+          String(id)
+      );
+
+
+    return {
+
+      type:"Supplier",
+
+      id,
+
+      name:
+        supplier
+          ? supplierName(supplier)
+          : select
+              .selectedOptions[0]
+              ?.textContent ||
+            "Supplier"
+
+    };
+
+  }
+
+
+  if(type==="employee"){
+
+    const employee =
+      employees.find(
+        e=>
+          String(e.id)===
+          String(id)
+      );
+
+
+    return {
+
+      type:"Employee",
+
+      id,
+
+      name:
+        employee
+          ? employeeName(employee)
+          : select
+              .selectedOptions[0]
+              ?.textContent ||
+            "Employee"
+
+    };
+
+  }
+
+
+  return {
+
+    type:"Other",
+
+    id:null,
+
+    name:
+      select
+        .selectedOptions[0]
+        ?.textContent ||
+      "Other Payee"
+
+  };
+
+}
+
+
+/* =========================================================
+   COLLECT LINES
+========================================================= */
+
+function collectLines(){
+
+  const rows =
+    document.querySelectorAll(
+      "#paymentLines tr"
+    );
+
+
+  return [...rows]
+    .map(row=>{
+
+      const accountSelect =
+        row.querySelector(
+          ".line-account"
+        );
+
+
+      const selected =
+        accountSelect
+          ?.selectedOptions[0];
+
+
+      const amount =
+        num(
+          row.querySelector(
+            ".line-amount"
+          )?.value
+        );
+
+
+      return {
+
+        accountId:
+          accountSelect?.value ||
+          null,
+
+        accountCode:
+          selected
+            ?.dataset
+            ?.code ||
+          "",
+
+        accountName:
+          selected
+            ?.textContent
+            ?.trim() ||
+          "",
+
+        description:
+          row.querySelector(
+            ".line-description"
+          )?.value
+          ?.trim() ||
+          "",
+
+        amount
+
+      };
+
+    })
+    .filter(
+      line=>line.amount>0
+    );
+
+}
+
+
+/* =========================================================
+   SAVE REQUISITION
+========================================================= */
+
+window.saveRequisition =
+  async function(status){
+
+    const payee =
+      selectedPayee();
+
+
+    const requestedDate =
+      document.getElementById(
+        "requestedDate"
+      ).value;
+
+
+    const paymentMethod =
+      document.getElementById(
+        "paymentMethod"
+      ).value;
+
+
+    const paymentAccount =
+      document.getElementById(
+        "paymentAccount"
+      );
+
+
+    const description =
+      document.getElementById(
+        "description"
+      )
+      .value
+      .trim();
+
+
+    const lines =
+      collectLines();
+
+
+    const total =
+      calculateTotal();
+
+
+    if(!payee){
+
+      alert(
+        "Please select the payee."
+      );
+
+      return;
+
+    }
+
+
+    if(!requestedDate){
+
+      alert(
+        "Please select the requested payment date."
+      );
+
+      return;
+
+    }
+
+
+    if(!paymentAccount.value){
+
+      alert(
+        "Please select the payment account."
+      );
+
+      return;
+
+    }
+
+
+    if(!description){
+
+      alert(
+        "Please enter the purpose or description of the payment."
+      );
+
+      return;
+
+    }
+
+
+    if(!lines.length){
+
+      alert(
+        "Please add at least one payment allocation."
+      );
+
+      return;
+
+    }
+
+
+    if(total<=0){
+
+      alert(
+        "The payment amount must be greater than zero."
+      );
+
+      return;
+
+    }
+
+
+    const invalidLine =
+      lines.find(
+        line=>
+          !line.accountId ||
+          !line.description ||
+          line.amount<=0
+      );
+
+
+    if(invalidLine){
+
+      alert(
+        "Every payment allocation must have an account, description and amount."
+      );
+
+      return;
+
+    }
+
+
+    const selectedPaymentAccount =
+      paymentAccount
+        .selectedOptions[0];
+
+
+    const requisitionNo =
+      await generatePRNumber();
+
+
+    const data={
+
+      requisitionNo,
+
+      requestType:
+        document.getElementById(
+          "requestType"
+        ).value,
+
+      payeeType:
+        payee.type,
+
+      payeeId:
+        payee.id,
+
+      payeeName:
+        payee.name,
+
+      requestedDate,
+
+      paymentMethod,
+
+      paymentAccountId:
+        paymentAccount.value,
+
+      paymentAccountCode:
+        selectedPaymentAccount
+          ?.dataset
+          ?.code ||
+        "",
+
+      paymentAccountName:
+        selectedPaymentAccount
+          ?.dataset
+          ?.name ||
+        selectedPaymentAccount
+          ?.textContent
+          ?.trim() ||
+        "",
+
+      invoiceReference:
+        document.getElementById(
+          "invoiceReference"
+        ).value.trim(),
+
+      billId:
+        document.getElementById(
+          "billReference"
+        ).value ||
+        null,
+
+      externalReference:
+        document.getElementById(
+          "externalReference"
+        ).value.trim(),
+
+      description,
+
+      lines,
+
+      totalAmount:
+        total,
+
+      supportingReference:
+        document.getElementById(
+          "supportingReference"
+        ).value.trim(),
+
+      notes:
+        document.getElementById(
+          "notes"
+        ).value.trim(),
+
+      status,
+
+      submittedAt:
+        status==="Pending Authorisation"
+          ? serverTimestamp()
+          : null,
+
+      submittedBy:
+        status==="Pending Authorisation"
+          ? loggedUser?.username ||
+            "Accountant"
+          : null,
+
+      createdBy:
+        loggedUser?.username ||
+        "Accountant",
+
+      createdByRole:
+        loggedUser?.role ||
+        "Accountant",
+
+      createdAt:
+        serverTimestamp(),
+
+      updatedAt:
+        serverTimestamp()
+
+    };
+
+
+    try{
+
+      document.getElementById(
+        "saveDraftBtn"
+      ).disabled=true;
+
+
+      document.getElementById(
+        "submitBtn"
+      ).disabled=true;
+
+
+      await addDoc(
+        collection(
+          db,
+          "paymentRequisitions"
+        ),
+        data
+      );
+
+
+      alert(
+        status==="Draft"
+
+          ? "Payment requisition saved as draft."
+
+          : "Payment requisition submitted for authorisation."
+      );
+
+
+      closeRequisitionModal();
+
+
+      await loadData();
+
+
+    }catch(error){
+
+      console.error(
+        "SAVE PAYMENT REQUISITION ERROR:",
+        error
+      );
+
+
+      alert(
+        "Failed to save payment requisition.\n\n" +
+        (
+          error?.message ||
+          "Please try again."
+        )
+      );
+
+    }finally{
+
+      document.getElementById(
+        "saveDraftBtn"
+      ).disabled=false;
+
+
+      document.getElementById(
+        "submitBtn"
+      ).disabled=false;
+
+    }
+
+  };
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+function updateSummary(){
+
+  const draft =
+    requisitions.filter(
+      r=>
+        String(
+          r.status ||
+          ""
+        ).toLowerCase()==="draft"
+    ).length;
+
+
+  const pending =
+    requisitions.filter(
+      r=>
+        String(
+          r.status ||
+          ""
+        ).toLowerCase()==
+        "pending authorisation"
+    ).length;
+
+
+  const approved =
+    requisitions.filter(
+      r=>
+        String(
+          r.status ||
+          ""
+        ).toLowerCase()==="approved"
+    ).length;
+
+
+  const total =
+    requisitions
+      .filter(
+        r=>
+          ![
+            "rejected",
+            "returned"
+          ].includes(
+            String(
+              r.status ||
+              ""
+            ).toLowerCase()
+          )
+      )
+      .reduce(
+        (sum,r)=>
+          sum +
+          num(
+            r.totalAmount
+          ),
+        0
+      );
+
+
+  document.getElementById(
+    "draftCount"
+  ).textContent =
+    draft;
+
+
+  document.getElementById(
+    "pendingCount"
+  ).textContent =
+    pending;
+
+
+  document.getElementById(
+    "approvedCount"
+  ).textContent =
+    approved;
+
+
+  document.getElementById(
+    "requestedTotal"
+  ).textContent =
+    fmt(total);
+
+}
+
+
+/* =========================================================
+   RENDER REQUISITIONS
+========================================================= */
+
+function renderRequisitions(){
+
+  const tbody =
+    document.getElementById(
+      "requisitionTable"
+    );
+
+
+  const search =
+    document.getElementById(
+      "searchInput"
+    )
+    .value
+    .toLowerCase()
+    .trim();
+
+
+  const status =
+    document.getElementById(
+      "statusFilter"
+    ).value;
+
+
+  const from =
+    document.getElementById(
+      "fromDate"
+    ).value;
+
+
+  const to =
+    document.getElementById(
+      "toDate"
+    ).value;
+
+
+  let data =
+    [...requisitions];
+
+
+  data =
+    data.filter(r=>{
+
+      const searchText =
+        (
+          r.requisitionNo ||
+          "" 
+        ) +
+        " " +
+        (
+          r.payeeName ||
+          ""
+        ) +
+        " " +
+        (
+          r.invoiceReference ||
+          ""
+        ) +
+        " " +
+        (
+          r.description ||
+          ""
+        );
+
+
+      if(
+        search &&
+        !searchText
+          .toLowerCase()
+          .includes(search)
+      )
+        return false;
+
+
+      if(
+        status &&
+        String(
+          r.status ||
+          ""
+        ) !== status
+      )
+        return false;
+
+
+      const d =
+        dateValue(r);
+
+
+      if(
+        from &&
+        d <
+        new Date(
+          from+"T00:00:00"
+        )
+      )
+        return false;
+
+
+      if(
+        to &&
+        d >
+        new Date(
+          to+"T23:59:59"
+        )
+      )
+        return false;
+
+
+      return true;
+
+    });
+
+
+  data.sort(
+    (a,b)=>
+      dateValue(b) -
+      dateValue(a)
+  );
+
+
+  if(!data.length){
+
+    tbody.innerHTML=`
+
+      <tr>
+
+        <td colspan="8">
+
+          <div class="empty">
+
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+
+            No payment requisitions found.
+
+          </div>
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  tbody.innerHTML =
+    data.map(r=>{
+
+      const status =
+        r.status ||
+        "Draft";
+
+
+      let cls =
+        "badge-orange";
+
+
+      const lower =
+        status.toLowerCase();
+
+
+      if(
+        lower.includes(
+          "pending"
+        )
+      )
+        cls="badge-orange";
+
+
+      if(
+        lower==="approved"
+      )
+        cls="badge-green";
+
+
+      if(
+        lower==="posted"
+      )
+        cls="badge-blue";
+
+
+      if(
+        lower==="rejected"
+      )
+        cls="badge-red";
+
+
+      if(
+        lower==="returned"
+      )
+        cls="badge-purple";
+
+
+      return `
+
+        <tr>
+
+          <td class="ref">
+
+            ${escapeHTML(
+              r.requisitionNo ||
+              "-"
+            )}
+
+          </td>
+
+
+          <td>
+
+            ${escapeHTML(
+              r.payeeName ||
+              "-"
+            )}
+
+          </td>
+
+
+          <td>
+
+            ${escapeHTML(
+              r.invoiceReference ||
+              r.externalReference ||
+              "-"
+            )}
+
+          </td>
+
+
+          <td>
+
+            ${dateText(r)}
+
+          </td>
+
+
+          <td>
+
+            ${escapeHTML(
+              r.paymentMethod ||
+              "-"
+            )}
+
+          </td>
+
+
+          <td>
+
+            <span
+              class="badge ${cls}">
+
+              ${escapeHTML(status)}
+
+            </span>
+
+          </td>
+
+
+          <td class="amount">
+
+            ${fmt(
+              r.totalAmount
+            )}
+
+          </td>
+
+
+          <td>
+
+            <button
+              class="action-btn"
+              title="View"
+              onclick="viewRequisition('${r.id}')">
+
+              <i class="fa-solid fa-eye"></i>
+
+            </button>
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================================================
+   VIEW REQUISITION
+========================================================= */
+
+window.viewRequisition =
+  function(id){
+
+    const requisition =
+      requisitions.find(
+        r=>
+          String(r.id)===
+          String(id)
+      );
+
+
+    if(!requisition)
+      return;
+
+
+    const lines =
+      Array.isArray(
+        requisition.lines
+      )
+        ? requisition.lines
+        : [];
+
+
+    document.getElementById(
+      "viewBody"
+    ).innerHTML=`
+
+      <div class="info-grid">
+
+        <div class="info-box">
+
+          <label>
+            Requisition Number
+          </label>
+
+          <strong>
+            ${escapeHTML(
+              requisition.requisitionNo ||
+              "-"
+            )}
+          </strong>
+
+        </div>
+
+
+        <div class="info-box">
+
+          <label>
+            Payee
+          </label>
+
+          <strong>
+            ${escapeHTML(
+              requisition.payeeName ||
+              "-"
+            )}
+          </strong>
+
+        </div>
+
+
+        <div class="info-box">
+
+          <label>
+            Requested Date
+          </label>
+
+          <strong>
+            ${dateText(requisition)}
+          </strong>
+
+        </div>
+
+
+        <div class="info-box">
+
+          <label>
+            Status
+          </label>
+
+          <strong>
+            ${escapeHTML(
+              requisition.status ||
+              "-"
+            )}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="card-header">
+
+          <h3>
+            Payment Information
+          </h3>
+
+          <span>
+            ${escapeHTML(
+              requisition.paymentMethod ||
+              "-"
+            )}
+          </span>
+
+        </div>
+
+
+        <div class="form-body">
+
+          <div class="form-grid">
+
+            <div class="info-box">
+
+              <label>
+                Payment Account
+              </label>
+
+              <strong>
+                ${escapeHTML(
+                  requisition.paymentAccountCode
+                    ? requisition.paymentAccountCode +
+                      " - " +
+                      requisition.paymentAccountName
+                    : requisition.paymentAccountName ||
+                      "-"
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+              <label>
+                Invoice / Bill Reference
+              </label>
+
+              <strong>
+                ${escapeHTML(
+                  requisition.invoiceReference ||
+                  "-"
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+              <label>
+                Request Type
+              </label>
+
+              <strong>
+                ${escapeHTML(
+                  requisition.requestType ||
+                  "-"
+                )}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="info-box">
+
+            <label>
+              Purpose
+            </label>
+
+            <strong>
+              ${escapeHTML(
+                requisition.description ||
+                "-"
+              )}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="card-header">
+
+          <h3>
+            Payment Allocation
+          </h3>
+
+          <span>
+            ${fmt(
+              requisition.totalAmount
+            )}
+          </span>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Account
+                </th>
+
+                <th>
+                  Description
+                </th>
+
+                <th style="text-align:right">
+                  Amount
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              ${
+                lines.map(line=>`
+
+                  <tr>
+
+                    <td>
+
+                      ${escapeHTML(
+                        line.accountCode
+                          ? line.accountCode +
+                            " - " +
+                            line.accountName
+                          : line.accountName ||
+                            "-"
+                      )}
+
+                    </td>
+
+
+                    <td>
+
+                      ${escapeHTML(
+                        line.description ||
+                        "-"
+                      )}
+
+                    </td>
+
+
+                    <td class="amount">
+
+                      ${fmt(
+                        line.amount
+                      )}
+
+                    </td>
+
+                  </tr>
+
+                `).join("")
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+
+        <div class="total-area">
+
+          <div class="total-box">
+
+            <div class="total-line grand">
+
+              <span>
+                Total Requested
+              </span>
+
+              <strong>
+                ${fmt(
+                  requisition.totalAmount
+                )}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="info-grid">
+
+        <div class="info-box">
+
+          <label>
+            Created By
+          </label>
+
+          <strong>
+            ${escapeHTML(
+              requisition.createdBy ||
+              "-"
+            )}
+          </strong>
+
+        </div>
+
+
+        <div class="info-box">
+
+          <label>
+            Submitted By
+          </label>
+
+          <strong>
+            ${escapeHTML(
+              requisition.submittedBy ||
+              "-"
+            )}
+          </strong>
+
+        </div>
+
+
+        <div class="info-box">
+
+          <label>
+            Supporting Reference
+          </label>
+
+          <strong>
+            ${escapeHTML(
+              requisition.supportingReference ||
+              "-"
+            )}
+          </strong>
+
+        </div>
+
+
+        <div class="info-box">
+
+          <label>
+            External Reference
+          </label>
+
+          <strong>
+            ${escapeHTML(
+              requisition.externalReference ||
+              "-"
+            )}
+          </strong>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    document.getElementById(
+      "viewModal"
+    ).classList.add(
+      "show"
+    );
+
+  };
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+[
+  "searchInput",
+  "statusFilter",
+  "fromDate",
+  "toDate"
+
+].forEach(id=>{
+
+  document
+    .getElementById(id)
+    .addEventListener(
+      id==="searchInput"
+        ? "input"
+        : "change",
+      renderRequisitions
+    );
+
+});
+
+
+window.clearFilters=function(){
+
+  document.getElementById(
+    "searchInput"
+  ).value="";
+
+
+  document.getElementById(
+    "statusFilter"
+  ).value="";
+
+
+  document.getElementById(
+    "fromDate"
+  ).value="";
+
+
+  document.getElementById(
+    "toDate"
+  ).value="";
+
+
+  renderRequisitions();
+
+};
+
+
+/* =========================================================
+   BILL AUTO REFERENCE
+========================================================= */
+
+document
+  .getElementById("billReference")
+  .addEventListener(
+    "change",
+    function(){
+
+      const option =
+        this.selectedOptions[0];
+
+
+      if(
+        !option ||
+        !option.value
+      )
+        return;
+
+
+      const amount =
+        num(
+          option.dataset.amount
+        );
+
+
+      const rows =
+        document.querySelectorAll(
+          "#paymentLines tr"
+        );
+
+
+      if(
+        rows.length===1
+      ){
+
+        const amountInput =
+          rows[0].querySelector(
+            ".line-amount"
+          );
+
+
+        if(
+          amountInput &&
+          !amountInput.value
+        ){
+
+          amountInput.value =
+            amount;
+
+
+          calculateTotal();
+
+        }
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value){
+
+  return String(
+    value ?? ""
+  )
+  .replaceAll(
+    "&",
+    "&amp;"
+  )
+  .replaceAll(
+    "<",
+    "&lt;"
+  )
+  .replaceAll(
+    ">",
+    "&gt;"
+  )
+  .replaceAll(
+    '"',
+    "&quot;"
+  )
+  .replaceAll(
+    "'",
+    "&#039;"
+  );
+
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+loadData();
+
+</script>
+
+</body>
+</html>

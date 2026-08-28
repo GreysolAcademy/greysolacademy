@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greysol Academy | Student Management</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;}
+:root{--navy:#001f3f;--blue:#003366;--light:#f4f7fb;}
+body{margin:0;background:var(--light);display:flex;height:100vh;overflow:hidden;}
+
+/* ===== MAIN LOADER ===== */
+.main-loader{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(244,247,251,.9);z-index:10;display:flex;justify-content:center;align-items:center;flex-direction:column;color:var(--navy);transition:opacity .3s}
+.main-loader.hidden{opacity:0;pointer-events:none}
+.spinner{border:4px solid rgba(0,31,63,.3);border-top:4px solid var(--navy);border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* SIDEBAR */
+.sidebar{width:270px;background:var(--navy);color:white;height:100vh;overflow:auto;position:relative;z-index:20;}
+.logo{text-align:center;padding:20px;border-bottom:1px solid rgba(255,255,255,.2);}
+.logo img{width:80px;height:80px;object-fit:contain;}
+.logo h2{margin:10px 0;}
+.menu a,.menu-header{display:flex;align-items:center;gap:15px;padding:15px 25px;color:white;text-decoration:none;cursor:pointer;}
+.menu a:hover,.menu-header:hover{background:rgba(255,255,255,.1);}
+.arrow{margin-left:auto;}
+.submenu{max-height:0;overflow:hidden;background:rgba(0,0,0,.2);transition:.3s;}
+.menu-group.active .submenu{max-height:300px;}
+.submenu a{padding-left:55px;font-size:14px;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;position:relative;} /* position relative for loader */
+.topbar{height:75px;background:white;display:flex;justify-content:space-between;align-items:center;padding:0 30px;box-shadow:0 3px 10px rgba(0,0,0,.1);}
+.topbar h2{color:var(--navy);}
+.user{font-weight:bold;color:var(--navy);}
+.content{padding:30px;overflow:auto;flex:1;}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;}
+.card{background:white;padding:25px;border-radius:15px;text-align:center;box-shadow:0 5px 20px rgba(0,0,0,.1);}
+.card i{font-size:35px;color:var(--navy);}
+.card h1{color:var(--navy);margin:10px;}
+
+.box{background:white;padding:25px;border-radius:15px;margin-top:25px;box-shadow:0 5px 20px rgba(0,0,0,.1);}
+.filters{display:flex;gap:15px;flex-wrap:wrap;}
+input,select,button{padding:12px;border-radius:8px;border:1px solid #ccc;}
+input,select{min-width:220px;}
+button{background:var(--navy);color:white;border:none;cursor:pointer;}
+button:hover{background:var(--blue)}
+
+table{width:100%;border-collapse:collapse;}
+th{background:var(--navy);color:white;padding:12px;text-align:left;}
+td{padding:12px;border-bottom:1px solid #ddd;}
+.action{padding:7px 12px;font-size:12px;border-radius:6px;}
+.profile{background:#2980b9;color:white;}
+.statement{background:#8e44ad;color:white;}
+</style>
+</head>
+<body>
+
+<!-- ========================== SIDEBAR ========================== -->
+<div class="sidebar">
+<div class="logo">
+<img src="../images/logo1 - Copy.png">
+<h2>GREYSOL ACADEMY</h2>
+<p>Head Teacher Portal</p>
+</div>
+<div class="menu">
+<a href="headteacher-dashboard.html"><i class="fa-solid fa-gauge"></i>Dashboard</a>
+<div class="menu-group active">
+<div class="menu-header"><i class="fa-solid fa-user-graduate"></i>Students <i class="fa-solid fa-chevron-down arrow"></i></div>
+<div class="submenu">
+<a href="headteacher-students.html">Student List</a>
+<a href="#">Class Information</a>
+</div>
+</div>
+<div class="menu-group">
+<div class="menu-header"><i class="fa-solid fa-book-open"></i>Academics <i class="fa-solid fa-chevron-down arrow"></i></div>
+<div class="submenu">
+<a href="subject-allocation.html">Subject Allocation</a>
+<a href="#">Attendance</a>
+<a href="#">Results</a>
+</div>
+</div>
+<div class="menu-group">
+<div class="menu-header"><i class="fa-solid fa-chalkboard-user"></i>Staff <i class="fa-solid fa-chevron-down arrow"></i></div>
+<div class="submenu">
+<a href="teacher-list.html">Teacher List</a>
+<a href="subject-allocation.html">Teacher Allocation</a>
+</div>
+</div>
+<a href="staff-login.html"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+</div>
+</div>
+
+<!-- ========================== MAIN AREA ========================== -->
+<div class="main">
+
+  <!-- ===== MAIN LOADER ===== -->
+  <div class="main-loader" id="mainLoader">
+    <div class="spinner"></div>
+    <p style="margin-top:15px">Loading Students...</p>
+  </div>
+
+<div class="topbar">
+<h2>Student Management</h2>
+<div class="user"><span id="staffName">Head Teacher</span></div>
+</div>
+
+<div class="content">
+<!-- SUMMARY CARDS -->
+<div class="cards">
+<div class="card"><i class="fa-solid fa-users"></i><h1 id="totalStudents">0</h1><p>Total Students</p></div>
+<div class="card"><i class="fa-solid fa-mars"></i><h1 id="maleStudents">0</h1><p>Male Students</p></div>
+<div class="card"><i class="fa-solid fa-venus"></i><h1 id="femaleStudents">0</h1><p>Female Students</p></div>
+<div class="card"><i class="fa-solid fa-school"></i><h1 id="classCount">0</h1><p>Classes</p></div>
+</div>
+
+<!-- FILTER BOX -->
+<div class="box">
+<h2>Registered Students</h2>
+<div class="filters">
+<input id="searchStudent" placeholder="Search Student ID or Name">
+<select id="classFilter"><option value="">All Classes</option><option>Form 1</option><option>Form 2</option><option>Form 3</option><option>Form 4</option></select>
+<button id="refreshBtn"><i class="fa-solid fa-rotate"></i>Refresh</button>
+</div>
+</div>
+
+<!-- STUDENT TABLE -->
+<div class="box">
+<table>
+<thead><tr><th>Student ID</th><th>Name</th><th>Gender</th><th>Class</th><th>Guardian</th><th>Phone</th><th>Action</th></tr></thead>
+<tbody id="studentTable"><tr><td colspan="7">Loading students...</td></tr></tbody>
+</table>
+</div>
+
+</div>
+</div>
+
+<script>
+// SIDEBAR DROPDOWN
+document.querySelectorAll(".menu-group").forEach(group=>{
+group.querySelector(".menu-header").onclick=function(){group.classList.toggle("active");};
+});
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey: "AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",authDomain: "greysol-academy.firebaseapp.com",projectId: "greysol-academy"};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// LOGIN CHECK
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+if(!loggedUser){window.location.href="staff-login.html";}
+document.getElementById("staffName").innerHTML = loggedUser.username;
+
+let students=[];
+
+// ===============================
+// LOAD STUDENTS
+// ===============================
+async function loadStudents(){
+const loader = document.getElementById("mainLoader"); // 1. SHOW MAIN LOADER
+loader.classList.remove("hidden");
+
+try{
+const snapshot = await getDocs(collection(db,"students"));
+students=[];
+snapshot.forEach(item=>{students.push({id:item.id,...item.data()});});
+updateSummary();
+displayStudents(students);
+}
+catch(error){console.error(error);alert(error.message);}
+finally{
+// 2. HIDE MAIN LOADER
+document.getElementById("mainLoader").classList.add("hidden");
+}
+}
+
+// DISPLAY STUDENTS
+function displayStudents(list){
+const table = document.getElementById("studentTable");
+table.innerHTML="";
+if(list.length===0){table.innerHTML=`<tr><td colspan="7" style="text-align:center">No students found</td></tr>`;return;}
+list.forEach(student=>{
+let fullName = (student.firstName || "")+" "+(student.middleName || "")+" "+(student.surname || "");
+table.innerHTML += `
+<tr>
+<td>${student.studentID || "-"}</td>
+<td>${fullName}</td>
+<td>${student.gender || "-"}</td>
+<td>${student.classApplying || "-"}</td>
+<td>${student.guardianName || "-"}</td>
+<td>${student.guardianPhone || "-"}</td>
+<td>
+<button class="action profile" onclick="viewProfile('${student.studentID}')">Profile</button>
+<button class="action statement" onclick="viewStatement('${student.studentID}')">Statement</button>
+</td>
+</tr>`;
+});
+}
+
+// SUMMARY CARDS
+function updateSummary(){
+document.getElementById("totalStudents").innerHTML = students.length;
+document.getElementById("maleStudents").innerHTML = students.filter(s=>s.gender==="Male").length;
+document.getElementById("femaleStudents").innerHTML = students.filter(s=>s.gender==="Female").length;
+let classes=[];
+students.forEach(student=>{if(student.classApplying){classes.push(student.classApplying);}});
+document.getElementById("classCount").innerHTML = [...new Set(classes)].length;
+}
+
+// SEARCH + FILTER
+function filterStudents(){
+let search = document.getElementById("searchStudent").value.toLowerCase();
+let selectedClass = document.getElementById("classFilter").value;
+let filtered = students.filter(student=>{
+let name = (student.firstName || "")+" "+(student.surname || "");
+name = name.toLowerCase();
+let matchSearch = (student.studentID || "").toLowerCase().includes(search) || name.includes(search);
+let matchClass = selectedClass==="" || student.classApplying===selectedClass;
+return matchSearch && matchClass;
+});
+displayStudents(filtered);
+}
+
+document.getElementById("searchStudent").oninput = filterStudents;
+document.getElementById("classFilter").onchange = filterStudents;
+
+// VIEW PROFILE
+window.viewProfile=function(id){window.location.href = "student-profile.html?id="+id;};
+// VIEW STATEMENT
+window.viewStatement=function(id){window.location.href = "admin-statement.html?id="+id;};
+// REFRESH
+document.getElementById("refreshBtn").onclick=function(){loadStudents();};
+// LOGOUT
+document.querySelector(".menu a:last-child").onclick=function(e){e.preventDefault();localStorage.removeItem("loggedUser");window.location.href="login.html";};
+
+// START
+loadStudents();
+</script>
+</body>
+</html>

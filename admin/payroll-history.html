@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payroll History | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--light:#f4f7fb;--green:#27ae60;--red:#c0392b;--blue:#003366;--orange:#f39c12}
+body{margin:0;background:var(--light);display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR - SAME AS DASHBOARD */
+.sidebar{width:270px;background:var(--navy);color:white;height:100vh;overflow-y:auto;position:fixed;left:0;top:0;z-index:1001;transition:left.3s ease}
+.sidebar.closed{left:-270px}
+.logo{padding:20px;text-align:center;border-bottom:1px solid rgba(255,255,255,.2)}
+.logo img{width:80px}.logo h2{margin:10px 0;font-size:18px}.logo p{margin:0;opacity:.8}
+
+/* MENU */
+.menu a,.menu-header{display:flex;align-items:center;gap:15px;padding:14px 25px;color:white;text-decoration:none;cursor:pointer;font-size:14px}
+.menu a:hover,.menu-header:hover{background:rgba(255,255,255,.12)}
+.menu a.active{background:rgba(255,255,255,.2);border-left:4px solid var(--green)}
+
+/* COLLAPSE */
+.submenu{max-height:0;overflow:hidden;background:rgba(0,0,0,.18);transition:max-height.4s ease-in-out}
+.menu-group.active .submenu{max-height:1000px}
+.arrow{margin-left:auto;transition:transform.3s ease;font-size:12px}
+.menu-group.active .arrow{transform:rotate(180deg)}
+.submenu a{padding-left:55px;font-size:13px;padding-top:12px;padding-bottom:12px}
+.section-label{padding:15px 25px 5px;font-size:10px;text-transform:uppercase;opacity:.6;letter-spacing:1px}
+
+/* MAIN LAYOUT */
+.main{display:flex;flex-direction:column;margin-left:270px;width:calc(100% - 270px);height:100vh;transition:margin-left.3s ease}
+.content{flex:1;padding:30px;overflow-y:auto}
+
+/* TOPBAR */
+.topbar{height:75px;background:white;display:flex;align-items:center;justify-content:space-between;padding:0 20px 0 30px;box-shadow:0 3px 10px rgba(0,0,0,.1);position:sticky;top:0;z-index:999}
+.hamburger{display:none;font-size:24px;color:var(--navy);cursor:pointer;margin-right:15px}
+.user-info{display:flex;align-items:center;gap:15px;color:var(--navy);font-weight:bold}
+
+#pageLoader{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(244,247,251,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100}
+#pageLoader i{font-size:72px;color:var(--navy);animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+.box{background:white;padding:25px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.1);margin-bottom:20px}
+.filters{display:flex;gap:15px;flex-wrap:wrap;margin-bottom:20px}
+.filters input{padding:10px;border:1px solid #ccc;border-radius:8px;flex:1;min-width:250px}
+table{width:100%;border-collapse:collapse}
+th{background:var(--navy);color:white;padding:12px;text-align:left;font-size:13px}
+td{padding:12px;border-bottom:1px solid #ddd;font-size:13px}
+.btn{padding:8px 12px;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:bold}
+.btn-view{background:var(--blue);color:white}
+.btn-view:hover{background:#004b96}
+.badge{padding:4px 10px;border-radius:12px;font-size:11px;color:white;font-weight:bold;background:var(--green)}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-content{background:#fff;border-radius:15px;padding:25px;width:90%;max-width:1000px;max-height:90vh;overflow-y:auto}
+.modal-content h3{margin:0 0 15px;color:var(--navy)}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
+.summary-card{background:#f4f7fb;padding:15px;border-radius:10px;text-align:center;border-left:4px solid var(--navy)}
+.summary-card h4{margin:0;font-size:12px;color:#555}
+.summary-card p{margin:5px 0 0;font-size:20px;font-weight:bold;color:var(--navy)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:15px}
+
+/* OFFLINE NOTIFICATION */
+.connection-status{position:fixed;top:0;left:270px;right:0;z-index:2001;padding:12px 20px;text-align:center;font-weight:bold;font-size:14px;color:white;transform:translateY(-100%);transition:transform.3s ease}
+.connection-status.show{transform:translateY(0)}
+.connection-status.offline{background:var(--red)}
+@media(max-width:1100px){.connection-status{left:0}}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000}
+.overlay.show{display:block}
+
+/* RESPONSIVE */
+@media(max-width:992px){
+.sidebar{left:-270px}
+.sidebar.open{left:0}
+.main{margin-left:0;width:100%}
+.hamburger{display:block}
+}
+</style>
+</head>
+<body>
+
+<div class="connection-status" id="connectionStatus"></div>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR SAME AS DASHBOARD -->
+<div class="sidebar" id="sidebar">
+  <div class="logo"><img src="../images/logo1 - Copy.png"><h2>GREYSOL ACADEMY</h2><p id="portalRole">Accountant Portal</p></div>
+  <div class="menu">
+    <a href="accountant-dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+
+    <div class="section-label">Accounting</div>
+    <div class="menu-group" id="accountingGroup">
+      <div class="menu-header"><i class="fa-solid fa-book"></i> Accounting <i class="fa-solid fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="chart-of-accounts.html"><i class="fa-solid fa-list"></i> Chart of Accounts</a>
+        <a href="journal-entry.html"><i class="fa-solid fa-book-journal-whills"></i> Journal Entry</a>
+        <a href="journal-list.html"><i class="fa-solid fa-list-check"></i> Journal List</a>
+        <a href="bills.html"><i class="fa-solid fa-file-invoice"></i> Bills</a>
+        <a href="expenses.html"><i class="fa-solid fa-receipt"></i> Expenses</a>
+      </div>
+    </div>
+
+    <div class="section-label">Sales</div>
+    <div class="menu-group" id="salesGroup">
+      <div class="menu-header"><i class="fa-solid fa-cart-shopping"></i> Sales <i class="fa-solid fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="invoice-list.html"><i class="fa-solid fa-file-invoice-dollar"></i> Invoices</a>
+        <a href="receipts-list.html"><i class="fa-solid fa-money-bill-wave"></i> Payments</a>
+        <a href="students.html"><i class="fa-solid fa-user-graduate"></i> Students</a>
+      </div>
+    </div>
+
+    <div class="section-label">HR & Payroll</div>
+    <div class="menu-group active" id="hrGroup">
+      <div class="menu-header"><i class="fa-solid fa-users-gear"></i> HR & Payroll <i class="fa-solid fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="attendance.html"><i class="fa-solid fa-calendar-check"></i> Daily Attendance</a>
+        <a href="payroll-settings.html"><i class="fa-solid fa-gears"></i> Payroll Settings</a>
+        <a href="payroll-run.html"><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</a>
+        <a href="payroll-history.html" class="active"><i class="fa-solid fa-clock-rotate-left"></i> Payroll History</a>
+      </div>
+    </div>
+
+    <div class="section-label">Reports</div>
+    <div class="menu-group" id="reportsGroup">
+      <div class="menu-header"><i class="fa-solid fa-chart-pie"></i> Reports <i class="fa-solid fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+      </div>
+    </div>
+    <a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </div>
+</div>
+
+<div class="main" id="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <i class="fa-solid fa-bars hamburger" id="hamburger" onclick="toggleSidebar()"></i>
+      <h2>Payroll History</h2>
+    </div>
+    <div class="user-info">
+      <span id="staffName">Loading...</span>
+    </div>
+  </div>
+  <div class="content">
+    <div id="pageLoader"><i class="fa-solid fa-circle-notch"></i><p>Loading Payroll History...</p></div>
+
+    <div class="box">
+      <div class="filters">
+        <input type="text" id="searchInput" placeholder="Search by Journal No, Description, Posted By" onkeyup="renderTable()">
+        <input type="month" id="monthFilter" onchange="renderTable()">
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Journal No</th>
+            <th>Payroll Date</th>
+            <th>Description</th>
+            <th>Employees</th>
+            <th>Total Gross</th>
+            <th>Total Net</th>
+            <th>Posted By</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="payrollTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PAYROLL DETAILS MODAL -->
+<div class="modal" id="payrollModal" onclick="if(event.target.id==='payrollModal') closeModal()">
+  <div class="modal-content">
+    <h3 id="modalTitle">Payroll Details</h3>
+    <div class="summary-grid" id="summaryGrid"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Employee</th>
+          <th>Basic</th>
+          <th>Allowances</th>
+          <th>Gross</th>
+          <th>Deductions</th>
+          <th>Net Pay</th>
+        </tr>
+      </thead>
+      <tbody id="payrollDetailsBody"></tbody>
+    </table>
+    <div class="modal-actions">
+      <button class="btn btn-view" onclick="printPayroll()"><i class="fa-solid fa-print"></i> Print</button>
+      <button class="btn" style="background:#ccc" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+
+// STRICT ROLE CHECK
+if(!loggedUser || loggedUser.role!== "Accountant"){
+  alert("Access Denied. Accountants Only.");
+  window.location.href = "staff-login.html";
+}
+
+document.getElementById("staffName").innerText = loggedUser?.username || "Admin";
+document.getElementById("portalRole").innerText = loggedUser.role + " Portal";
+
+// BULLETPROOF COLLAPSE TOGGLE - SAME AS DASHBOARD
+document.querySelectorAll('.menu-header').forEach(header => {
+  header.addEventListener('click', function() {
+    this.parentElement.classList.toggle('active');
+  });
+});
+
+document.getElementById("logoutBtn").onclick = (e) => {e.preventDefault();localStorage.removeItem("loggedUser");window.location.href = "staff-login.html";}
+
+// HAMBURGER FUNCTION
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+}
+
+// OFFLINE CHECK
+const statusBar = document.getElementById("connectionStatus");
+function updateConnectionStatus(){
+  if(!navigator.onLine){ 
+    statusBar.className = `connection-status offline show`;
+    statusBar.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> No internet connection`;
+  }
+}
+window.addEventListener('offline', updateConnectionStatus);
+updateConnectionStatus();
+
+function formatMoney(n){ return "MWK " + Number(n||0).toLocaleString() }
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",projectId:"greysol-academy"});
+const db = getFirestore(app);
+
+let allPayrollJournals = [];
+
+async function loadPayrollHistory(){
+  if(!navigator.onLine){ document.getElementById("pageLoader").style.display="none"; return; }
+  
+  const snap = await getDocs(query(collection(db,"journalEntries"), orderBy("date","desc")));
+  
+  // Filter for payroll journals
+  allPayrollJournals = snap.docs
+    .map(d=>({id:d.id,...d.data()}))
+    .filter(j => j.source === "Payroll" || (j.description && j.description.toLowerCase().includes("payroll")));
+  
+  renderTable();
+  document.getElementById("pageLoader").style.display="none";
+}
+loadPayrollHistory();
+
+window.renderTable = function(){
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const month = document.getElementById("monthFilter").value; // yyyy-mm
+
+  let filtered = allPayrollJournals.filter(j=>{
+    const matchSearch = !search || 
+      (j.journalNo||"").toLowerCase().includes(search) ||
+      (j.description||"").toLowerCase().includes(search) ||
+      (j.postedBy||"").toLowerCase().includes(search);
+    
+    const matchMonth = !month || new Date(j.date.toDate()).toISOString().slice(0,7) === month;
+    return matchSearch && matchMonth;
+  });
+
+  document.getElementById("payrollTable").innerHTML = filtered.map(j=>{
+    // Calculate totals from payrollData or lines
+    let totalGross = 0, totalNet = 0, empCount = 0;
+    if(j.payrollData && j.payrollData.employees){
+      empCount = j.payrollData.employees.length;
+      j.payrollData.employees.forEach(emp=>{
+        totalGross += emp.gross || 0;
+        totalNet += emp.netPay || 0;
+      });
+    } else {
+      totalGross = j.totalDebit || 0;
+      totalNet = j.totalCredit || 0;
+    }
+
+    return `
+    <tr>
+      <td><b>${j.journalNo}</b></td>
+      <td>${new Date(j.date.toDate()).toLocaleDateString("en-GB")}</td>
+      <td>${j.description}</td>
+      <td>${empCount}</td>
+      <td>${formatMoney(totalGross)}</td>
+      <td>${formatMoney(totalNet)}</td>
+      <td>${j.postedBy}</td>
+      <td><button class="btn btn-view" onclick="viewPayroll('${j.id}')"><i class="fa-solid fa-eye"></i> View</button></td>
+    </tr>
+  `}).join("") || `<tr><td colspan="8" style="text-align:center">No payroll records found</td></tr>`;
+}
+
+window.viewPayroll = function(id){
+  const j = allPayrollJournals.find(x=>x.id===id);
+  if(!j) return;
+  
+  document.getElementById("modalTitle").innerText = `Payroll: ${j.journalNo} - ${new Date(j.date.toDate()).toLocaleDateString("en-GB")}`;
+  
+  let totalGross = 0, totalDeductions = 0, totalNet = 0, empCount = 0;
+  let rows = "";
+  
+  if(j.payrollData && j.payrollData.employees){
+    j.payrollData.employees.forEach((emp, index)=>{
+      totalGross += emp.gross || 0;
+      totalDeductions += emp.deductions || 0;
+      totalNet += emp.netPay || 0;
+      empCount++;
+      rows += `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${emp.name}</td>
+        <td>${formatMoney(emp.basic)}</td>
+        <td>${formatMoney(emp.allowances)}</td>
+        <td>${formatMoney(emp.gross)}</td>
+        <td>${formatMoney(emp.deductions)}</td>
+        <td><b>${formatMoney(emp.netPay)}</b></td>
+      </tr>
+      `;
+    });
+  }
+  
+  document.getElementById("summaryGrid").innerHTML = `
+    <div class="summary-card"><h4>Employees Paid</h4><p>${empCount}</p></div>
+    <div class="summary-card"><h4>Total Gross</h4><p>${formatMoney(totalGross)}</p></div>
+    <div class="summary-card"><h4>Total Deductions</h4><p>${formatMoney(totalDeductions)}</p></div>
+    <div class="summary-card"><h4>Total Net Pay</h4><p>${formatMoney(totalNet)}</p></div>
+  `;
+  
+  document.getElementById("payrollDetailsBody").innerHTML = rows || `<tr><td colspan="7">No employee breakdown found. Check journal lines.</td></tr>`;
+  document.getElementById("payrollModal").classList.add("show");
+}
+
+window.closeModal = function(){
+  document.getElementById("payrollModal").classList.remove("show");
+}
+
+window.printPayroll = function(){
+  window.print();
+}
+</script>
+</body>
+</html>

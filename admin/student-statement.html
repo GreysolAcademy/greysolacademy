@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+Greysol Academy Student Statement
+</title>
+
+
+<style>
+
+
+*{
+
+box-sizing:border-box;
+
+font-family:'Segoe UI',Arial,sans-serif;
+
+}
+
+
+
+body{
+
+margin:0;
+
+background:#f4f7fb;
+
+color:#333;
+
+}
+
+
+
+.container{
+
+width:95%;
+
+max-width:1100px;
+
+margin:30px auto;
+
+}
+
+
+
+
+
+.search-box{
+
+background:white;
+
+padding:25px;
+
+border-radius:15px;
+
+box-shadow:
+0 5px 20px rgba(0,0,0,.15);
+
+margin-bottom:25px;
+
+}
+
+
+
+input,button{
+
+padding:12px;
+
+border-radius:8px;
+
+border:1px solid #ccc;
+
+}
+
+
+
+input{
+
+margin:5px;
+
+}
+
+
+
+button{
+
+background:#001f3f;
+
+color:white;
+
+border:none;
+
+cursor:pointer;
+
+}
+
+
+
+button:hover{
+
+background:#003366;
+
+}
+
+
+
+
+
+.statement{
+
+
+background:white;
+
+padding:40px;
+
+border-radius:15px;
+
+box-shadow:
+0 5px 20px rgba(0,0,0,.15);
+
+
+}
+
+
+
+
+
+.school-header{
+
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:20px;
+
+border-bottom:3px solid #001f3f;
+
+padding-bottom:20px;
+
+
+}
+
+
+
+.school-header img{
+
+
+width:100px;
+
+height:100px;
+
+object-fit:contain;
+
+
+}
+
+
+
+.school-name{
+
+text-align:center;
+
+}
+
+
+
+.school-name h1{
+
+
+margin:0;
+
+font-size:32px;
+
+color:#001f3f;
+
+
+}
+
+
+
+.school-name p{
+
+margin:5px;
+
+}
+
+
+
+
+.title{
+
+
+text-align:center;
+
+color:#001f3f;
+
+margin:25px;
+
+
+}
+
+
+
+
+
+
+.student-info{
+
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:15px;
+
+
+}
+
+
+
+.info-box{
+
+
+background:#f4f7fb;
+
+padding:15px;
+
+border-radius:10px;
+
+
+}
+
+
+
+.info-box b{
+
+color:#001f3f;
+
+}
+
+
+
+
+
+
+
+.summary{
+
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:15px;
+
+margin:25px 0;
+
+
+}
+
+
+
+.summary-box{
+
+
+background:#001f3f;
+
+color:white;
+
+padding:20px;
+
+text-align:center;
+
+border-radius:10px;
+
+
+}
+
+
+
+.summary-box h2{
+
+margin:0;
+
+}
+
+
+
+
+
+
+table{
+
+
+width:100%;
+
+border-collapse:collapse;
+
+margin-top:20px;
+
+
+}
+
+
+
+th{
+
+
+background:#001f3f;
+
+color:white;
+
+padding:12px;
+
+text-align:left;
+
+
+}
+
+
+
+td{
+
+padding:12px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+
+
+.right{
+
+text-align:right;
+
+}
+
+
+
+
+
+
+.footer{
+
+
+margin-top:40px;
+
+border-top:1px solid #ccc;
+
+padding-top:20px;
+
+display:flex;
+
+justify-content:space-between;
+
+
+}
+
+
+
+
+.hidden{
+
+display:none;
+
+}
+
+
+
+
+
+.print-btn{
+
+float:right;
+
+margin-bottom:20px;
+
+}
+
+
+
+
+
+
+/* PRINT SETTINGS */
+
+
+@media print{
+
+
+@page{
+
+size:A4;
+
+margin:15mm;
+
+}
+
+
+
+body{
+
+background:white;
+
+overflow:hidden;
+
+-webkit-print-color-adjust:exact;
+
+print-color-adjust:exact;
+
+}
+
+
+
+.search-box,
+.print-btn{
+
+display:none!important;
+
+}
+
+
+
+.container{
+
+width:100%;
+
+margin:0;
+
+padding:0;
+
+}
+
+
+
+.statement{
+
+box-shadow:none;
+
+border-radius:0;
+
+}
+
+
+
+thead{
+
+display:table-header-group;
+
+}
+
+
+
+tr{
+
+page-break-inside:avoid;
+
+}
+
+
+
+}
+
+
+
+
+/* REMOVE SCROLL BAR */
+
+
+::-webkit-scrollbar{
+
+display:none;
+
+}
+
+
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+
+<div class="search-box">
+
+
+<h2>
+Student Statement
+</h2>
+
+
+<input 
+id="searchStudent"
+placeholder="Enter Student ID">
+
+
+<button id="searchBtn">
+Search
+</button>
+
+
+<br><br>
+
+
+<label>
+From:
+</label>
+
+
+<input
+type="date"
+id="fromDate">
+
+
+
+<label>
+To:
+</label>
+
+
+<input
+type="date"
+id="toDate">
+
+
+
+<button id="filterBtn">
+
+Filter
+
+</button>
+
+
+
+</div>
+<div id="statement" class="statement hidden">
+
+
+
+<button 
+class="print-btn"
+onclick="window.print()">
+
+Print Statement
+
+</button>
+
+
+
+
+
+<div class="school-header">
+
+
+<img src="../images/logo1 - Copy.png">
+
+
+
+<div class="school-name">
+
+
+<h1>
+GREYSOL ACADEMY
+</h1>
+
+
+<p>
+P.O Box 1416, Lilongwe
+</p>
+
+
+<p>
+Tel: 0880314701
+</p>
+
+
+<p>
+Email: info@greysolacademy.com
+</p>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<h2 class="title">
+
+STUDENT FEE STATEMENT
+
+</h2>
+
+
+
+
+
+
+
+
+<div class="student-info">
+
+
+
+<div class="info-box">
+
+Student Name:
+
+<br>
+
+<b id="studentName">
+
+-
+
+</b>
+
+</div>
+
+
+
+
+
+
+<div class="info-box">
+
+Student ID:
+
+<br>
+
+<b id="studentID">
+
+-
+
+</b>
+
+</div>
+
+
+
+
+
+
+<div class="info-box">
+
+Class:
+
+<br>
+
+<b id="studentClass">
+
+-
+
+</b>
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="summary">
+
+
+
+<div class="summary-box">
+
+
+<h2 id="totalInvoice">
+
+MWK 0
+
+</h2>
+
+
+<p>
+
+Total Invoiced
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="summary-box">
+
+
+<h2 id="totalPaid">
+
+MWK 0
+
+</h2>
+
+
+<p>
+
+Total Paid
+
+</p>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="summary-box">
+
+
+<h2 id="balance">
+
+MWK 0
+
+</h2>
+
+
+<p>
+
+Outstanding Balance
+
+</p>
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<table>
+
+
+<thead>
+
+
+<tr>
+
+
+<th>
+Date
+</th>
+
+
+<th>
+Reference
+</th>
+
+
+<th>
+Description
+</th>
+
+
+<th>
+Debit
+</th>
+
+
+<th>
+Credit
+</th>
+
+
+<th>
+Balance
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+
+<tbody id="transactions">
+
+
+
+</tbody>
+
+
+
+</table>
+
+
+
+
+
+
+
+
+
+<div class="footer">
+
+
+
+<p>
+
+Prepared by: ______________________
+
+</p>
+
+
+
+<p>
+
+Date: ______________________
+
+</p>
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+</div>
+<script type="module">
+
+
+import { initializeApp }
+
+from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+
+getFirestore,
+
+collection,
+
+query,
+
+where,
+
+getDocs
+
+}
+
+from
+
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+
+// FIREBASE CONFIG
+
+const firebaseConfig = {
+
+
+apiKey: "AIzaSyAgoW4EU_hvrWHSxJciW0qUWeUXOr-msgw",
+
+authDomain: "greysol-academy.firebaseapp.com",
+
+projectId: "greysol-academy",
+
+storageBucket: "greysol-academy.firebasestorage.app",
+
+messagingSenderId: "700477093508",
+
+appId: "1:700477093508:web:d1f95a63483b8e9ab934d1",
+
+measurementId: "G-XY8XSZJ9HE"
+
+
+};
+
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const db = getFirestore(app);
+
+
+
+
+
+let allTransactions = [];
+
+let currentStudent = null;
+
+
+
+
+
+const searchBtn =
+document.getElementById("searchBtn");
+
+
+const filterBtn =
+document.getElementById("filterBtn");
+
+
+
+
+
+
+
+// ==============================
+// SEARCH STUDENT
+// ==============================
+
+
+searchBtn.onclick = async()=>{
+
+
+let id =
+document
+.getElementById("searchStudent")
+.value
+.trim()
+.toUpperCase();
+
+
+
+
+if(id===""){
+
+alert("Enter Student ID");
+
+return;
+
+}
+
+
+
+
+
+try{
+
+
+const q = query(
+
+collection(db,"students"),
+
+where(
+
+"studentID",
+
+"==",
+
+id
+
+)
+
+);
+
+
+
+
+const snap = await getDocs(q);
+
+
+
+
+
+if(snap.empty){
+
+
+alert("Student not found");
+
+
+return;
+
+
+}
+
+
+
+
+currentStudent =
+snap.docs[0].data();
+
+
+
+loadStatement(currentStudent);
+
+
+
+}
+
+catch(error){
+
+
+console.error(error);
+
+alert(error.message);
+
+
+}
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+// ==============================
+// LOAD STATEMENT
+// ==============================
+
+
+async function loadStatement(student){
+
+
+
+document
+.getElementById("statement")
+.classList
+.remove("hidden");
+
+
+
+
+
+document.getElementById("studentName").innerHTML =
+
+`${student.firstName || ""}
+
+${student.middleName || ""}
+
+${student.surname || ""}`;
+
+
+
+
+document.getElementById("studentID").innerHTML =
+
+student.studentID || "-";
+
+
+
+
+
+document.getElementById("studentClass").innerHTML =
+
+student.classApplying || "-";
+
+
+
+
+
+
+
+allTransactions=[];
+
+
+
+
+
+
+// ==============================
+// GET INVOICES
+// ==============================
+
+
+const invoiceQuery = query(
+
+collection(db,"invoices"),
+
+where(
+
+"studentID",
+
+"==",
+
+student.studentID
+
+)
+
+);
+
+
+
+
+
+const invoiceSnap =
+
+await getDocs(invoiceQuery);
+
+
+
+
+
+
+invoiceSnap.forEach(doc=>{
+
+
+let invoice = doc.data();
+
+
+
+let description="School Fees";
+
+
+
+if(invoice.items && invoice.items.length>0){
+
+
+
+description="";
+
+
+
+invoice.items.forEach(item=>{
+
+
+description +=
+
+item.description
++
+" (MWK "
++
+Number(item.amount)
+.toLocaleString()
++
+")<br>";
+
+
+
+});
+
+
+
+}
+
+
+
+
+
+
+
+allTransactions.push({
+
+
+date:
+
+
+invoice.createdAt?.toDate
+
+?
+
+invoice.createdAt.toDate()
+
+:
+
+new Date(),
+
+
+
+
+
+reference:
+
+
+invoice.invoiceNumber
+
+||
+
+invoice.invoiceNo
+
+||
+
+doc.id,
+
+
+
+
+
+description:description,
+
+
+
+
+
+debit:
+
+Number(invoice.totalAmount || 0),
+
+
+
+
+
+credit:0
+
+
+
+});
+
+
+
+});
+
+
+
+
+
+
+
+
+
+// ==============================
+// GET PAYMENTS
+// ==============================
+
+
+
+const paymentQuery = query(
+
+collection(db,"payments"),
+
+where(
+
+"studentID",
+
+"==",
+
+student.studentID
+
+)
+
+);
+
+
+
+
+
+
+const paymentSnap =
+
+await getDocs(paymentQuery);
+
+
+
+
+
+
+paymentSnap.forEach(doc=>{
+
+
+let payment = doc.data();
+
+
+
+
+allTransactions.push({
+
+
+
+date:
+
+new Date(payment.paymentDate),
+
+
+
+
+reference:
+
+payment.invoiceID || doc.id,
+
+
+
+
+description:
+
+"Payment Received - "
++
+(payment.paymentMethod || "Cash"),
+
+
+
+
+
+debit:0,
+
+
+
+
+
+credit:
+
+Number(payment.amount || 0)
+
+
+
+});
+
+
+
+});
+
+
+
+
+
+
+
+
+// SORT EVERYTHING
+
+
+allTransactions.sort(
+
+(a,b)=>
+
+a.date-b.date
+
+);
+
+
+
+
+
+
+displayTransactions(allTransactions);
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// ==============================
+// DISPLAY STATEMENT
+// ==============================
+
+
+function displayTransactions(rows){
+
+
+
+let balance = 0;
+
+
+let totalInvoice = 0;
+
+
+let totalPaid = 0;
+
+
+
+
+
+const table =
+
+document.getElementById("transactions");
+
+
+
+table.innerHTML="";
+
+
+
+
+
+
+
+
+rows.forEach(row=>{
+
+
+
+balance += row.debit;
+
+
+balance -= row.credit;
+
+
+
+
+totalInvoice += row.debit;
+
+
+totalPaid += row.credit;
+
+
+
+
+
+table.innerHTML += `
+
+
+<tr>
+
+
+<td>
+
+${row.date.toLocaleDateString()}
+
+</td>
+
+
+<td>
+
+${row.reference}
+
+</td>
+
+
+<td>
+
+${row.description}
+
+</td>
+
+
+
+<td class="right">
+
+${
+row.debit
+
+?
+
+"MWK "
++
+row.debit.toLocaleString()
+
+:
+
+"-"
+
+}
+
+</td>
+
+
+
+<td class="right">
+
+${
+row.credit
+
+?
+
+"MWK "
++
+row.credit.toLocaleString()
+
+:
+
+"-"
+
+}
+
+</td>
+
+
+
+<td class="right">
+
+MWK ${balance.toLocaleString()}
+
+</td>
+
+
+</tr>
+
+
+`;
+
+
+
+});
+
+
+
+
+
+
+
+document
+.getElementById("totalInvoice")
+.innerHTML =
+
+"MWK "
++
+totalInvoice.toLocaleString();
+
+
+
+
+
+
+document
+.getElementById("totalPaid")
+.innerHTML =
+
+"MWK "
++
+totalPaid.toLocaleString();
+
+
+
+
+
+
+
+document
+.getElementById("balance")
+.innerHTML =
+
+"MWK "
++
+balance.toLocaleString();
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==============================
+// DATE FILTER WITH OPENING BALANCE
+// ==============================
+
+
+filterBtn.onclick=function(){
+
+
+
+let fromValue =
+
+document
+.getElementById("fromDate")
+.value;
+
+
+
+let toValue =
+
+document
+.getElementById("toDate")
+.value;
+
+
+
+
+
+
+let from = fromValue
+
+?
+
+new Date(fromValue)
+
+:
+
+new Date("2000-01-01");
+
+
+
+
+
+
+let to = toValue
+
+?
+
+new Date(toValue)
+
+:
+
+new Date();
+
+
+
+
+to.setHours(23,59,59);
+
+
+
+
+
+
+
+let openingBalance = 0;
+
+
+
+let filtered=[];
+
+
+
+
+
+
+
+allTransactions.forEach(row=>{
+
+
+if(row.date < from){
+
+
+openingBalance += row.debit;
+
+openingBalance -= row.credit;
+
+
+
+}
+
+else if(row.date >= from && row.date <= to){
+
+
+filtered.push(row);
+
+
+}
+
+
+});
+
+
+
+
+
+
+
+
+if(openingBalance !==0){
+
+
+
+filtered.unshift({
+
+
+date:from,
+
+reference:"OPENING",
+
+
+description:"Balance Brought Forward",
+
+
+debit:
+
+openingBalance > 0
+
+?
+
+openingBalance
+
+:
+
+0,
+
+
+
+credit:
+
+openingBalance < 0
+
+?
+
+Math.abs(openingBalance)
+
+:
+
+0
+
+
+});
+
+
+
+}
+
+
+
+
+
+
+displayTransactions(filtered);
+
+
+
+};
+
+
+
+
+</script>
+</body>
+</html>

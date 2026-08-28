@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bank Reconciliation | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
+:root{--primary:#0B1F3A;--secondary:#2563EB;--success:#16A34A;--warning:#F59E0B;--danger:#DC2626;--light:#F8FAFC;--border:#E2E8F0;--text:#334155;}
+body{background:#F1F5F9;color:var(--text);height:100vh;overflow:hidden;}
+.sidebar{
+    width:270px;
+    height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    z-index:1100;
+    background:#001f3f;
+    color:#fff;
+    overflow-y:auto;
+    transition:width .25s ease,left .25s ease;
+}
+
+.logo{
+    padding:18px 15px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.14);
+}
+
+.logo img{
+    width:66px;
+    height:66px;
+    object-fit:contain;
+}
+
+.logo h2{
+    font-size:17px;
+    margin:8px 0 3px;
+}
+
+.logo p{
+    margin:0;
+    font-size:12px;
+    opacity:.7;
+}
+
+.menu{
+    padding:8px 0 20px;
+}
+
+.section-label{
+    padding:15px 24px 6px;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1.1px;
+    opacity:.5;
+}
+
+.menu a,
+.menu-header{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:12px 22px;
+    color:#fff;
+    text-decoration:none;
+    cursor:pointer;
+    font-size:13px;
+    min-height:46px;
+}
+
+.menu a i,
+.menu-header>i:first-child{
+    width:18px;
+    text-align:center;
+}
+
+.menu a:hover,
+.menu-header:hover{
+    background:rgba(255,255,255,.08);
+}
+
+.menu a.active{
+    background:rgba(255,255,255,.13);
+    border-left:4px solid #1f9d55;
+    padding-left:18px;
+}
+
+.arrow{
+    margin-left:auto!important;
+    width:auto!important;
+    font-size:11px!important;
+    transition:transform .25s ease;
+}
+
+.submenu{
+    max-height:0;
+    overflow:hidden;
+    background:rgba(0,0,0,.17);
+    transition:max-height .3s ease;
+}
+
+.menu-group.active .submenu{
+    max-height:600px;
+}
+
+.menu-group.active .arrow{
+    transform:rotate(180deg);
+}
+
+.submenu a{
+    padding-left:54px;
+    font-size:12px;
+}
+
+.submenu a.active{
+    padding-left:50px;
+}
+
+.sidebar::-webkit-scrollbar{
+    width:5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.2);
+    border-radius:10px;
+}
+
+.menu-group{
+    position:relative;
+}
+
+.menu-header span{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.menu a span{
+    white-space:nowrap;
+}
+.main{
+    margin-left:270px;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    transition:margin-left .25s ease;
+}
+
+.topbar{
+    height:70px;
+    flex:0 0 70px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+    box-shadow:0 2px 10px rgba(0,0,0,.07);
+    z-index:900;
+}
+
+.top-left{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.topbar h2{
+    margin:0;
+    color:#001f3f;
+    font-size:20px;
+}
+
+.hamburger{
+    font-size:21px;
+    color:#001f3f;
+    cursor:pointer;
+}
+
+.mobile-menu{
+    display:none;
+}
+
+.user-info{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.user-avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:#001f3f;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+}
+
+.user-text{
+    text-align:right;
+}
+
+.user-text strong{
+    display:block;
+    font-size:13px;
+    color:#001f3f;
+}
+
+.user-text span{
+    font-size:11px;
+    color:#6b7280;
+}
+@media(max-width:992px){
+
+    .sidebar{
+        left:-270px;
+    }
+
+    .sidebar.open{
+        left:0;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .mobile-menu{
+        display:block;
+    }
+
+    .overlay{
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.4);
+        z-index:1050;
+    }
+
+    .overlay.show{
+        display:block;
+    }
+
+}
+.hamburger{display:none;font-size:24px;cursor:pointer;color:var(--primary)}
+.content{padding:25px;overflow-y:auto;}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:25px;}
+.card{background:white;padding:20px;border-radius:15px;border:1px solid var(--border);}
+.kpi-card{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:20px;
+}
+
+.kpi-icon{
+    width:50px;
+    height:50px;
+    min-width:50px;
+    border-radius:12px;
+    background:#EFF6FF;
+    color:var(--secondary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:21px;
+}
+
+.kpi-content{
+    min-width:0;
+}
+
+.kpi-content .card-title{
+    margin-bottom:6px;
+}
+
+.kpi-content .card-value{
+    font-size:22px;
+    white-space:nowrap;
+}
+.card-title{color:#64748B;font-size:13px;margin-bottom:10px;}
+.card-value{font-size:25px;font-weight:700;color:var(--primary);}
+.section{background:white;padding:25px;border-radius:15px;border:1px solid var(--border);margin-bottom:25px;}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+.form-group input,.form-group select{width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;}
+.btn{padding:11px 18px;border:none;border-radius:8px;cursor:pointer;font-weight:600;}
+.btn-primary{background:var(--secondary);color:white;}.btn-success{background:var(--success);color:white;}.btn-warning{background:var(--warning);color:white;}.btn-danger{background:var(--danger);color:white;}.btn-grey{background:#64748B;color:white;}
+.transaction-panel{border:1px solid var(--border);border-radius:10px;padding:15px;max-height:450px;overflow:auto;}
+.panel-header{background:var(--primary);color:white;padding:10px;border-radius:8px;margin-bottom:10px;display:flex;justify-content:space-between;}
+.transaction-row{display:grid;grid-template-columns:40px 120px 1fr 120px 120px 40px;gap:10px;padding:10px;border-bottom:1px solid #eee;align-items:center;}
+.transaction-row.matched{background:#F0FDF4;}
+.amount.positive{color:var(--success);font-weight:bold;}.amount.negative{color:var(--danger);font-weight:bold;}
+.status-badge{padding:4px 8px;border-radius:20px;font-size:11px;}.status-badge.success{background:#DCFCE7;color:var(--success);}.status-badge.pending{background:#FEF3C7;color:var(--warning);}
+.analysis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;}
+.analysis-card{background:#F8FAFC;padding:15px;border-radius:10px;text-align:center;}
+.difference-box{text-align:center;padding:20px;background:#F8FAFC;border-radius:10px;}.difference-box h1{font-size:32px;color:var(--primary);}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center;}
+.modal-content{background:white;width:90%;max-width:800px;border-radius:15px;padding:25px;max-height:90vh;overflow:auto;}
+.manual-add-row{display:grid;grid-template-columns:1fr 2fr 1fr 1fr 1fr 50px;gap:8px;margin-bottom:10px;padding:10px;background:#F8FAFC;border-radius:8px;}
+.import-options{display:none;background:#F8FAFC;padding:12px;border-radius:8px;margin-bottom:10px;gap:10px;}
+.notification{position:fixed;right:25px;top:25px;background:white;padding:15px 20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);display:flex;align-items:center;gap:12px;transform:translateX(400px);transition:.3s;z-index:99999;}
+.notification.show{transform:translateX(0);}.notification.success{border-left:5px solid #16A34A;}.notification.error{border-left:5px solid #DC2626;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.total-row td{font-weight:bold;background:#f4f7fb}
+.error{color:var(--danger);font-weight:bold}.balanced{color:var(--success);font-weight:bold}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th{background:var(--primary);color:white;padding:10px;text-align:left}
+td{padding:10px;border-bottom:1px solid #ddd}
+@media(max-width:992px){.sidebar{left:-260px}.sidebar.open{left:0}.main{margin-left:0}.hamburger{display:block}.form-grid{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+    <h2>GREYSOL ACADEMY</h2>
+    <p id="portalRole">Accountant Portal</p>
+  </div>
+
+  <div class="menu">
+    <a href="accounting-dashboard.html">
+      <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+    </a>
+    <a href="staff-profile.html">
+      <i class="fa-solid fa-user"></i><span>Staff Profile</span>
+    </a>
+
+    <div class="section-label">Operations</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Sales & Receivables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="students.html"><i class="fa-solid fa-user-graduate"></i> Students / Customers</a>
+        <a href="quotations.html"><i class="fa-solid fa-file-signature"></i> Quotations</a>
+        <a href="invoice-list.html"><i class="fa-solid fa-file-invoice"></i> Invoices</a>
+        <a href="credit-notes.html"><i class="fa-solid fa-file-circle-minus"></i> Credit Notes</a>
+        <a href="receipts-list.html"><i class="fa-solid fa-money-bill-wave"></i> Customer Payments</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="accounts-receivable.html"><i class="fa-solid fa-hand-holding-dollar"></i> Accounts Receivable</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Receivables Aging</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-cart-shopping"></i><span>Purchases & Payables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="suppliers.html"><i class="fa-solid fa-truck-field"></i> Suppliers</a>
+        <a href="requisitions.html"><i class="fa-solid fa-file-circle-plus"></i> Purchase Requisitions</a>
+        <a href="requisition-create.html"><i class="fa-solid fa-plus"></i> Create Requisition</a>
+        <a href="purchase-orders.html"><i class="fa-solid fa-clipboard-list"></i> Purchase Orders</a>
+        <a href="goods-received.html"><i class="fa-solid fa-box-open"></i> Goods Received</a>
+        <a href="bills.html"><i class="fa-solid fa-file-invoice"></i> Bills</a>
+        <a href="supplier-payments.html"><i class="fa-solid fa-money-check-dollar"></i> Supplier Payments</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="accounts-payable.html"><i class="fa-solid fa-money-bill-transfer"></i> Accounts Payable</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Payables Aging</a>
+      </div>
+    </div>
+
+    <div class="section-label">Cash Management</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-building-columns"></i><span>Banking</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="bank-accounts.html"><i class="fa-solid fa-building-columns"></i> Bank Accounts</a>
+        <a href="cash-accounts.html"><i class="fa-solid fa-wallet"></i> Cash Accounts</a>
+        <a href="bank-transactions.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Bank Transactions</a>
+        <a href="bank-transfer.html"><i class="fa-solid fa-right-left"></i> Transfers</a>
+        <a href="bank-reconciliation.html" class="active"><i class="fa-solid fa-scale-balanced"></i> Bank Reconciliation</a>
+        <a href="reconciliation-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Reconciliation History</a>
+      </div>
+    </div>
+
+    <div class="section-label">General Accounting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-book"></i><span>Accounting</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="chart-of-accounts.html"><i class="fa-solid fa-list"></i> Chart of Accounts</a>
+        <a href="journal-entry.html"><i class="fa-solid fa-book-journal-whills"></i> Journal Entry</a>
+        <a href="journal-list.html"><i class="fa-solid fa-list-check"></i> Journal List</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="ledger.html"><i class="fa-solid fa-table-list"></i> Account Ledger</a>
+        <a href="#"><i class="fa-solid fa-repeat"></i> Recurring Journals</a>
+        <a href="#"><i class="fa-solid fa-lock"></i> Period Closing</a>
+        <a href="accounting-settings.html"><i class="fa-solid fa-gear"></i>Settings</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-receipt"></i><span>Expenses</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="expenses.html"><i class="fa-solid fa-file-circle-plus"></i> Expense Entry</a>
+        <a href="expense-list.html"><i class="fa-solid fa-list"></i> Expense List</a>
+        <a href="expense-categories.html"><i class="fa-solid fa-tags"></i> Expense Categories</a>
+        <a href="expense-claims.html"><i class="fa-solid fa-hand-holding-dollar"></i> Expense Claims</a>
+      </div>
+    </div>
+
+    <div class="section-label">People & Statutory</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-users-gear"></i><span>HR & Payroll</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="employees.html"><i class="fa-solid fa-users"></i> Employees</a>
+        <a href="#"><i class="fa-solid fa-user-tag"></i> Employee Categories</a>
+        <a href="attendance.html"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="payroll-settings.html"><i class="fa-solid fa-gears"></i> Payroll Settings</a>
+        <a href="payroll-run.html"><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</a>
+        <a href="payslips.html"><i class="fa-solid fa-file-invoice-dollar"></i> Payslips</a>
+        <a href="payroll-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Payroll History</a>
+        <a href="payroll-journal.html"><i class="fa-solid fa-book"></i> Payroll Journal</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-chart-column"></i> Payroll Reports</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-percent"></i><span>Taxes</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="vat.html"><i class="fa-solid fa-percent"></i> VAT</a>
+        <a href="vat-transactions.html"><i class="fa-solid fa-receipt"></i> VAT Transactions</a>
+        <a href="vat-return.html"><i class="fa-solid fa-file-circle-check"></i> VAT Return</a>
+        <a href="#"><i class="fa-solid fa-file-invoice"></i> Withholding Tax</a>
+        <a href="paye.html"><i class="fa-solid fa-user-shield"></i> PAYE</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-chart-column"></i> Tax Reports</a>
+      </div>
+    </div>
+
+    <div class="section-label">Reporting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-chart-pie"></i><span>Reports</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-user-clock"></i> AR Aging</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-file-circle-exclamation"></i> AP Aging</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="expense-report.html"><i class="fa-solid fa-receipt"></i> Expense Report</a>
+        <a href="revenue-report.html"><i class="fa-solid fa-arrow-trend-up"></i> Revenue Report</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-percent"></i> Tax Reports</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-users"></i> Payroll Reports</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+      </div>
+    </div>
+
+    <div class="section-label">Administration</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-user-shield"></i><span>Administration</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="userlist.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="#"><i class="fa-solid fa-key"></i> Roles & Permissions</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+        <a href="#"><i class="fa-solid fa-check-double"></i> Approval Workflows</a>
+        <a href="#"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="#"><i class="fa-solid fa-building"></i> Company Profile</a>
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> Financial Year</a>
+        <a href="#"><i class="fa-solid fa-calendar-check"></i> Accounting Periods</a>
+        <a href="#"><i class="fa-solid fa-percent"></i> Tax Settings</a>
+        <a href="#"><i class="fa-solid fa-hashtag"></i> Numbering</a>
+        <a href="#"><i class="fa-solid fa-sliders"></i> System Settings</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+    </a>
+  </div>
+</aside>
+
+<div class="main">
+<header class="topbar">
+    <div class="top-left">
+        <i class="fa-solid fa-bars hamburger mobile-menu"
+           onclick="toggleSidebar()"></i>
+
+        <h2>Bank Reconciliation</h2>
+    </div>
+
+    <div class="user-info">
+
+        <div class="user-text">
+            <strong id="staffName">Loading...</strong>
+            <span id="staffRole">Accountant</span>
+        </div>
+
+        <div class="user-avatar" id="avatar">A</div>
+
+    </div>
+</header>
+<div class="content">
+  <div class="cards">
+
+    <div class="card kpi-card">
+        <div class="kpi-icon">
+            <i class="fa-solid fa-book"></i>
+        </div>
+        <div class="kpi-content">
+            <div class="card-title">Book Balance</div>
+            <div class="card-value" id="bookBalance">MWK 0</div>
+        </div>
+    </div>
+
+    <div class="card kpi-card">
+        <div class="kpi-icon">
+            <i class="fa-solid fa-building-columns"></i>
+        </div>
+        <div class="kpi-content">
+            <div class="card-title">Bank Statement Balance</div>
+            <div class="card-value" id="statementBalance">MWK 0</div>
+        </div>
+    </div>
+
+    <div class="card kpi-card">
+        <div class="kpi-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="kpi-content">
+            <div class="card-title">Matched</div>
+            <div class="card-value" id="matchedCount">0%</div>
+        </div>
+    </div>
+
+    <div class="card kpi-card">
+        <div class="kpi-icon">
+            <i class="fa-solid fa-scale-balanced"></i>
+        </div>
+        <div class="kpi-content">
+            <div class="card-title">Difference</div>
+            <div class="card-value" id="differenceCard">MWK 0</div>
+        </div>
+    </div>
+
+</div>
+  <div class="section"><div class="section-header"><h3>Bank Statement Details</h3></div><div class="form-grid"><div class="form-group"><label>Bank Account</label><select id="bankAccountSelect"><option value="">-- Select --</option></select></div><div class="form-group"><label>Statement Date</label><input type="date" id="statementDate"></div><div class="form-group"><label>Opening Balance</label><input type="number" id="openingBalance" value="0"></div><div class="form-group"><label>Closing Balance</label><input type="number" id="closingBalance" value="0"></div></div><br><button class="btn btn-primary" id="startBtn"><i class="fa-solid fa-play"></i>Start</button></div>
+  <div class="section" id="workspace" style="display:none"><div class="section-header"><h3>Transaction Matching</h3><div><button class="btn btn-primary" id="autoMatchBtn"><i class="fa-solid fa-wand-magic-sparkles"></i>Auto Match</button><button class="btn btn-warning" id="importBtn"><i class="fa-solid fa-upload"></i>Import</button><button class="btn btn-success" id="manualAddBtn"><i class="fa-solid fa-plus"></i>Add Line</button></div></div><div class="import-options" id="importOptions"><button class="btn btn-grey" id="downloadTemplateBtn"><i class="fa-solid fa-download"></i>Download Template</button><label class="btn btn-warning" style="cursor:pointer"><i class="fa-solid fa-file-csv"></i>Choose CSV<input type="file" id="statementFile" accept=".csv" hidden></label></div><div id="manualAddContainer" style="display:none"><div class="manual-add-row"><input type="date" id="manualDate"><input type="text" id="manualDesc" placeholder="Description"><input type="number" id="manualDebit" placeholder="Debit"><input type="number" id="manualCredit" placeholder="Credit"><button class="btn btn-success" id="saveManualBtn"><i class="fa-solid fa-check"></i></button><button class="btn btn-danger" id="cancelManualBtn"><i class="fa-solid fa-x"></i></button></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;"><div class="transaction-panel"><div class="panel-header"><span>System Transactions</span><span id="systemTotal">MWK 0</span></div><div id="systemTransactions"></div></div><div class="transaction-panel"><div class="panel-header"><span>Bank Statement</span><span id="bankTotal">MWK 0</span></div><div id="statementTransactions"></div></div></div></div>
+  <div class="section"><div class="section-header"><h3>Difference Analysis</h3></div><div class="analysis-grid"><div class="analysis-card"><h4>Outstanding Deposits</h4><p id="outstandingDeposits">MWK 0</p></div><div class="analysis-card"><h4>Outstanding Payments</h4><p id="outstandingPayments">MWK 0</p></div><div class="analysis-card"><h4>Bank Charges</h4><p id="bankCharges">MWK 0</p></div><div class="analysis-card"><h4>Interest</h4><p id="interest">MWK 0</p></div></div><br><div class="difference-box"><h3>Adjusted Difference</h3><h1 id="adjustedDifference">MWK 0</h1><p id="differenceMessage">Balanced</p><button class="btn btn-danger" id="postSuspenseBtn" style="display:none;margin-top:10px"><i class="fa-solid fa-triangle-exclamation"></i> Post to Suspense</button></div></div>
+  <div class="section"><div style="display:flex;justify-content:flex-end;gap:15px;"><button class="btn btn-warning" id="findDifferenceBtn"><i class="fa-solid fa-search"></i>Find Difference</button><button class="btn btn-primary" id="saveDraftBtn"><i class="fa-solid fa-save"></i>Save Draft</button><button class="btn btn-success" id="completeBtn"><i class="fa-solid fa-check"></i>Complete</button></div></div>
+</div></div>
+
+<div class="modal" id="analysisModal"><div class="modal-content"><h2>Unreconciled Items</h2><div id="analysisBody"></div><button class="btn btn-primary" onclick="closeModal('analysisModal')">Close</button></div></div>
+
+<div class="modal" id="recordModal"><div class="modal-content"><h2><i class="fa-solid fa-pen"></i> Record Journal from Bank Statement</h2><div class="section" style="margin-bottom:15px"><h3>Journal Details</h3><div class="grid-2"><div class="form-group"><label>Journal Date</label><input type="date" id="recordJournalDate"></div><div class="form-group"><label>Reference</label><input type="text" id="recordReference" readonly></div></div><div class="form-group"><label>Description / Narration</label><input type="text" id="recordDescription"></div></div><div class="section"><h3>Journal Lines</h3><table id="linesTable"><thead><tr><th style="width:45%">Account</th><th>Debit MWK</th><th>Credit MWK</th></tr></thead><tbody id="recordLinesBody"></tbody><tfoot><tr class="total-row"><td>TOTAL</td><td id="recordTotalDebit">MWK 0</td><td id="recordTotalCredit">MWK 0</td><td id="recordBalanceStatus" class="error">Not Balanced</td></tr></tfoot></table></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px"><button class="btn btn-grey" onclick="closeModal('recordModal')">Cancel</button><button class="btn btn-success" id="saveRecordJournalBtn"><i class="fa-solid fa-floppy-disk"></i> Save Journal & Match</button></div></div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, Timestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",projectId:"greysol-academy"});
+const db = getFirestore(app);
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+
+if(!loggedUser || loggedUser.role !== "Accountant"){
+    alert("Access Denied. Accountants Only.");
+    window.location.href = "staff-login.html";
+}
+
+document.getElementById("staffName").textContent =
+    loggedUser?.username || "Accountant";
+
+document.getElementById("staffRole").textContent =
+    loggedUser?.role || "Accountant";
+
+document.getElementById("portalRole").textContent =
+    (loggedUser?.role || "Accountant") + " Portal";
+
+document.getElementById("avatar").textContent =
+    (loggedUser?.username || "A").charAt(0).toUpperCase();
+document.getElementById("statementDate").valueAsDate = new Date();
+document.querySelectorAll(".menu-header").forEach(header => {
+
+    header.addEventListener("click", () => {
+
+        const group = header.parentElement;
+
+        document.querySelectorAll(".menu-group").forEach(other => {
+            if(other !== group){
+                other.classList.remove("active");
+            }
+        });
+
+        group.classList.toggle("active");
+
+    });
+
+});
+
+
+document.getElementById("logoutBtn").addEventListener("click", e => {
+
+    e.preventDefault();
+
+    localStorage.removeItem("loggedUser");
+
+    window.location.href = "staff-login.html";
+
+});
+
+
+function toggleSidebar(){
+
+    document.getElementById("sidebar").classList.toggle("open");
+
+    document.getElementById("overlay").classList.toggle("show");
+
+}
+
+let CHART_OF_ACCOUNTS=[], BANK_ACCOUNTS=[], SYSTEM_TRANSACTIONS=[], BANK_TRANSACTIONS=[], MATCHED_TRANSACTIONS=[], SELECTED_BANK="", CURRENT_RECORD_TXN=null;
+
+function money(v){return "MWK " + Number(v || 0).toLocaleString("en-US",{minimumFractionDigits:2});}
+function safeDate(d){ if(!d) return null; const date = new Date(d + 'T00:00:00'); return isNaN(date)? null : date; }
+function dateFormat(d){ const date = d instanceof Date? d : safeDate(d); return date? date.toLocaleDateString("en-GB") : "Invalid Date"; }
+function showNotification(m,t="success"){const box=document.createElement("div");box.className="notification "+t;box.innerHTML=`<i class="fa-solid fa-circle-check"></i><span>${m}</span>`;document.body.appendChild(box);setTimeout(()=>box.classList.add("show"),100);setTimeout(()=>{box.classList.remove("show");setTimeout(()=>box.remove(),300)},4000);}
+window.closeModal=(id)=>document.getElementById(id).style.display="none"
+window.toggleSidebar = () => {
+    document.getElementById("sidebar").classList.toggle("open");
+    document.getElementById("overlay").classList.toggle("show");
+};
+document.addEventListener("click", (e) => {
+    const sidebar = document.getElementById("sidebar");
+    const hamburger = document.querySelector(".mobile-menu");
+
+    if (
+        sidebar.classList.contains("open") &&
+        !sidebar.contains(e.target) &&
+        !hamburger.contains(e.target)
+    ) {
+        sidebar.classList.remove("open");
+        document.getElementById("overlay").classList.remove("show");
+    }
+});
+async function loadAccounts(){const snap=await getDocs(collection(db,"chartOfAccounts")); CHART_OF_ACCOUNTS=[];BANK_ACCOUNTS=[]; snap.forEach(i=>{const a={id:i.id,...i.data()};CHART_OF_ACCOUNTS.push(a);if(a.accountDetailType==="Bank")BANK_ACCOUNTS.push(a)});document.getElementById("bankAccountSelect").innerHTML=`<option value="">-- Select --</option>`+BANK_ACCOUNTS.map(a=>`<option value="${a.accountCode}">${a.accountCode} - ${a.accountName}</option>`).join("");}
+loadAccounts();
+
+document.getElementById("startBtn").addEventListener("click",async()=>{SELECTED_BANK=document.getElementById("bankAccountSelect").value; if(!SELECTED_BANK)return alert("Select bank"); const sd=new Date(document.getElementById("statementDate").value); sd.setHours(23,59,59,999); document.getElementById("workspace").style.display="block"; await loadSystemTransactions(sd);});
+
+async function loadSystemTransactions(sd){
+  SYSTEM_TRANSACTIONS=[];
+  const snap=await getDocs(collection(db,"journalEntries"));
+  snap.forEach(j=>{
+    const d={id:j.id,...j.data()};
+    const jd = d.date?.toDate? d.date.toDate() : safeDate(d.date);
+    if(!jd || jd>sd)return;
+    d.lines?.forEach(l=>{
+      if(l.accountCode===SELECTED_BANK)SYSTEM_TRANSACTIONS.push({id:d.id,date:jd,reference:d.reference,description:d.description,debit:Number(l.debit||0),credit:Number(l.credit||0),amount:Number(l.debit||0)-Number(l.credit||0),matched:false})
+    })
+  }); // FIXED BRACKET HERE
+  SYSTEM_TRANSACTIONS.sort((a,b)=>a.date-b.date);
+  renderSystemTransactions();
+}
+
+function renderSystemTransactions(){const c=document.getElementById("systemTransactions"); c.innerHTML=SYSTEM_TRANSACTIONS.map((t,i)=>`<div class="transaction-row ${t.matched?"matched":""}"><div><input type="checkbox" class="system-check" data-id="${i}"></div><div>${dateFormat(t.date)}</div><div><strong>${t.reference}</strong><br><small>${t.description}</small></div><div class="amount ${t.amount>=0?"positive":"negative"}">${t.amount>=0?"+":"-"}${money(Math.abs(t.amount))}</div><div><span class="status-badge ${t.matched?"success":"pending"}">${t.matched?"Matched":"Unmatched"}</span></div><div></div></div>`).join("")||"<p>No transactions</p>"; updateTotals();}
+
+document.getElementById("importBtn").onclick=()=>{document.getElementById("importOptions").style.display=document.getElementById("importOptions").style.display==="none"?"flex":"none"}
+document.getElementById("downloadTemplateBtn").onclick=()=>{const csv="Date,Description,Debit,Credit\n2026-08-01,Deposit,,50000\n2026-08-02,Payment,120000,"; const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download="Template.csv";a.click();}
+document.getElementById("manualAddBtn").onclick=()=>{document.getElementById("manualAddContainer").style.display="block";document.getElementById("manualDate").valueAsDate=new Date()}
+document.getElementById("cancelManualBtn").onclick=()=>document.getElementById("manualAddContainer").style.display="none"
+document.getElementById("saveManualBtn").onclick=()=>{const dateStr=document.getElementById("manualDate").value;const desc=document.getElementById("manualDesc").value;const debit=Number(document.getElementById("manualDebit").value)||0;const credit=Number(document.getElementById("manualCredit").value)||0; if(!dateStr||!desc)return alert("Required"); const date = safeDate(dateStr); if(!date) return alert("Invalid Date"); BANK_TRANSACTIONS.push({id:"m_"+Date.now(),date,description:desc,debit,credit,amount:credit-debit,matched:false}); renderBankTransactions(); document.getElementById("manualAddContainer").style.display="none";}
+
+document.getElementById("statementFile").onchange=e=>{
+  const r=new FileReader();
+  r.onload=ev=>{
+    BANK_TRANSACTIONS = []; // clear first
+    ev.target.result.split('\n').slice(1).forEach((l,i)=>{
+      if(!l.trim())return;
+      const [d,desc,de,cr]=l.split(',');
+      const date = safeDate(d.trim());
+      if(!date) return showNotification(`Row ${i+2} invalid date: ${d}`, "error");
+      BANK_TRANSACTIONS.push({id:"c_"+Date.now()+"_"+i,date,description:desc||"",debit:Number(de)||0,credit:Number(cr)||0,amount:Number(cr)||-Number(de)||0,matched:false})
+    });
+    renderBankTransactions()
+  };
+  r.readAsText(e.target.files[0])
+}
+
+function renderBankTransactions(){const c=document.getElementById("statementTransactions"); c.innerHTML=BANK_TRANSACTIONS.map((t,i)=>{
+  const needsRecording =!t.matched;
+  return `<div class="transaction-row ${t.matched?"matched":""}">
+    <div><input type="checkbox" class="bank-check" data-id="${i}"></div>
+    <div>${dateFormat(t.date)}</div>
+    <div><strong>Bank</strong><br><small>${t.description}</small></div>
+    <div class="amount ${t.amount>=0?"positive":"negative"}">${t.amount>=0?"+":"-"}${money(Math.abs(t.amount))}</div>
+    <div><span class="status-badge ${t.matched?"success":"pending"}">${t.matched?"Matched":"Unmatched"}</span>${needsRecording? `<button class="btn btn-warning" style="padding:4px 8px;font-size:11px;margin-top:4px;width:100%" onclick="openRecordModal(${i})"><i class="fa-solid fa-pen"></i> Record</button>` : ""}</div>
+    <div><button class="btn btn-danger" style="padding:5px 8px" onclick="deleteBankLine(${i})"><i class="fa-solid fa-trash"></i></button></div>
+  </div>`}).join("")||"<p>No transactions</p>"; updateTotals();}
+window.deleteBankLine=(i)=>{BANK_TRANSACTIONS.splice(i,1);renderBankTransactions();showNotification("Line deleted")}
+
+document.getElementById("autoMatchBtn").onclick=()=>{let matched=0; SYSTEM_TRANSACTIONS.forEach(s=>{if(s.matched)return; const best=BANK_TRANSACTIONS.find(b=>!b.matched&&Math.abs(b.amount-s.amount)<0.01); if(best){s.matched=true;best.matched=true;MATCHED_TRANSACTIONS.push({s:s.id,b:best.id});matched++}}); renderSystemTransactions();renderBankTransactions();showNotification(`${matched} transactions auto-matched`);}
+
+function updateTotals(){const sTotal=SYSTEM_TRANSACTIONS.filter(t=>t.matched).reduce((a,b)=>a+b.amount,0);const bTotal=BANK_TRANSACTIONS.filter(t=>t.matched).reduce((a,b)=>a+b.amount,0);document.getElementById("systemTotal").innerHTML=money(sTotal);document.getElementById("bankTotal").innerHTML=money(bTotal);calculateReconciliation();}
+
+function calculateReconciliation(){const totalSys=SYSTEM_TRANSACTIONS.reduce((a,b)=>a+b.amount,0);const totalBank=BANK_TRANSACTIONS.reduce((a,b)=>a+b.amount,0);const opening=Number(document.getElementById("openingBalance").value)||0;const closing=Number(document.getElementById("closingBalance").value)||0;const rawDiff=closing-(opening+totalSys);const outDep=SYSTEM_TRANSACTIONS.filter(t=>!t.matched&&t.amount>0).reduce((a,b)=>a+b.amount,0);const outPay=Math.abs(SYSTEM_TRANSACTIONS.filter(t=>!t.matched&&t.amount<0).reduce((a,b)=>a+b.amount,0));const charges=BANK_TRANSACTIONS.filter(t=>!t.matched&&t.amount<0).reduce((a,b)=>a+Math.abs(b.amount),0);const interest=BANK_TRANSACTIONS.filter(t=>!t.matched&&t.amount>0).reduce((a,b)=>a+b.amount,0);const adjusted=rawDiff-outDep+outPay; document.getElementById("bookBalance").innerHTML=money(totalSys);document.getElementById("statementBalance").innerHTML=money(closing);document.getElementById("differenceCard").innerHTML=money(rawDiff);document.getElementById("adjustedDifference").innerHTML=money(adjusted);document.getElementById("outstandingDeposits").innerHTML=money(outDep);document.getElementById("outstandingPayments").innerHTML=money(outPay);document.getElementById("bankCharges").innerHTML=money(charges);document.getElementById("interest").innerHTML=money(interest);document.getElementById("matchedCount").innerHTML=SYSTEM_TRANSACTIONS.length>0?((MATCHED_TRANSACTIONS.length/SYSTEM_TRANSACTIONS.length)*100).toFixed(1)+"%":"0%"; if(Math.abs(adjusted)<0.01){document.getElementById("differenceMessage").innerHTML=`<span style="color:var(--success)">Balanced</span>`;document.getElementById("postSuspenseBtn").style.display="none"}else{document.getElementById("differenceMessage").innerHTML=`<span style="color:var(--danger)">Difference Exists</span>`;document.getElementById("postSuspenseBtn").style.display="inline-block"}}
+
+document.getElementById("findDifferenceBtn").onclick=()=>{const us=SYSTEM_TRANSACTIONS.filter(t=>!t.matched);const ub=BANK_TRANSACTIONS.filter(t=>!t.matched);document.getElementById("analysisBody").innerHTML=`<h4>Outstanding System (${us.length})</h4>${us.map(t=>`<p>${dateFormat(t.date)} ${t.reference}: ${money(t.amount)}</p>`).join("")}<h4>Unmatched Bank (${ub.length})</h4>${ub.map(t=>`<p>${dateFormat(t.date)} ${t.description}: ${money(t.amount)}</p>`).join("")}`;document.getElementById("analysisModal").style.display="flex"}
+
+window.openRecordModal = (index) => {
+  CURRENT_RECORD_TXN = BANK_TRANSACTIONS[index];
+  const txn = CURRENT_RECORD_TXN;
+  document.getElementById("recordJournalDate").value = txn.date.toISOString().split('T')[0];
+  document.getElementById("recordReference").value = `BR-REC-${Date.now()}`;
+  document.getElementById("recordDescription").value = txn.description;
+  const bankAcc = BANK_ACCOUNTS.find(a=>a.accountCode===SELECTED_BANK);
+  const amount = Math.abs(txn.amount);
+  let line1 = '', line2 = '';
+  if(txn.amount < 0){
+    line1 = `<tr><td><select id="recAcc1">${getCOAOptions("Expense")}</select></td><td><input type="number" id="recDebit1" value="${amount}" readonly></td><td><input type="number" value="0" readonly></td></tr>`;
+    line2 = `<tr><td><input type="text" value="${bankAcc.accountCode} - ${bankAcc.accountName}" readonly></td><td><input type="number" value="0" readonly></td><td><input type="number" id="recCredit2" value="${amount}" readonly></td></tr>`;
+  } else {
+    line1 = `<tr><td><input type="text" value="${bankAcc.accountCode} - ${bankAcc.accountName}" readonly></td><td><input type="number" id="recDebit1" value="${amount}" readonly></td><td><input type="number" value="0" readonly></td></tr>`;
+    line2 = `<tr><td><select id="recAcc2">${getCOAOptions("Income")}</select></td><td><input type="number" value="0" readonly></td><td><input type="number" id="recCredit2" value="${amount}" readonly></td></tr>`;
+  }
+  document.getElementById("recordLinesBody").innerHTML = line1 + line2;
+  calculateRecordTotals();
+  document.getElementById("recordModal").style.display="flex";
+}
+
+function getCOAOptions(typeFilter){let options = '<option value="">-- Select Account --</option>';CHART_OF_ACCOUNTS.filter(a=>a.accountType===typeFilter || a.accountType==="Other Expense" || a.accountType==="Other Income").forEach(acc=>{options += `<option value="${acc.accountCode}">${acc.accountCode} - ${acc.accountName}</option>`;});return options;}
+function calculateRecordTotals(){const d1 = Number(document.getElementById("recDebit1")?.value)||0;const c2 = Number(document.getElementById("recCredit2")?.value)||0;document.getElementById("recordTotalDebit").innerText = money(d1);document.getElementById("recordTotalCredit").innerText = money(c2);const status = document.getElementById("recordBalanceStatus");if(d1===c2 && d1>0){status.innerText="Balanced";status.className="balanced";}else{status.innerText="Not Balanced";status.className="error";}}
+
+document.getElementById("saveRecordJournalBtn").onclick = async () => {
+  const accDropdown = document.getElementById("recAcc1") || document.getElementById("recAcc2");
+  if(!accDropdown ||!accDropdown.value) return alert("Please choose Expense/Income account");
+  const accData = CHART_OF_ACCOUNTS.find(a=>a.accountCode===accDropdown.value);
+  const bankAcc = BANK_ACCOUNTS.find(a=>a.accountCode===SELECTED_BANK);
+  const amount = Math.abs(CURRENT_RECORD_TXN.amount);
+  const lines = [];
+  if(CURRENT_RECORD_TXN.amount < 0){lines.push({accountCode: accDropdown.value, accountName: accData.accountName, debit: amount, credit: 0});lines.push({accountCode: SELECTED_BANK, accountName: bankAcc.accountName, debit: 0, credit: amount});}
+  else {lines.push({accountCode: SELECTED_BANK, accountName: bankAcc.accountName, debit: amount, credit: 0});lines.push({accountCode: accDropdown.value, accountName: accData.accountName, debit: 0, credit: amount});}
+  document.getElementById("saveRecordJournalBtn").disabled = true;document.getElementById("saveRecordJournalBtn").innerText = "Saving...";
+  try{
+    const journalNo = await generateJournalNo();
+    await addDoc(collection(db,"journalEntries"),{journalNo: journalNo, date: Timestamp.fromDate(CURRENT_RECORD_TXN.date), reference: document.getElementById("recordReference").value, description: document.getElementById("recordDescription").value, lines: lines, totalDebit: amount, totalCredit: amount, createdBy: loggedUser.username, createdAt: Timestamp.now(), postedBy: loggedUser.username, postedAt: Timestamp.now(), source: "Bank Reconciliation"});
+    SYSTEM_TRANSACTIONS.push({id: journalNo, date: CURRENT_RECORD_TXN.date, reference: journalNo, description: document.getElementById("recordDescription").value, debit: lines[0].debit, credit: lines[0].credit, amount: CURRENT_RECORD_TXN.amount, matched: true});
+    CURRENT_RECORD_TXN.matched = true; MATCHED_TRANSACTIONS.push({s: journalNo, b: CURRENT_RECORD_TXN.id});
+    renderSystemTransactions(); renderBankTransactions(); closeModal('recordModal'); showNotification(`Journal ${journalNo} saved and matched`,"success");
+  } catch(error){alert(error.message);} finally {document.getElementById("saveRecordJournalBtn").disabled = false;document.getElementById("saveRecordJournalBtn").innerText = "Save Journal & Match";}
+}
+
+async function generateJournalNo(){const q = query(collection(db,"journalEntries"), orderBy("createdAt","desc"), limit(1));const snap = await getDocs(q);let number = 1;if(!snap.empty){const lastNo = snap.docs[0].data().journalNo; number = Number(lastNo.replace("JV","")) + 1;}return "JV" + String(number).padStart(5,"0");}
+
+document.getElementById("postSuspenseBtn").onclick=async()=>{const adj=Number(document.getElementById("adjustedDifference").innerText.replace(/[^0-9-]/g,'')); if(!confirm(`Post ${money(Math.abs(adj))} to Suspense 9999?`))return; const jn=await generateJournalNo(); await addDoc(collection(db,"journalEntries"),{journalNo:jn,date:Timestamp.fromDate(new Date(document.getElementById("statementDate").value)),reference:`BR-ADJ-${Date.now()}`,description:"Bank Recon Variance",lines:[{accountCode:"9999",accountName:"Bank Suspense",debit:adj>0?adj:0,credit:adj<0?Math.abs(adj):0},{accountCode:SELECTED_BANK,accountName:BANK_ACCOUNTS.find(a=>a.accountCode===SELECTED_BANK).accountName,debit:adj<0?Math.abs(adj):0,credit:adj>0?adj:0}],totalDebit:Math.abs(adj),totalCredit:Math.abs(adj),createdBy:loggedUser.username,createdAt:Timestamp.now(),postedBy:loggedUser.username,postedAt:Timestamp.now()}); showNotification("Suspense journal created"); location.reload();}
+
+document.getElementById("saveDraftBtn").onclick=async()=>{await addDoc(collection(db,"bankReconciliations"),{bankAccount:SELECTED_BANK,statementDate:Timestamp.fromDate(new Date(document.getElementById("statementDate").value)),openingBalance:Number(document.getElementById("openingBalance").value),closingBalance:Number(document.getElementById("closingBalance").value),systemTransactions:SYSTEM_TRANSACTIONS,bankTransactions:BANK_TRANSACTIONS,status:"Draft",createdBy:loggedUser.username,createdAt:Timestamp.now()});showNotification("Draft saved")}
+document.getElementById("completeBtn").onclick=async()=>{const adj=Number(document.getElementById("adjustedDifference").innerText.replace(/[^0-9-]/g,'')); if(Math.abs(adj)>0.01)return alert("Adjusted Difference must be 0"); if(!confirm("Complete reconciliation?"))return; await addDoc(collection(db,"bankReconciliations"),{bankAccount:SELECTED_BANK,statementDate:Timestamp.fromDate(new Date(document.getElementById("statementDate").value)),openingBalance:Number(document.getElementById("openingBalance").value),closingBalance:Number(document.getElementById("closingBalance").value),systemTransactions:SYSTEM_TRANSACTIONS,bankTransactions:BANK_TRANSACTIONS,status:"Completed",createdBy:loggedUser.username,createdAt:Timestamp.now()});showNotification("Reconciliation Completed");location.reload();}
+</script>
+</body>
+</html>

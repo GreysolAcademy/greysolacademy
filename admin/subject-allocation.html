@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greysol Academy | Subject Allocation</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;}
+:root{--navy:#001f3f;--blue:#003366;--light:#f4f7fb;}
+body{margin:0;background:var(--light);display:flex;height:100vh;overflow:hidden;}
+
+/* ===== MAIN LOADER ===== */
+.main-loader{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(244,247,251,.9);z-index:10;display:flex;justify-content:center;align-items:center;flex-direction:column;color:var(--navy);transition:opacity .3s}
+.main-loader.hidden{opacity:0;pointer-events:none}
+.spinner{border:4px solid rgba(0,31,63,.3);border-top:4px solid var(--navy);border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* SIDEBAR */
+.sidebar{width:270px;background:var(--navy);color:white;height:100vh;overflow:auto;position:relative;z-index:20;transition:transform .3s ease;}
+.logo{text-align:center;padding:20px;border-bottom:1px solid rgba(255,255,255,.2);}
+.logo img{width:80px;height:80px;object-fit:contain;}
+.menu a,.menu-header{display:flex;align-items:center;gap:15px;padding:15px 25px;color:white;text-decoration:none;cursor:pointer;}
+.menu a:hover{background:rgba(255,255,255,.1);}
+.arrow{margin-left:auto;transition:.3s;}
+.menu-group.active .arrow{transform:rotate(180deg);}
+.submenu{max-height:0;overflow:hidden;background:rgba(0,0,0,.2);transition:.3s;}
+.menu-group.active .submenu{max-height:400px;}
+.submenu a{padding-left:55px;font-size:14px;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;position:relative;}
+.topbar{height:75px;background:white;display:flex;justify-content:space-between;align-items:center;padding:0 30px;box-shadow:0 3px 10px rgba(0,0,0,.1);}
+.topbar h2{color:var(--navy);}
+.user{font-weight:bold;color:var(--navy);}
+.content{padding:30px;overflow:auto;flex:1;}
+.card-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;}
+.card{background:white;padding:25px;border-radius:15px;text-align:center;box-shadow:0 5px 20px rgba(0,0,0,.1);}
+.card h1{color:var(--navy);}
+.box{background:white;padding:25px;border-radius:15px;margin-top:25px;box-shadow:0 5px 20px rgba(0,0,0,.1);}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;}
+select,button{width:100%;padding:12px;border-radius:8px;border:1px solid #ccc;}
+button{background:var(--navy);color:white;border:none;cursor:pointer;}
+button:hover{background:var(--blue);}
+table{width:100%;border-collapse:collapse;}
+th{background:var(--navy);color:white;padding:12px;text-align:left;}
+td{padding:12px;border-bottom:1px solid #ddd;}
+.delete{background:#c0392b;padding:7px 12px;}
+
+/* ===== MOBILE HAMBURGER ===== */
+.hamburger{display:none;background:none;border:none;color:var(--navy);font-size:24px;cursor:pointer;}
+.sidebar-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:15;}
+
+@media(max-width:900px){
+  .sidebar{position:fixed;left:0;top:0;transform:translateX(-100%);z-index:30;}
+  .sidebar.active{transform:translateX(0);}
+  .sidebar-overlay.active{display:block;}
+  .hamburger{display:block;}
+  .topbar{padding:0 20px;}
+  .content{padding:20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR OVERLAY FOR MOBILE -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="sidebar" id="sidebar">
+<div class="logo">
+<img src="../images/logo1 - Copy.png">
+<h2>GREYSOL ACADEMY</h2>
+<p>Head Teacher Portal</p>
+</div>
+<div class="menu">
+<a href="headteacher-dashboard.html"><i class="fa-solid fa-gauge"></i>Dashboard</a>
+<div class="menu-group">
+<div class="menu-header"><i class="fa-solid fa-user-graduate"></i>Students<i class="fa-solid fa-chevron-down arrow"></i></div>
+<div class="submenu"><a href="headteacher-students.html">Student List</a><a href="#">Class Information</a></div>
+</div>
+<div class="menu-group active">
+<div class="menu-header"><i class="fa-solid fa-book-open"></i>Academics<i class="fa-solid fa-chevron-down arrow"></i></div>
+<div class="submenu"><a href="subject-list.html">Subject List</a><a href="subject-allocation.html">Subject Allocation</a><a href="#">Results</a><a href="#">Timetable</a></div>
+</div>
+<div class="menu-group">
+<div class="menu-header"><i class="fa-solid fa-chalkboard-user"></i>Staff<i class="fa-solid fa-chevron-down arrow"></i></div>
+<div class="submenu"><a href="teacher-list.html">Teacher List</a><a href="subject-allocation.html">Teacher Allocation</a></div>
+</div>
+<a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+</div>
+</div>
+
+<div class="main">
+  <!-- ===== MAIN LOADER ===== -->
+  <div class="main-loader" id="mainLoader">
+    <div class="spinner"></div>
+    <p style="margin-top:15px">Loading Data...</p>
+  </div>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:15px">
+    <button class="hamburger" id="hamburgerBtn"><i class="fa-solid fa-bars"></i></button>
+    <h2>Head Teacher | Subject Allocation</h2>
+  </div>
+<div class="user"><i class="fa-solid fa-user"></i><span id="staffName">Head Teacher</span></div>
+</div>
+
+<div class="content">
+<div class="card-container">
+<div class="card"><i class="fa-solid fa-chalkboard-user"></i><h1 id="totalTeachers">0</h1><p>Teachers</p></div>
+<div class="card"><i class="fa-solid fa-book-open"></i><h1 id="totalSubjects">0</h1><p>Active Subjects</p></div>
+<div class="card"><i class="fa-solid fa-link"></i><h1 id="totalAllocations">0</h1><p>Allocations</p></div>
+</div>
+
+<div class="box">
+<h2>Allocate Subject To Teacher</h2>
+<div class="form-grid">
+<div><label>Teacher</label><select id="teacherSelect"><option value="">Select Teacher</option></select></div>
+<div><label>Subject</label><select id="subjectSelect"><option value="">Select Subject</option></select></div>
+<div><label>Class</label><select id="classSelect"><option value="">Select Class</option><option>Form 1</option><option>Form 2</option><option>Form 3</option><option>Form 4</option></select></div>
+</div>
+<br>
+<button id="saveAllocation"><i class="fa-solid fa-save"></i>Save Allocation</button>
+</div>
+
+<div class="box">
+<h2>Current Allocations</h2>
+<table>
+<thead><tr><th>Teacher</th><th>Subject</th><th>Class</th><th>Action</th></tr></thead>
+<tbody id="allocationTable"><tr><td colspan="4">Loading allocations...</td></tr></tbody>
+</table>
+</div>
+
+</div>
+</div>
+
+<script>
+// SIDEBAR DROPDOWN
+document.querySelectorAll(".menu-group").forEach(group=>{
+group.querySelector(".menu-header").onclick=function(){ group.classList.toggle("active"); };
+});
+
+// ===== MOBILE SIDEBAR TOGGLE =====
+const sidebar = document.getElementById("sidebar");
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+hamburgerBtn.onclick = () => {
+  sidebar.classList.toggle("active");
+  sidebarOverlay.classList.toggle("active");
+}
+
+sidebarOverlay.onclick = () => {
+  sidebar.classList.remove("active");
+  sidebarOverlay.classList.remove("active");
+}
+
+// Close sidebar when clicking a menu link on mobile
+document.querySelectorAll(".menu a").forEach(link=>{
+  link.onclick = () => {
+    if(window.innerWidth < 900){
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    }
+  }
+})
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",
+authDomain: "greysol-academy.firebaseapp.com",
+projectId: "greysol-academy",
+storageBucket: "greysol-academy.firebasestorage.app",
+messagingSenderId: "700477093508",
+appId: "1:700477093508:web:d1f95a63483b8e9ab934d1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let teachers=[];
+let subjects=[];
+let allocations=[];
+
+// LOGIN CHECK
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+if(!loggedUser){ window.location.href="staff-login.html"; }
+if(loggedUser.role !== "Head Teacher"){ alert("Access denied. Head Teacher only."); window.location.href="admin-dashboard.html"; }
+document.getElementById("staffName").innerHTML = loggedUser.username;
+
+// LOAD ALL DATA WITH LOADER
+async function loadAllData(){
+  const loader = document.getElementById("mainLoader");
+  loader.classList.remove("hidden");
+  try{
+    await Promise.all([loadTeachers(), loadSubjects(), loadAllocations()]);
+  }catch(error){console.error(error);alert("Failed to load data");}
+  finally{loader.classList.add("hidden");}
+}
+
+// LOAD TEACHERS
+async function loadTeachers(){
+const select = document.getElementById("teacherSelect");
+const snapshot = await getDocs(collection(db,"staff"));
+let allStaff = [];
+snapshot.forEach(item=>{ allStaff.push({ id:item.id, ...item.data() }); });
+const teachingRoles = ["teacher", "class teacher", "head teacher", "deputy head teacher"];
+teachers = allStaff.filter(s => teachingRoles.includes((s.role || "").trim().toLowerCase()));
+teachers.sort((a,b) => (a.firstName || "").localeCompare(b.firstName || ""));
+select.innerHTML = `<option value="">Select Teacher</option>`;
+teachers.forEach(teacher=>{
+    let option = document.createElement("option");
+    option.value = teacher.id;
+    option.textContent = `${teacher.firstName || ""} ${teacher.surname || ""} - ${teacher.staffID || ""}`;
+    select.appendChild(option);
+});
+document.getElementById("totalTeachers").innerHTML = teachers.length;
+}
+
+// LOAD ACTIVE SUBJECTS
+async function loadSubjects(){
+const select = document.getElementById("subjectSelect");
+select.innerHTML = `<option value="">Select Subject</option>`;
+const snapshot = await getDocs(query(collection(db,"subjects"), where("status","==","Active")));
+subjects=[];
+snapshot.forEach(item=>{
+    let subject=item.data();
+    subjects.push({ id:item.id, ...subject });
+    let option=document.createElement("option");
+    option.value=item.id;
+    option.textContent = subject.subjectName;
+    select.appendChild(option);
+});
+document.getElementById("totalSubjects").innerHTML = subjects.length;
+}
+
+// SAVE ALLOCATION
+document.getElementById("saveAllocation").onclick = async function(){
+let teacherID = document.getElementById("teacherSelect").value;
+let subjectID = document.getElementById("subjectSelect").value;
+let className = document.getElementById("classSelect").value;
+if(teacherID==="" || subjectID==="" || className===""){ alert("Complete all fields"); return; }
+let teacher = teachers.find(t=>t.id===teacherID);
+let subject = subjects.find(s=>s.id===subjectID);
+const duplicate = await getDocs(query(collection(db,"allocations"),where("teacherID","==",teacherID),where("subjectID","==",subjectID),where("class","==",className)));
+if(!duplicate.empty){ alert("This allocation already exists"); return; }
+await addDoc(collection(db,"allocations"),{teacherID: teacherID,staffID: teacher.staffID,teacherName: `${teacher.firstName} ${teacher.surname}`,subjectID: subjectID,subjectName: subject.subjectName,class: className,createdBy: loggedUser.staffID,createdAt: new Date()});
+alert("Subject allocated successfully");
+loadAllocations();
+};
+
+// LOAD ALLOCATIONS
+async function loadAllocations(){
+const table = document.getElementById("allocationTable");
+table.innerHTML="";
+allocations=[];
+const snapshot = await getDocs(query(collection(db,"allocations"), orderBy("createdAt","desc")));
+snapshot.forEach(item=>{ allocations.push({ id:item.id, ...item.data() }); });
+if(allocations.length===0){table.innerHTML=`<tr><td colspan="4">No allocations found</td></tr>`;}
+allocations.forEach(item=>{
+    table.innerHTML += `<tr><td>${item.teacherName}</td><td>${item.subjectName}</td><td>${item.class}</td><td><button class="delete" onclick="deleteAllocation('${item.id}')">Delete</button></td></tr>`;
+});
+document.getElementById("totalAllocations").innerHTML = allocations.length;
+}
+
+// DELETE ALLOCATION
+window.deleteAllocation = async function(id){
+if(!confirm("Remove this allocation?")) return;
+await deleteDoc(doc(db,"allocations",id));
+alert("Allocation removed");
+loadAllocations();
+};
+
+// LOGOUT
+document.getElementById("logoutBtn").onclick=function(e){
+e.preventDefault();
+localStorage.removeItem("loggedUser");
+window.location.href="login.html";
+};
+
+// START
+loadAllData();
+</script>
+</body>
+</html>

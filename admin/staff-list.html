@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greysol Academy | Staff Management</title>
+
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<!-- EXCEL EXPORT -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- PDF EXPORT -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--blue:#003366;--gold:#f4b400;--green:#16a085;--red:#e74c3c;--light:#f4f7fb;--white:#ffffff;--shadow:0 5px 15px rgba(0,0,0,.08)}
+body{background:var(--light);display:flex;height:100vh;overflow:hidden}
+
+/* LOADER */
+.main-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(244,247,251,.95);display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:99999;color:var(--navy);transition:.3s}
+.main-loader.hidden{opacity:0;pointer-events:none}
+.spinner{width:50px;height:50px;border:4px solid rgba(0,31,63,.2);border-top:4px solid var(--navy);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* SIDEBAR - EXACT COPY FROM DASHBOARD */
+.sidebar{width:270px;background:var(--navy);color:#fff;overflow-y:auto;overflow-x:hidden;transition:.3s;z-index:1000;scrollbar-width:none;-ms-overflow-style:none}
+.sidebar::-webkit-scrollbar{width:0;height:0;display:none}
+.logo{padding:25px;text-align:center;border-bottom:1px solid rgba(255,255,255,.15)}
+.logo img{width:80px;margin-bottom:10px}
+.logo h2{font-size:22px;margin-bottom:5px}
+.logo p{font-size:13px;opacity:.8}
+.menu{padding:15px 0}
+.menu a{display:flex;align-items:center;gap:15px;padding:14px 25px;color:white;text-decoration:none;transition:.25s}
+.menu a:hover{background:rgba(255,255,255,.12);padding-left:35px}
+.menu a.active{background:rgba(255,255,255,.18);padding-left:35px}
+.menu i{width:22px;text-align:center}
+
+/* ACCORDION SIDEBAR */
+.menu-group{border-bottom:1px solid rgba(255,255,255,.08)}
+.menu-header{display:flex;align-items:center;gap:15px;padding:14px 25px;cursor:pointer;color:white;transition:.3s}
+.menu-header:hover{background:rgba(255,255,255,.12)}
+.menu-header i:first-child{width:22px;text-align:center}
+.arrow{
+    margin-left:auto;
+    font-size:12px;
+    transition:transform .3s ease;
+}
+
+.menu-group.active .arrow{
+    transform:rotate(180deg);
+}
+
+.submenu{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:max-height .35s ease, opacity .25s ease;
+    background:rgba(0,0,0,.15);
+}
+
+.menu-group.active .submenu{
+    max-height:700px;
+    opacity:1;
+}
+.submenu a{display:flex;align-items:center;gap:12px;padding:12px 25px 12px 55px;font-size:14px;color:#ddd;text-decoration:none;transition:.3s}
+.submenu a:hover{background:rgba(255,255,255,.12);color:white;padding-left:65px}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:75px;background:white;display:flex;justify-content:space-between;align-items:center;padding:0 30px;box-shadow:var(--shadow)}
+.left-top{display:flex;align-items:center;gap:20px}
+#menuBtn{font-size:24px;cursor:pointer;color:var(--navy);display:none}
+.admin{display:flex;align-items:center;gap:15px;text-align:right}
+.admin span{color:var(--navy);font-weight:bold}
+.admin small{display:block;font-weight:normal;font-size:12px;opacity:.7}
+.admin img{width:45px;height:45px;border-radius:50%}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999}
+.overlay.show{display:block}
+
+/* CONTENT */
+.content{padding:30px;overflow:auto;overflow-x:hidden;flex:1;scrollbar-width:none;-ms-overflow-style:none}
+.content::-webkit-scrollbar{width:0;height:0;display:none}
+.page-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.page-title h1{color:var(--navy)}
+
+/* SUMMARY CARDS */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:25px}
+.summary-card{background:white;padding:25px;border-radius:15px;box-shadow:var(--shadow);text-align:center}
+.summary-card h1{margin:0;font-size:35px;color:var(--navy)}
+.summary-card p{color:#777;margin-top:8px}
+
+/* BOX */
+.box{background:white;padding:25px;border-radius:15px;box-shadow:var(--shadow);margin-bottom:20px}
+.box h3{margin-bottom:20px;color:var(--navy)}
+
+/* BUTTONS */
+button{padding:12px 18px;border-radius:8px;border:none;background:var(--navy);color:white;cursor:pointer}
+button:hover{background:var(--blue)}
+.primary-btn{background:#16a085}
+.export-btn{background:#16a085}
+.pdf-btn{background:#c0392b}
+
+/* SEARCH AREA */
+.filters{display:flex;gap:15px;flex-wrap:wrap;margin-bottom:15px}
+input,select{padding:12px;border-radius:8px;border:1px solid #ccc;min-width:220px}
+
+/* TABLE */
+.table-container{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th{background:var(--navy);color:white;padding:12px;text-align:left}
+td{padding:12px;border-bottom:1px solid #ddd}
+tr:hover{background:#f4f7fb}
+
+/* ACTION BUTTONS */
+.action{padding:7px 10px;font-size:12px;border-radius:6px;color:white;margin:2px;border:none;cursor:pointer}
+.view-btn{background:#2980b9}
+.edit-btn{background:#27ae60}
+.delete-btn{background:#c0392b}
+.empty{text-align:center;padding:40px;color:#888}
+
+/* MODAL */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000}
+.modal-content{background:white;width:90%;max-width:750px;margin:50px auto;padding:30px;border-radius:15px;box-shadow:0 5px 30px rgba(0,0,0,.3);max-height:90vh;overflow:auto}
+.close{float:right;font-size:30px;cursor:pointer;color:#c0392b}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+
+@media(max-width:900px){
+.sidebar{position:absolute;left:-270px;height:100%;z-index:1000}
+.sidebar.active{left:0}
+#menuBtn{display:block}
+}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="main-loader" id="mainLoader">
+  <div class="spinner"></div>
+  <p style="margin-top:15px">Loading Staff...</p>
+</div>
+
+<!-- SIDEBAR - EXACT COPY -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png">
+    <h2>GREYSOL ACADEMY</h2>
+    <p>School Management System</p>
+  </div>
+
+  <div class="menu">
+    <a href="admin-dashboard.html"><i class="fas fa-gauge"></i><span>Dashboard</span></a>
+
+    <!-- STUDENTS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-user-graduate"></i><span>Students</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="registration.html"><i class="fas fa-user-plus"></i>Register Student</a>
+        <a href="student-list.html"><i class="fas fa-users"></i>Student List</a>
+        <a href="student-statement.html"><i class="fas fa-file-invoice"></i>Student Statement</a>
+        <a href="#"><i class="fas fa-arrow-up"></i>Promotion</a>
+      </div>
+    </div>
+
+    <!-- FEES -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-money-bill-wave"></i><span>Fees Management</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="invoice.html"><i class="fas fa-file-circle-plus"></i>Create Invoice</a>
+        <a href="invoice-list.html"><i class="fas fa-file-lines"></i>Invoice List</a>
+        <a href="payment.html"><i class="fas fa-cash-register"></i>Receive Payment</a>
+        <a href="#"><i class="fas fa-receipt"></i>Receipts</a>
+        <a href="student-statement.html"><i class="fas fa-file-invoice-dollar"></i>Fee Statements</a>
+      </div>
+    </div>
+
+    <!-- ACCOUNTING -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-calculator"></i><span>Accounting</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="fee-balances.html"><i class="fas fa-wallet"></i>Student Fee Balances</a>
+        <a href="#"><i class="fas fa-list"></i>Chart of Accounts</a>
+        <a href="#"><i class="fas fa-book"></i>Journal Entries</a>
+        <a href="#"><i class="fas fa-book-open"></i>General Ledger</a>
+        <a href="#"><i class="fas fa-scale-balanced"></i>Trial Balance</a>
+        <a href="#"><i class="fas fa-chart-line"></i>Income Statement</a>
+        <a href="#"><i class="fas fa-landmark"></i>Balance Sheet</a>
+        <a href="#"><i class="fas fa-money-check"></i>Cash Book</a>
+        <a href="#"><i class="fas fa-boxes-stacked"></i>Fixed Assets</a>
+        <a href="#"><i class="fas fa-receipt"></i>Expense Tracker</a>
+      </div>
+    </div>
+
+    <!-- ACADEMICS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-school"></i><span>Academics</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="#"><i class="fas fa-chalkboard"></i>Classes</a>
+        <a href="#"><i class="fas fa-book"></i>Subjects</a>
+        <a href="#"><i class="fas fa-calendar"></i>Timetable</a>
+        <a href="#"><i class="fas fa-chart-column"></i>Results</a>
+        <a href="#"><i class="fas fa-user-check"></i>Attendance</a>
+      </div>
+    </div>
+
+    <!-- STAFF -->
+    <div class="menu-group active">
+      <div class="menu-header"><i class="fas fa-users"></i><span>Staff</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="staff-list.html" class="active"><i class="fas fa-user-tie"></i>Staff List</a>
+        <a href="#"><i class="fas fa-money-check-dollar"></i>Payroll</a>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-chart-pie"></i><span>Reports</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="#"><i class="fas fa-file"></i>Fee Reports</a>
+        <a href="#"><i class="fas fa-chart-line"></i>Financial Reports</a>
+        <a href="#"><i class="fas fa-user-graduate"></i>Student Reports</a>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-cog"></i><span>Settings</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="#"><i class="fas fa-school"></i>School Information</a>
+        <a href="#"><i class="fas fa-calendar-days"></i>Academic Year</a>
+        <a href="#"><i class="fas fa-user-shield"></i>User Management</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn"><i class="fas fa-right-from-bracket"></i>Logout</a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="left-top">
+      <i class="fas fa-bars" id="menuBtn"></i>
+      <h2>Staff Management</h2>
+    </div>
+    <div class="admin">
+      <div>
+        <span id="adminName">Loading...</span>
+        <small id="adminRole">-</small>
+      </div>
+      <img src="../images/user.png">
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- SUMMARY -->
+    <div class="summary">
+      <div class="summary-card"><h1 id="totalStaff">0</h1><p>Total Staff</p></div>
+      <div class="summary-card"><h1 id="administrators">0</h1><p>Administrators</p></div>
+      <div class="summary-card"><h1 id="teachers">0</h1><p>Teachers</p></div>
+      <div class="summary-card"><h1 id="otherStaff">0</h1><p>Other Staff</p></div>
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="box">
+      <button id="openStaffModal" class="primary-btn"><i class="fa-solid fa-user-plus"></i> Add Staff Member</button>
+    </div>
+
+    <!-- SEARCH / EXPORT -->
+    <div class="box">
+      <h3>Registered Staff</h3>
+      <div class="filters">
+        <input id="searchStaff" placeholder="Search staff by name, ID or role">
+        <button id="refreshBtn"><i class="fa-solid fa-refresh"></i> Refresh</button>
+        <button id="excelBtn" class="export-btn"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
+        <button id="pdfBtn" class="pdf-btn"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+      </div>
+    </div>
+
+    <!-- STAFF TABLE -->
+    <div class="box">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr><th>Staff ID</th><th>Full Name</th><th>Role</th><th>Department</th><th>Phone</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="staffTable"><tr><td colspan="7" class="empty">Loading staff...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD STAFF MODAL -->
+<div id="staffModal" class="modal">
+  <div class="modal-content">
+    <span id="closeModal" class="close">&times;</span>
+    <h2>Add Staff Member</h2>
+    <div class="form-grid">
+      <input id="staffID" placeholder="Staff ID (STF001)">
+      <input id="firstName" placeholder="First Name">
+      <input id="surname" placeholder="Surname">
+      <select id="gender"><option value="">Select Gender</option><option>Male</option><option>Female</option></select>
+      <input id="phone" placeholder="Phone Number">
+      <input id="email" placeholder="Email Address">
+      <select id="role">
+        <option value="">Select Role</option><option>Administrator</option><option>Head Teacher</option><option>Deputy Head Teacher</option>
+        <option>Accountant</option><option>Bursar</option><option>Teacher</option><option>Class Teacher</option>
+        <option>Secretary</option><option>Librarian</option><option>Other Staff</option>
+      </select>
+      <select id="department"><option value="">Select Department</option><option>Administration</option><option>Finance</option><option>Academics</option><option>Support</option></select>
+      <input id="username" placeholder="Username">
+      <select id="status"><option>Active</option><option>Inactive</option></select>
+    </div><br>
+    <button id="saveStaff" class="primary-btn"><i class="fa-solid fa-save"></i> Save Staff</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4EU_hvrWHSxJciW0qUWeUXOr-msgw",projectId:"greysol-academy"});
+const db = getFirestore(app);
+const loader = document.getElementById("mainLoader");
+let staff=[];
+
+// 1. ADMIN ONLY CHECK
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+const userRole = (loggedUser?.role || "").toString().trim().toLowerCase();
+if(!loggedUser || userRole!== "administrator"){
+  alert("Access Denied. Administrator only.");
+  window.location.href = "staff-login.html";
+}
+
+// 2. SHOW LOGGED IN USER
+document.getElementById("adminName").innerText = loggedUser.username;
+document.getElementById("adminRole").innerText = loggedUser.role.toUpperCase();
+
+// 3. LOGOUT
+document.getElementById("logoutBtn").onclick = (e) => {
+  e.preventDefault();
+  localStorage.removeItem("loggedUser");
+  window.location.href = "staff-login.html";
+}
+
+// 4. HAMBURGER + OVERLAY
+document.getElementById("menuBtn").onclick = function(){
+  document.getElementById("sidebar").classList.add("active");
+  document.getElementById("overlay").classList.add("show");
+};
+document.getElementById("overlay").onclick = function(){
+  document.getElementById("sidebar").classList.remove("active");
+  document.getElementById("overlay").classList.remove("show");
+}
+
+// 5. SIDEBAR ACCORDION
+const groups = document.querySelectorAll(".menu-group");
+
+groups.forEach(group => {
+
+    const header = group.querySelector(".menu-header");
+
+    header.addEventListener("click", function () {
+
+        if(group.classList.contains("active")){
+            group.classList.remove("active");
+            return;
+        }
+
+        groups.forEach(g => g.classList.remove("active"));
+
+        group.classList.add("active");
+
+    });
+
+});
+
+// MODAL CONTROL
+const modal = document.getElementById("staffModal");
+document.getElementById("openStaffModal").onclick=()=> modal.style.display="block";
+document.getElementById("closeModal").onclick=()=> modal.style.display="none";
+window.onclick=function(e){ if(e.target===modal){ modal.style.display="none"; } }
+
+// LOAD STAFF
+async function loadStaff(){
+  loader.classList.remove("hidden");
+  try{
+    const snapshot = await getDocs(collection(db,"staff"));
+    staff=[];
+    snapshot.forEach(item=> staff.push({id:item.id,...item.data()}));
+    displayStaff(staff);
+    updateSummary();
+  }catch(error){ alert(error.message); }
+  finally{ loader.classList.add("hidden"); }
+}
+loadStaff();
+
+// SAVE STAFF
+document.getElementById("saveStaff").onclick=async()=>{
+  const data={
+    staffID:document.getElementById("staffID").value.trim(),
+    firstName:document.getElementById("firstName").value.trim(),
+    surname:document.getElementById("surname").value.trim(),
+    gender:document.getElementById("gender").value,
+    phone:document.getElementById("phone").value,
+    email:document.getElementById("email").value,
+    role:document.getElementById("role").value,
+    department:document.getElementById("department").value,
+    username:document.getElementById("username").value,
+    status:document.getElementById("status").value,
+    createdAt:new Date()
+  };
+  if(data.firstName==="" || data.surname==="" || data.role===""){ alert("Please fill required fields"); return; }
+  try{
+    await addDoc(collection(db,"staff"),data);
+    alert("Staff added successfully");
+    clearForm(); modal.style.display="none"; loadStaff();
+  }catch(error){ alert(error.message); }
+}
+
+function displayStaff(list){
+  const table = document.getElementById("staffTable");
+  table.innerHTML="";
+  if(list.length===0){ table.innerHTML=`<tr><td colspan="7" class="empty">No staff found</td></tr>`; return; }
+  list.forEach(member=>{
+    let fullname = `${member.firstName || ""} ${member.surname || ""}`;
+    table.innerHTML += `<tr><td>${member.staffID || "-"}</td><td>${fullname}</td><td>${member.role || "-"}</td><td>${member.department || "-"}</td><td>${member.phone || "-"}</td><td>${member.status || "-"}</td><td><button class="action view-btn" onclick="viewStaff('${member.id}')">View</button><button class="action edit-btn" onclick="editStaff('${member.id}')">Edit</button><button class="action delete-btn" onclick="deleteStaff('${member.id}')">Delete</button></td></tr>`;
+  });
+}
+
+function updateSummary(){
+  document.getElementById("totalStaff").innerHTML = staff.length;
+  document.getElementById("administrators").innerHTML = staff.filter(s=>s.role==="Administrator").length;
+  document.getElementById("teachers").innerHTML = staff.filter(s=> s.role==="Teacher" || s.role==="Class Teacher").length;
+  document.getElementById("otherStaff").innerHTML = staff.filter(s=> s.role!=="Administrator" && s.role!=="Teacher" && s.role!=="Class Teacher").length;
+}
+
+document.getElementById("searchStaff").addEventListener("input",function(){
+  let value=this.value.toLowerCase();
+  let filtered=staff.filter(s=>{
+    let name=`${s.firstName} ${s.surname}`.toLowerCase();
+    return(name.includes(value) || (s.staffID||"").toLowerCase().includes(value) || (s.role||"").toLowerCase().includes(value));
+  });
+  displayStaff(filtered);
+});
+
+window.deleteStaff=async function(id){
+  if(!confirm("Are you sure you want to delete this staff member?")) return;
+  await deleteDoc(doc(db,"staff",id));
+  alert("Staff deleted"); loadStaff();
+}
+window.viewStaff=function(id){ window.location.href="staff-profile.html?id="+id; }
+window.editStaff=function(id){ alert("Edit module coming next"); }
+
+function clearForm(){
+  document.querySelectorAll("#staffModal input").forEach(input=> input.value="");
+  document.querySelectorAll("#staffModal select").forEach(select=> select.value="");
+}
+
+document.getElementById("refreshBtn").onclick=()=> loadStaff();
+
+// EXCEL EXPORT
+document.getElementById("excelBtn").onclick=function(){
+  let rows = staff.map(s=>({"Staff ID":s.staffID,"Name":`${s.firstName} ${s.surname}`,"Role":s.role,"Department":s.department,"Phone":s.phone,"Status":s.status}));
+  let sheet = XLSX.utils.json_to_sheet(rows); let book=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(book,sheet,"Staff"); XLSX.writeFile(book,"Greysol_Staff_List.xlsx");
+}
+
+// PDF EXPORT
+document.getElementById("pdfBtn").onclick=function(){
+  const {jsPDF}=window.jspdf; let pdf=new jsPDF();
+  pdf.text("GREYSOL ACADEMY STAFF LIST",14,20);
+  let rows=[]; staff.forEach(s=> rows.push([s.staffID,`${s.firstName} ${s.surname}`,s.role,s.department,s.phone,s.status]));
+  pdf.autoTable({startY:30,head:[["ID","Name","Role","Department","Phone","Status"]],body:rows});
+  pdf.save("Greysol_Staff.pdf");
+}
+</script>
+</body>
+</html>

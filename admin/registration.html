@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Add Student | Greysol Academy</title>
+<link rel="icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif} :root{--navy:#001f3f;--blue:#003366;--green:#27ae60;--red:#c0392b;--light:#f4f7fb;--border:#d9e0e8}body{margin:0;background:var(--light);color:#172033}
+
+/* YOUR ADMIN SIDEBAR */
+.sidebar{position:fixed;left:0;top:0;width:270px;height:100vh;overflow-y:auto;background:var(--navy);color:#fff;z-index:2000;transition:left.3s}
+.logo{text-align:center;padding:20px;border-bottom:1px solid #ffffff22}
+.logo img{width:70px;height:70px;object-fit:contain}
+.logo h2{font-size:17px;margin:8px 0 3px}
+.logo p{font-size:12px;opacity:.75;margin:0}
+.menu a,.menu-header{display:flex;align-items:center;gap:13px;padding:13px 22px;color:#fff;text-decoration:none;font-size:13px;cursor:pointer}
+.menu a:hover,.menu-header:hover{background:#ffffff18}
+.menu a.active{background:#ffffff22;border-left:4px solid var(--green);padding-left:18px}
+.menu a i:first-child,.menu-header>i:first-child{width:18px;text-align:center}
+.menu-header span{flex:1}
+.arrow{font-size:10px!important;transition:.25s}
+.menu-group.active .arrow{transform:rotate(180deg)}
+.submenu{max-height:0;overflow:hidden;background:#0000002e;transition:max-height.35s}
+.menu-group.active .submenu{max-height:800px}
+.submenu a{padding:10px 18px 10px 52px;font-size:12px}
+.section-label{padding:15px 22px 5px;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;opacity:.55}
+
+.main{margin-left:270px;min-height:100vh}
+.topbar{height:70px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 25px;box-shadow:0 2px 12px #00000012;position:sticky;top:0;z-index:1000}
+.topbar-left{display:flex;align-items:center;gap:15px}
+.topbar h1{font-size:21px;color:var(--navy);margin:0}
+.hamburger{display:none;font-size:23px;color:var(--navy);cursor:pointer}
+.user-info{display:flex;align-items:center;gap:10px;color:var(--navy);font-weight:600;font-size:13px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center}
+.content{padding:25px;max-width:1400px;margin:auto}
+.breadcrumb{font-size:12px;color:#667085;margin-bottom:18px}
+.breadcrumb span{color:var(--navy);font-weight:700}
+
+.progress-card,.form-card{background:#fff;border-radius:14px;box-shadow:0 5px 20px #0000000d}
+.progress-card{padding:18px 22px;margin-bottom:20px}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:15px}
+.progress-title{font-weight:700;color:var(--navy);font-size:14px}
+.progress-count{font-size:12px;color:#667085}
+.progress-track{height:4px;background:#e6eaf0;border-radius:10px;margin:0 25px;position:relative}
+.progress-fill{position:absolute;left:0;top:0;height:100%;width:20%;background:var(--green);border-radius:10px;transition:.3s}
+.progress-steps{display:grid;grid-template-columns:repeat(5,1fr);margin-top:-15px}
+.progress-step{text-align:center}
+.progress-circle{width:31px;height:31px;border-radius:50%;background:#e7ebf0;color:#687386;display:flex;align-items:center;justify-content:center;margin:0 auto 7px;font-size:12px;font-weight:700;border:3px solid #fff}
+.progress-step.active.progress-circle{background:var(--green);color:#fff}
+.progress-step.current.progress-circle{background:var(--navy);color:#fff}
+.progress-step h4{margin:0;font-size:11px}
+.progress-step small{font-size:9px;color:#98a2b3}
+
+.form-header{padding:22px 25px;border-bottom:1px solid #edf0f4;display:flex;justify-content:space-between;gap:20px}
+.form-header h2{margin:0;color:var(--navy);font-size:19px}
+.form-header p{margin:5px 0 0;color:#667085;font-size:12px}
+.admin-badge{background:#edf6ff;color:var(--blue);padding:8px 12px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.form-body{padding:25px}
+.form-step{display:none}
+.form-step.active{display:block}
+.form-step>h3{margin:0 0 20px;color:var(--navy);font-size:16px}
+.input-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.input-box{display:flex;flex-direction:column}
+.input-box.full{grid-column:1/-1}
+.input-box label{font-size:12px;font-weight:700;color:#344054;margin-bottom:7px}
+.input-box input,.input-box select,.input-box textarea{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:8px;outline:0;font-size:13px}
+.input-box textarea{min-height:90px;resize:vertical}
+.input-box input:focus,.input-box select:focus,.input-box textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #00336614}
+.input-box input[readonly]{background:#f5f7fa;font-weight:700}
+.help-text{font-size:11px;color:#667085;margin:5px 0}
+.subjects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:9px;border:1px solid var(--border);border-radius:9px;padding:13px;min-height:90px}
+.subjects-grid label{display:flex;align-items:center;gap:8px;padding:9px;border:1px solid #e5e7eb;border-radius:7px;font-size:12px;background:#fafbfc}
+.subjects-grid input{accent-color:var(--navy)}
+.preview-box{background:#f8fafc;border:1px solid #e3e8ef;border-radius:10px;padding:20px;min-height:180px}
+.preview-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.preview-item{background:#fff;border:1px solid #e8ebef;border-radius:8px;padding:10px}
+.preview-item small{display:block;color:#667085;font-size:10px;margin-bottom:4px}
+.preview-item strong{font-size:12px}
+.form-actions{display:flex;justify-content:space-between;padding:18px 25px;border-top:1px solid #edf0f4;background:#fbfcfe}
+.action-right{display:flex;gap:9px}
+.btn{border:0;border-radius:8px;padding:10px 17px;font-weight:700;font-size:12px;cursor:pointer}
+.btn-secondary{background:#e9edf2;color:#344054}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-success{background:var(--green);color:#fff}
+.btn-danger-outline{background:#fff;color:var(--red);border:1px solid #efb1aa}
+.btn:disabled{opacity:.55}
+
+/* SUCCESS MODAL WITH 2 BUTTONS */
+.success-overlay{position:fixed;inset:0;background:#0000008c;z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px}
+.success-box{background:#fff;width:100%;max-width:480px;border-radius:16px;padding:28px;text-align:center;box-shadow:0 20px 60px #0004}
+.success-icon{width:58px;height:58px;border-radius:50%;background:#e9f8ef;color:var(--green);display:flex;align-items:center;justify-content:center;margin:auto auto 15px;font-size:28px}
+.success-box h2{color:var(--navy);margin:0 0 7px}
+.success-box p{font-size:13px;color:#475467}
+.credentials{background:#f7f9fc;border:1px solid #e2e7ee;border-radius:10px;padding:15px;text-align:left;margin:15px 0}
+.credentials p{margin:7px 0}
+.success-actions{display:flex;gap:10px;margin-top:10px}
+.success-actions.btn{flex:1}
+
+.overlay{display:none;position:fixed;inset:0;background:#0006;z-index:1900}
+.overlay.show{display:block}
+@media(max-width:992px){.sidebar{left:-270px}.sidebar.open{left:0}.main{margin-left:0}.hamburger{display:block}}
+@media(max-width:700px){.content{padding:15px}.topbar{padding:0 15px}.topbar h1{font-size:17px}.user-info span{display:none}.input-grid{grid-template-columns:1fr}.input-box.full{grid-column:auto}.form-body{padding:17px}.form-header{padding:18px;flex-direction:column}.progress-card{padding:15px 10px}.progress-step h4{font-size:9px}.progress-step small{display:none}.progress-track{margin:0 16px}.form-actions{padding:15px;flex-direction:column;gap:12px}.action-right{justify-content:flex-end}.preview-grid{grid-template-columns:1fr}.success-actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png">
+    <h2>GREYSOL ACADEMY</h2>
+    <p>School Management System</p>
+  </div>
+
+  <div class="menu">
+    <a href="admin-dashboard.html"><i class="fas fa-gauge"></i><span>Dashboard</span></a>
+
+    <!-- STUDENTS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-user-graduate"></i><span>Students</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="registration.html" class="active"><i class="fas fa-user-plus"></i>Register Student</a>
+        <a href="student-list.html"><i class="fas fa-users"></i>Student List</a>
+        <a href="student-statement.html"><i class="fas fa-file-invoice"></i>Student Statement</a>
+        <a href="#"><i class="fas fa-arrow-up"></i>Promotion</a>
+      </div>
+    </div>
+
+    <!-- FEES -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-money-bill-wave"></i><span>Fees Management</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="invoice.html"><i class="fas fa-file-circle-plus"></i>Create Invoice</a>
+        <a href="invoice-list.html"><i class="fas fa-file-lines"></i>Invoice List</a>
+        <a href="payment.html"><i class="fas fa-cash-register"></i>Receive Payment</a>
+        <a href="#"><i class="fas fa-receipt"></i>Receipts</a>
+        <a href="student-statement.html"><i class="fas fa-file-invoice-dollar"></i>Fee Statements</a>
+      </div>
+    </div>
+
+    <!-- ACCOUNTING -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-calculator"></i><span>Accounting</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="fee-balances.html"><i class="fas fa-wallet"></i>Student Fee Balances</a>
+        <a href="#"><i class="fas fa-list"></i>Chart of Accounts</a>
+        <a href="#"><i class="fas fa-book"></i>Journal Entries</a>
+        <a href="#"><i class="fas fa-book-open"></i>General Ledger</a>
+        <a href="#"><i class="fas fa-scale-balanced"></i>Trial Balance</a>
+        <a href="#"><i class="fas fa-chart-line"></i>Income Statement</a>
+        <a href="#"><i class="fas fa-landmark"></i>Balance Sheet</a>
+        <a href="#"><i class="fas fa-money-check"></i>Cash Book</a>
+        <a href="#"><i class="fas fa-boxes-stacked"></i>Fixed Assets</a>
+        <a href="#"><i class="fas fa-receipt"></i>Expense Tracker</a>
+      </div>
+    </div>
+
+    <!-- ACADEMICS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-school"></i><span>Academics</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="#"><i class="fas fa-chalkboard"></i>Classes</a>
+        <a href="#"><i class="fas fa-book"></i>Subjects</a>
+        <a href="#"><i class="fas fa-calendar"></i>Timetable</a>
+        <a href="#"><i class="fas fa-chart-column"></i>Results</a>
+        <a href="#"><i class="fas fa-user-check"></i>Attendance</a>
+      </div>
+    </div>
+
+    <!-- STAFF -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-users"></i><span>Staff</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="staff-list.html"><i class="fas fa-user-tie"></i>Staff List</a>
+        <a href="#"><i class="fas fa-money-check-dollar"></i>Payroll</a>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-chart-pie"></i><span>Reports</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="#"><i class="fas fa-file"></i>Fee Reports</a>
+        <a href="#"><i class="fas fa-chart-line"></i>Financial Reports</a>
+        <a href="#"><i class="fas fa-user-graduate"></i>Student Reports</a>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="menu-group">
+      <div class="menu-header"><i class="fas fa-cog"></i><span>Settings</span><i class="fas fa-chevron-down arrow"></i></div>
+      <div class="submenu">
+        <a href="#"><i class="fas fa-school"></i>School Information</a>
+        <a href="#"><i class="fas fa-calendar-days"></i>Academic Year</a>
+        <a href="#"><i class="fas fa-user-shield"></i>User Management</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn"><i class="fas fa-right-from-bracket"></i>Logout</a>
+  </div>
+</div>
+<div class="main">
+<header class="topbar"><div class="topbar-left"><i class="fa-solid fa-bars hamburger" onclick="toggleSidebar()"></i><h1>Add New Student</h1></div><div class="user-info"><span id="staffName">Loading...</span><div class="user-avatar"><i class="fa-solid fa-user-shield"></i></div></div></header>
+
+<main class="content">
+<div class="breadcrumb">Students / <span>Add New Student</span></div>
+
+<div class="progress-card">
+  <div class="progress-top"><div class="progress-title">Student Registration Progress</div><div class="progress-count">Step <span id="stepNumber">1</span> of 5</div></div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-steps">
+    <div class="progress-step active current"><div class="progress-circle">1</div><h4>Student Details</h4><small>Personal Information</small></div>
+    <div class="progress-step"><div class="progress-circle">2</div><h4>Parent Details</h4><small>Guardian Information</small></div>
+    <div class="progress-step"><div class="progress-circle">3</div><h4>Academic</h4><small>School Background</small></div>
+    <div class="progress-step"><div class="progress-circle">4</div><h4>Health</h4><small>Emergency Details</small></div>
+    <div class="progress-step"><div class="progress-circle">5</div><h4>Preview</h4><small>Confirm Registration</small></div>
+  </div>
+</div>
+
+<div class="form-card">
+  <div class="form-header">
+    <div><h2>Student Registration</h2><p>Register a new student using the existing registration and Firebase save structure.</p></div>
+    <div class="admin-badge"><i class="fa-solid fa-shield-halved"></i> Administrator Entry</div>
+  </div>
+
+  <form id="studentForm">
+    <div class="form-body">
+      <!-- YOUR 5 STEPS UNCHANGED -->
+      <section class="form-step active"><h3>Student Information</h3><div class="input-grid"><div class="input-box"><label>Student ID</label><input id="studentID" readonly placeholder="Auto Generated"></div><div class="input-box"><label>First Name *</label><input id="firstName" required></div><div class="input-box"><label>Middle Name</label><input id="middleName"></div><div class="input-box"><label>Surname *</label><input id="surname" required></div><div class="input-box"><label>Password *</label><input type="password" id="password" required placeholder="Create Password"></div><div class="input-box"><label>Confirm Password *</label><input type="password" id="confirmPassword" required placeholder="Confirm Password"></div><div class="input-box"><label>Date of Birth *</label><input type="date" id="dob" required></div><div class="input-box"><label>Gender *</label><select id="gender" required><option value="">Select Gender</option><option>Male</option><option>Female</option></select></div></div></section>
+
+      <section class="form-step"><h3>Parent / Guardian Details</h3><div class="input-grid"><div class="input-box"><label>Parent / Guardian Name *</label><input id="guardianName" required></div><div class="input-box"><label>Relationship *</label><select id="relationship" required><option value="">Select Relationship</option><option>Father</option><option>Mother</option><option>Guardian</option></select></div><div class="input-box"><label>Phone Number *</label><input type="tel" id="guardianPhone" required></div><div class="input-box"><label>Email Address</label><input type="email" id="guardianEmail"></div><div class="input-box full"><label>Residential Address *</label><textarea id="address" required></textarea></div></div></section>
+
+      <section class="form-step"><h3>Academic Information</h3><div class="input-grid"><div class="input-box"><label>Class Applying For *</label><select id="classApplying" required><option value="">Select Class</option><option>Form 1</option><option>Form 2</option><option>Form 3</option><option>Form 4</option></select></div><div class="input-box"><label>Previous School</label><input id="previousSchool"></div><div class="input-box"><label>Previous Class</label><input id="previousClass"></div><div class="input-box"><label>Admission Year *</label><input type="number" id="admissionYear" required></div><div class="input-box full"><label>Subjects Selected *</label><p class="help-text">Only active subjects created by the Head Teacher will appear below. English is compulsory.</p><div class="subjects-grid" id="subjectsContainer"><div style="padding:20px;text-align:center;color:#777">Loading subjects...</div></div></div></div></section>
+
+      <section class="form-step"><h3>Health & Emergency Information</h3><div class="input-grid"><div class="input-box"><label>Blood Group</label><select id="bloodGroup"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div><div class="input-box"><label>Emergency Contact Name *</label><input id="emergencyName" required></div><div class="input-box"><label>Emergency Phone *</label><input type="tel" id="emergencyPhone" required></div><div class="input-box full"><label>Medical Conditions</label><textarea id="medical"></textarea></div></div></section>
+
+      <section class="form-step"><h3>Registration Preview</h3><div id="previewBox" class="preview-box"><p>Your information will appear here before submission.</p></div><br><button type="button" id="previewBtn" class="btn btn-secondary"><i class="fa-solid fa-eye"></i> Generate Preview</button></section>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" id="clearBtn" class="btn btn-danger-outline"><i class="fa-solid fa-rotate-left"></i> Clear Data</button>
+      <div class="action-right">
+        <button type="button" id="backBtn" class="btn btn-secondary">Back</button>
+        <button type="button" id="nextBtn" class="btn btn-primary">Next</button>
+        <button type="submit" id="submitBtn" class="btn btn-success" style="display:none"><i class="fa-solid fa-user-plus"></i> Save Student</button>
+      </div>
+    </div>
+  </form>
+</div>
+</main></div>
+
+<script type="module">
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    query,
+    where,
+    setDoc,
+    doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+    getAuth,
+    createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+// ============================================================
+// FIREBASE
+// ============================================================
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",
+    authDomain: "greysol-academy.firebaseapp.com",
+    projectId: "greysol-academy"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+
+// ============================================================
+// ADMIN AUTHENTICATION
+// ============================================================
+
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+
+const allowedRoles = [
+    "Admin",
+    "Administrator",
+    "Super Admin"
+];
+
+if (!loggedUser || !allowedRoles.includes(loggedUser.role)) {
+
+    alert("Access Denied. Administrators Only.");
+
+    window.location.href = "staff-login.html";
+
+    throw new Error("Unauthorized access");
+
+}
+
+
+// ============================================================
+// PAGE INITIALIZATION
+// ============================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const staffName = document.getElementById("staffName");
+
+    if (staffName) {
+        staffName.textContent =
+            loggedUser.username ||
+            loggedUser.fullName ||
+            "Administrator";
+    }
+
+
+    // ========================================================
+    // SIDEBAR OVERLAY
+    // ========================================================
+
+    let sidebarOverlay = document.getElementById("sidebarOverlay");
+
+    if (!sidebarOverlay) {
+
+        sidebarOverlay = document.createElement("div");
+
+        sidebarOverlay.id = "sidebarOverlay";
+
+        sidebarOverlay.className = "overlay";
+
+        document.body.appendChild(sidebarOverlay);
+
+    }
+
+
+    const sidebar = document.getElementById("sidebar");
+
+
+    // ========================================================
+    // HAMBURGER
+    // ========================================================
+
+    window.toggleSidebar = function () {
+
+        if (!sidebar) return;
+
+        sidebar.classList.toggle("open");
+
+        sidebarOverlay.classList.toggle("show");
+
+    };
+
+
+    // ========================================================
+    // CLOSE SIDEBAR WHEN OVERLAY IS CLICKED
+    // ========================================================
+
+    sidebarOverlay.addEventListener("click", () => {
+
+        sidebar.classList.remove("open");
+
+        sidebarOverlay.classList.remove("show");
+
+    });
+
+
+    // ========================================================
+    // SUBMENU TOGGLE
+    // ========================================================
+
+    const menuHeaders =
+        document.querySelectorAll(".menu-header");
+
+
+    menuHeaders.forEach(header => {
+
+        header.addEventListener("click", function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const group = this.closest(".menu-group");
+
+            if (!group) return;
+
+
+            // Close other groups
+            document
+                .querySelectorAll(".menu-group.active")
+                .forEach(otherGroup => {
+
+                    if (otherGroup !== group) {
+
+                        otherGroup.classList.remove("active");
+
+                    }
+
+                });
+
+
+            // Toggle selected group
+            group.classList.toggle("active");
+
+        });
+
+    });
+
+
+    // ========================================================
+    // KEEP STUDENTS MENU OPEN
+    // ========================================================
+
+    const activeLink =
+        document.querySelector(".submenu a.active");
+
+    if (activeLink) {
+
+        const parentGroup =
+            activeLink.closest(".menu-group");
+
+        if (parentGroup) {
+
+            parentGroup.classList.add("active");
+
+        }
+
+    }
+
+
+    // ========================================================
+    // CLOSE MOBILE SIDEBAR AFTER LINK CLICK
+    // ========================================================
+
+    document.querySelectorAll(".submenu a, .menu > a")
+        .forEach(link => {
+
+            link.addEventListener("click", () => {
+
+                if (window.innerWidth <= 992) {
+
+                    sidebar.classList.remove("open");
+
+                    sidebarOverlay.classList.remove("show");
+
+                }
+
+            });
+
+        });
+
+
+    // ========================================================
+    // LOGOUT
+    // ========================================================
+
+    const logoutBtn =
+        document.getElementById("logoutBtn");
+
+    if (logoutBtn) {
+
+        logoutBtn.addEventListener("click", e => {
+
+            e.preventDefault();
+
+            localStorage.removeItem("loggedUser");
+
+            window.location.href = "staff-login.html";
+
+        });
+
+    }
+
+
+    // ========================================================
+    // LOAD SUBJECTS
+    // ========================================================
+
+    loadSubjects();
+
+
+    // ========================================================
+    // REGISTRATION FORM
+    // ========================================================
+
+    initializeRegistration();
+
+});
+
+
+// ============================================================
+// LOAD ACTIVE SUBJECTS
+// ============================================================
+
+async function loadSubjects() {
+
+    const container =
+        document.getElementById("subjectsContainer");
+
+    if (!container) return;
+
+
+    try {
+
+        const snapshot = await getDocs(
+            query(
+                collection(db, "subjects"),
+                where("status", "==", "Active")
+            )
+        );
+
+
+        container.innerHTML = "";
+
+
+        if (snapshot.empty) {
+
+            container.innerHTML = `
+                <p style="color:red;padding:10px">
+                    No subjects available.
+                </p>
+            `;
+
+            return;
+
+        }
+
+
+        snapshot.forEach(docSnap => {
+
+            const data = docSnap.data();
+
+            const name =
+                String(data.subjectName || "").trim();
+
+            const isEnglish =
+                name.toLowerCase() === "english";
+
+
+            const label =
+                document.createElement("label");
+
+
+            const checkbox =
+                document.createElement("input");
+
+            checkbox.type = "checkbox";
+
+            checkbox.name = "subjects";
+
+            checkbox.value = name;
+
+            checkbox.dataset.id =
+                data.subjectID || "";
+
+
+            if (isEnglish) {
+
+                checkbox.checked = true;
+
+                checkbox.disabled = true;
+
+            }
+
+
+            label.appendChild(checkbox);
+
+            label.appendChild(
+                document.createTextNode(
+                    " " +
+                    name +
+                    (isEnglish ? " (Compulsory)" : "")
+                )
+            );
+
+
+            container.appendChild(label);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "SUBJECT LOAD ERROR:",
+            error
+        );
+
+        container.innerHTML = `
+            <p style="color:red;padding:10px">
+                Failed to load subjects.
+            </p>
+        `;
+
+    }
+
+}
+
+
+// ============================================================
+// REGISTRATION SYSTEM
+// ============================================================
+
+function initializeRegistration() {
+
+    let currentStep = 0;
+
+
+    const steps =
+        document.querySelectorAll(".form-step");
+
+    const progressSteps =
+        document.querySelectorAll(".progress-step");
+
+
+    const nextBtn =
+        document.getElementById("nextBtn");
+
+    const backBtn =
+        document.getElementById("backBtn");
+
+    const submitBtn =
+        document.getElementById("submitBtn");
+
+    const progressFill =
+        document.getElementById("progressFill");
+
+    const stepNumber =
+        document.getElementById("stepNumber");
+
+    const form =
+        document.getElementById("studentForm");
+
+    const previewBox =
+        document.getElementById("previewBox");
+
+
+    const $ = id =>
+        document.getElementById(id);
+
+
+    const fields = {
+
+        firstName: $("firstName"),
+
+        middleName: $("middleName"),
+
+        surname: $("surname"),
+
+        dob: $("dob"),
+
+        gender: $("gender"),
+
+        guardianName: $("guardianName"),
+
+        relationship: $("relationship"),
+
+        guardianPhone: $("guardianPhone"),
+
+        guardianEmail: $("guardianEmail"),
+
+        address: $("address"),
+
+        classApplying: $("classApplying"),
+
+        previousSchool: $("previousSchool"),
+
+        previousClass: $("previousClass"),
+
+        admissionYear: $("admissionYear"),
+
+        bloodGroup: $("bloodGroup"),
+
+        emergencyName: $("emergencyName"),
+
+        emergencyPhone: $("emergencyPhone"),
+
+        medical: $("medical")
+
+    };
+
+
+    // ========================================================
+    // SHOW STEP
+    // ========================================================
+
+    function showStep(index) {
+
+        steps.forEach((step, i) => {
+
+            step.classList.toggle(
+                "active",
+                i === index
+            );
+
+        });
+
+
+        progressSteps.forEach((step, i) => {
+
+            step.classList.toggle(
+                "active",
+                i <= index
+            );
+
+            step.classList.toggle(
+                "current",
+                i === index
+            );
+
+        });
+
+
+        if (stepNumber) {
+
+            stepNumber.textContent =
+                index + 1;
+
+        }
+
+
+        if (progressFill) {
+
+            progressFill.style.width =
+                ((index + 1) / steps.length * 100) + "%";
+
+        }
+
+
+        if (backBtn) {
+
+            backBtn.style.display =
+                index === 0
+                    ? "none"
+                    : "inline-block";
+
+        }
+
+
+        if (nextBtn) {
+
+            nextBtn.style.display =
+                index === steps.length - 1
+                    ? "none"
+                    : "inline-block";
+
+        }
+
+
+        if (submitBtn) {
+
+            submitBtn.style.display =
+                index === steps.length - 1
+                    ? "inline-block"
+                    : "none";
+
+        }
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    // ========================================================
+    // SELECTED SUBJECTS
+    // ========================================================
+
+    function selectedSubjects() {
+
+        return Array.from(
+            document.querySelectorAll(
+                'input[name="subjects"]:checked'
+            )
+        ).map(input => input.value);
+
+    }
+
+
+    // ========================================================
+    // VALIDATE STEP
+    // ========================================================
+
+    function validateStep() {
+
+        let valid = true;
+
+
+        const requiredFields =
+            steps[currentStep]
+                .querySelectorAll(
+                    "input[required], select[required], textarea[required]"
+                );
+
+
+        requiredFields.forEach(field => {
+
+            if (!String(field.value || "").trim()) {
+
+                field.style.border =
+                    "2px solid red";
+
+                valid = false;
+
+            } else {
+
+                field.style.border =
+                    "1px solid #d9e0e8";
+
+            }
+
+        });
+
+
+        if (!valid) {
+
+            alert(
+                "Please complete all required fields."
+            );
+
+            return false;
+
+        }
+
+
+        // PASSWORD VALIDATION
+        if (currentStep === 0) {
+
+            const password =
+                $("password").value;
+
+            const confirmPassword =
+                $("confirmPassword").value;
+
+
+            if (password !== confirmPassword) {
+
+                alert(
+                    "Passwords do not match."
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        // SUBJECT VALIDATION
+        if (currentStep === 2) {
+
+            const subjects =
+                selectedSubjects();
+
+
+            if (subjects.length < 6) {
+
+                alert(
+                    "Please select at least 6 subjects including English."
+                );
+
+                return false;
+
+            }
+
+
+            if (subjects.length > 9) {
+
+                alert(
+                    "You can select a maximum of 9 subjects."
+                );
+
+                return false;
+
+            }
+
+
+            const englishSelected =
+                subjects.some(
+                    subject =>
+                        subject.toLowerCase() === "english"
+                );
+
+
+            if (!englishSelected) {
+
+                alert(
+                    "English is compulsory."
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        return true;
+
+    }
+
+
+    // ========================================================
+    // NEXT
+    // ========================================================
+
+    nextBtn.addEventListener("click", () => {
+
+        if (!validateStep()) return;
+
+
+        if (currentStep < steps.length - 1) {
+
+            currentStep++;
+
+            showStep(currentStep);
+
+        }
+
+    });
+
+
+    // ========================================================
+    // BACK
+    // ========================================================
+
+    backBtn.addEventListener("click", () => {
+
+        if (currentStep > 0) {
+
+            currentStep--;
+
+            showStep(currentStep);
+
+        }
+
+    });
+
+
+    // ========================================================
+    // GENERATE STUDENT ID
+    // ========================================================
+
+    async function generateStudentID() {
+
+        const first =
+            fields.firstName.value
+                .trim()
+                .toUpperCase();
+
+        const last =
+            fields.surname.value
+                .trim()
+                .toUpperCase();
+
+
+        if (!first || !last) {
+
+            throw new Error(
+                "First Name and Surname are required."
+            );
+
+        }
+
+
+        const code =
+            "GST" +
+            last.substring(0, 3) +
+            first.substring(0, 2);
+
+
+        const snapshot =
+            await getDocs(
+                collection(db, "students")
+            );
+
+
+        const numbers = [];
+
+        const emailNumbers = [];
+
+
+        const baseEmail =
+            fields.firstName.value
+                .trim()
+                .toLowerCase() +
+
+            fields.surname.value
+                .trim()
+                .toLowerCase();
+
+
+        snapshot.forEach(docSnap => {
+
+            const data =
+                docSnap.data();
+
+
+            const sid =
+                data.studentID || "";
+
+
+            const email =
+                data.loginEmail || "";
+
+
+            if (sid.startsWith(code)) {
+
+                const number =
+                    parseInt(
+                        sid.slice(-2)
+                    ) || 0;
+
+                numbers.push(number);
+
+            }
+
+
+            if (email.startsWith(baseEmail)) {
+
+                const match =
+                    email.match(/\d+/);
+
+
+                emailNumbers.push(
+                    match
+                        ? parseInt(match[0])
+                        : 0
+                );
+
+            }
+
+        });
+
+
+        const nextNumber =
+            (numbers.length
+                ? Math.max(...numbers)
+                : 0) + 1;
+
+
+        const nextEmailNumber =
+            (emailNumbers.length
+                ? Math.max(...emailNumbers)
+                : 0) + 1;
+
+
+        return {
+
+            studentID:
+                code +
+                String(nextNumber)
+                    .padStart(2, "0"),
+
+
+            idCode:
+                code,
+
+
+            loginEmail:
+                baseEmail +
+                String(nextEmailNumber)
+                    .padStart(2, "0") +
+                "@greysolacademy.com"
+
+        };
+
+    }
+
+
+    // ========================================================
+    // PREVIEW
+    // ========================================================
+
+    document
+        .getElementById("previewBtn")
+        .addEventListener("click", async () => {
+
+            try {
+
+                if (currentStep !== 4) {
+
+                    alert(
+                        "Please complete the registration steps first."
+                    );
+
+                    return;
+
+                }
+
+
+                const generated =
+                    await generateStudentID();
+
+
+                $("studentID").value =
+                    generated.studentID;
+
+
+                previewBox.innerHTML = `
+
+                    <h3>
+                        Student Registration Summary
+                    </h3>
+
+                    <div class="preview-grid">
+
+                        <div class="preview-item">
+                            <small>Student ID</small>
+                            <strong>
+                                ${generated.studentID}
+                            </strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <small>Login Email</small>
+                            <strong>
+                                ${generated.loginEmail}
+                            </strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <small>Name</small>
+                            <strong>
+                                ${fields.firstName.value}
+                                ${fields.middleName.value}
+                                ${fields.surname.value}
+                            </strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <small>Date of Birth</small>
+                            <strong>
+                                ${fields.dob.value}
+                            </strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <small>Gender</small>
+                            <strong>
+                                ${fields.gender.value}
+                            </strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <small>Class</small>
+                            <strong>
+                                ${fields.classApplying.value}
+                            </strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <small>Guardian</small>
+                            <strong>
+                                ${fields.guardianName.value}
+                                (${fields.relationship.value})
+                            </strong>
+                        </div>
+
+                        <div class="preview-item">
+                            <small>Phone</small>
+                            <strong>
+                                ${fields.guardianPhone.value}
+                            </strong>
+                        </div>
+
+                        <div
+                            class="preview-item"
+                            style="grid-column:1/-1"
+                        >
+                            <small>Subjects</small>
+                            <strong>
+                                ${selectedSubjects().join(", ")}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                `;
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(error.message);
+
+            }
+
+        });
+
+
+    // ========================================================
+    // SUBMIT
+    // ========================================================
+
+    form.addEventListener("submit", async e => {
+
+        e.preventDefault();
+
+
+        submitBtn.disabled = true;
+
+        submitBtn.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+
+        try {
+
+            // Validate all previous steps
+            for (
+                let i = 0;
+                i < steps.length - 1;
+                i++
+            ) {
+
+                currentStep = i;
+
+                if (!validateStep()) {
+
+                    showStep(i);
+
+                    throw new Error(
+                        "Please complete all required fields."
+                    );
+
+                }
+
+            }
+
+
+            showStep(4);
+
+
+            const generated =
+                await generateStudentID();
+
+
+            const password =
+                $("password").value;
+
+
+            $("studentID").value =
+                generated.studentID;
+
+
+            // =================================================
+            // CREATE FIREBASE AUTH USER
+            // =================================================
+
+            const credential =
+                await createUserWithEmailAndPassword(
+                    auth,
+                    generated.loginEmail,
+                    password
+                );
+
+
+            const selected =
+                selectedSubjects();
+
+
+            // =================================================
+            // SAVE STUDENT
+            // =================================================
+
+            await setDoc(
+                doc(
+                    db,
+                    "students",
+                    generated.studentID
+                ),
+                {
+
+                    uid:
+                        credential.user.uid,
+
+                    studentID:
+                        generated.studentID,
+
+                    idCode:
+                        generated.idCode,
+
+                    loginEmail:
+                        generated.loginEmail,
+
+                    firstName:
+                        fields.firstName.value,
+
+                    middleName:
+                        fields.middleName.value,
+
+                    surname:
+                        fields.surname.value,
+
+                    dateOfBirth:
+                        fields.dob.value,
+
+                    gender:
+                        fields.gender.value,
+
+                    guardianName:
+                        fields.guardianName.value,
+
+                    relationship:
+                        fields.relationship.value,
+
+                    guardianPhone:
+                        fields.guardianPhone.value,
+
+                    guardianEmail:
+                        fields.guardianEmail.value,
+
+                    address:
+                        fields.address.value,
+
+                    classApplying:
+                        fields.classApplying.value,
+
+                    previousSchool:
+                        fields.previousSchool.value,
+
+                    previousClass:
+                        fields.previousClass.value,
+
+                    admissionYear:
+                        fields.admissionYear.value,
+
+                    subjects:
+                        selected,
+
+                    bloodGroup:
+                        fields.bloodGroup.value,
+
+                    emergencyName:
+                        fields.emergencyName.value,
+
+                    emergencyPhone:
+                        fields.emergencyPhone.value,
+
+                    medical:
+                        fields.medical.value,
+
+                    createdAt:
+                        new Date()
+
+                }
+            );
+
+
+            // =================================================
+            // SUCCESS MODAL
+            // =================================================
+
+            const popup =
+                document.createElement("div");
+
+
+            popup.innerHTML = `
+
+                <div class="success-overlay">
+
+                    <div class="success-box">
+
+                        <div class="success-icon">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+
+                        <h2>
+                            Student Added Successfully
+                        </h2>
+
+                        <p>
+                            The student account and
+                            registration record have been created.
+                        </p>
+
+                        <div class="credentials">
+
+                            <p>
+                                <b>Student ID:</b><br>
+                                ${generated.studentID}
+                            </p>
+
+                            <p>
+                                <b>Login Email:</b><br>
+                                ${generated.loginEmail}
+                            </p>
+
+                            <p>
+                                <b>Password:</b><br>
+                                ${password}
+                            </p>
+
+                        </div>
+
+                        <div class="success-actions">
+
+                            <button
+                                id="addAnotherBtn"
+                                class="btn btn-success"
+                            >
+                                <i class="fa-solid fa-user-plus"></i>
+                                Add Another Student
+                            </button>
+
+                            <button
+                                id="studentsRedirect"
+                                class="btn btn-primary"
+                            >
+                                <i class="fa-solid fa-users"></i>
+                                View Students List
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            document.body.appendChild(popup);
+
+
+            // =================================================
+            // ADD ANOTHER
+            // =================================================
+
+            document
+                .getElementById("addAnotherBtn")
+                .onclick = () => {
+
+                    popup.remove();
+
+                    form.reset();
+
+
+                    const english =
+                        Array.from(
+                            document.querySelectorAll(
+                                'input[name="subjects"]'
+                            )
+                        ).find(
+                            input =>
+                                input.value
+                                    .toLowerCase() ===
+                                "english"
+                        );
+
+
+                    if (english) {
+
+                        english.checked = true;
+
+                        english.disabled = true;
+
+                    }
+
+
+                    $("studentID").value = "";
+
+
+                    previewBox.innerHTML =
+                        "<p>Your information will appear here before submission.</p>";
+
+
+                    currentStep = 0;
+
+                    showStep(0);
+
+
+                    submitBtn.disabled = false;
+
+                    submitBtn.innerHTML =
+                        '<i class="fa-solid fa-user-plus"></i> Save Student';
+
+                };
+
+
+            // =================================================
+            // GO TO STUDENT LIST
+            // =================================================
+
+            document
+                .getElementById("studentsRedirect")
+                .onclick = () => {
+
+                    window.location.href =
+                        "student-list.html";
+
+                };
+
+
+        } catch (error) {
+
+            console.error(
+                "STUDENT SAVE ERROR:",
+                error
+            );
+
+
+            alert(
+                error.message ||
+                "Failed to save student."
+            );
+
+
+            submitBtn.disabled = false;
+
+            submitBtn.innerHTML =
+                '<i class="fa-solid fa-user-plus"></i> Save Student';
+
+        }
+
+    });
+
+
+    // ========================================================
+    // CLEAR FORM
+    // ========================================================
+
+    document
+        .getElementById("clearBtn")
+        .addEventListener("click", () => {
+
+            if (
+                !confirm(
+                    "Clear all student information?"
+                )
+            ) return;
+
+
+            form.reset();
+
+
+            const english =
+                Array.from(
+                    document.querySelectorAll(
+                        'input[name="subjects"]'
+                    )
+                ).find(
+                    input =>
+                        input.value
+                            .toLowerCase() ===
+                        "english"
+                );
+
+
+            if (english) {
+
+                english.checked = true;
+
+                english.disabled = true;
+
+            }
+
+
+            $("studentID").value = "";
+
+
+            previewBox.innerHTML =
+                "<p>Your information will appear here before submission.</p>";
+
+
+            currentStep = 0;
+
+            showStep(0);
+
+
+            submitBtn.disabled = false;
+
+            submitBtn.innerHTML =
+                '<i class="fa-solid fa-user-plus"></i> Save Student';
+
+        });
+
+
+    // ========================================================
+    // INITIAL STEP
+    // ========================================================
+
+    showStep(0);
+
+}
+</script>
+</body>
+</html>

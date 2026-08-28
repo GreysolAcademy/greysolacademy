@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greysol Academy | Timetable Setup</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--blue:#003366;--light:#f4f7fb}
+body{margin:0;background:var(--light);display:flex;height:100vh;overflow:hidden}
+.sidebar{width:270px;background:var(--navy);color:white;height:100vh;overflow:auto;position:fixed;left:0;z-index:1000;transition:.3s}
+.sidebar.hide{left:-270px}
+.logo{text-align:center;padding:20px;border-bottom:1px solid rgba(255,255,255,.2)}
+.menu a{display:flex;align-items:center;gap:15px;padding:15px 25px;color:white;text-decoration:none}
+.menu a.active{background:rgba(255,255,255,.1)}
+.main{flex:1;display:flex;flex-direction:column;margin-left:270px;transition:.3s}
+.topbar{height:75px;background:white;display:flex;justify-content:space-between;align-items:center;padding:0 30px;box-shadow:0 3px 10px rgba(0,0,0,.1);position:sticky;top:0;z-index:999}
+.menu-toggle{display:none;font-size:24px;cursor:pointer;color:var(--navy)}
+.content{padding:30px;overflow:auto}
+.box{background:white;padding:25px;border-radius:15px;margin-bottom:25px;box-shadow:0 5px 20px rgba(0,0,0,.1)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+select,button,input{width:100%;padding:12px;border-radius:8px;border:1px solid #ccc}
+button{background:var(--navy);color:white;border:none;cursor:pointer}
+button:hover{background:var(--blue)}
+table{width:100%;border-collapse:collapse}
+th{background:var(--navy);color:white;padding:12px;text-align:left}
+td{padding:12px;border-bottom:1px solid #ddd}
+.delete{background:#c0392b;padding:7px 12px;color:white;border:none;border-radius:5px}
+@media(max-width:900px){
+.sidebar{left:-270px}.sidebar.show{left:0}
+.main{margin-left:0}
+.menu-toggle{display:block}
+.content{padding:15px}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div class="logo"><h2>GREYSOL ACADEMY</h2><p>Head Teacher Portal</p></div>
+  <div class="menu">
+    <a href="headteacher-dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+    <a href="subject-allocation.html"><i class="fa-solid fa-link"></i> Subject Allocation</a>
+    <a href="timetable-setup.html" class="active"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+    <a href="staff-login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </div>
+</div>
+
+<div class="main" id="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:15px">
+      <i class="fa-solid fa-bars menu-toggle" id="menuToggle"></i>
+      <h2>Set Timetable</h2>
+    </div>
+    <span id="staffName"></span>
+  </div>
+  <div class="content">
+    <div class="box">
+      <h3>Add Period</h3>
+      <div class="form-grid">
+        <div><label>Teacher</label><select id="teacherSelect"><option value="">Select Teacher</option></select></div>
+        <div><label>Subject - Class</label><select id="allocationSelect"><option value="">Select Allocation First</option></select></div>
+        <div><label>Day</label>
+          <select id="daySelect"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select>
+        </div>
+        <div><label>Period Duration</label>
+          <select id="durationSelect">
+            <option value="">Select Duration</option>
+            <option value="30">30 Minutes</option>
+            <option value="35">35 Minutes</option>
+            <option value="40">40 Minutes</option>
+            <option value="45">45 Minutes</option>
+            <option value="60">1 Hour</option>
+            <option value="80">Double Period - 80min</option>
+          </select>
+        </div>
+        <div><label>Start Time</label><input type="time" id="startTime"></div>
+        <div><label>End Time</label><input type="time" id="endTime" readonly></div>
+      </div>
+      <br><button id="savePeriod">Save Period</button>
+    </div>
+
+    <div class="box">
+      <h3>Full Timetable</h3>
+      <table><thead><tr><th>Day</th><th>Time</th><th>Teacher</th><th>Subject</th><th>Class</th><th>Action</th></tr></thead>
+      <tbody id="timetableTable"><tr><td colspan="6">Loading...</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById("menuToggle").onclick = () => document.getElementById("sidebar").classList.toggle("show");
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",authDomain:"greysol-academy.firebaseapp.com",projectId:"greysol-academy"});
+const db = getFirestore(app);
+
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+if(!loggedUser) window.location.href="staff-login.html";
+document.getElementById("staffName").innerText = loggedUser.username;
+
+let allocations = [];
+let teachers = [];
+
+async function loadAll(){
+  // 1. LOAD TEACHERS
+  const teacherSnap = await getDocs(collection(db,"staff"));
+  const teacherSelect = document.getElementById("teacherSelect");
+  teacherSnap.forEach(d=>{
+    let s = d.data();
+    if(["teacher","class teacher","head teacher","deputy head teacher"].includes((s.role||"").toLowerCase())){
+      teachers.push({docId: d.id, ...s});
+      teacherSelect.innerHTML += `<option value="${d.id}">${s.firstName} ${s.surname} - ${s.staffID}</option>`;
+    }
+  });
+
+  // 2. LOAD ALLOCATIONS
+  const allocSnap = await getDocs(collection(db,"allocations"));
+  allocSnap.forEach(d=> allocations.push({id:d.id,...d.data()}));
+  
+  loadTimetable();
+}
+loadAll();
+
+// WHEN TEACHER SELECTS
+document.getElementById("teacherSelect").onchange = function(){
+  const teacherDocId = this.value;
+  const allocSelect = document.getElementById("allocationSelect");
+  allocSelect.innerHTML = `<option value="">Select Allocation</option>`;
+  const myAllocs = allocations.filter(a => a.teacherID === teacherDocId);
+  if(myAllocs.length === 0) allocSelect.innerHTML += `<option disabled>No subjects allocated</option>`;
+  myAllocs.forEach(a=> allocSelect.innerHTML += `<option value="${a.id}">${a.subjectName} - ${a.class}</option>`);
+}
+
+// AUTO FILL END TIME WHEN START TIME OR DURATION CHANGES
+function calculateEndTime(){
+  const start = document.getElementById("startTime").value;
+  const duration = parseInt(document.getElementById("durationSelect").value);
+  if(!start || !duration) return;
+  
+  const [h, m] = start.split(":").map(Number);
+  const startDate = new Date();
+  startDate.setHours(h, m);
+  startDate.setMinutes(startDate.getMinutes() + duration);
+  
+  const endH = String(startDate.getHours()).padStart(2,'0');
+  const endM = String(startDate.getMinutes()).padStart(2,'0');
+  document.getElementById("endTime").value = `${endH}:${endM}`;
+}
+
+document.getElementById("startTime").onchange = calculateEndTime;
+document.getElementById("durationSelect").onchange = calculateEndTime;
+
+// FUNCTION TO CHECK TIME OVERLAP
+function isOverlap(start1, end1, start2, end2){
+  return (start1 < end2) && (end1 > start2);
+}
+
+// SAVE WITH START + END TIME + CLASS CLASH CHECK
+document.getElementById("savePeriod").onclick = async function(){
+  let teacherDocId = document.getElementById("teacherSelect").value;
+  let allocationID = document.getElementById("allocationSelect").value;
+  let day = document.getElementById("daySelect").value;
+  let startTime = document.getElementById("startTime").value;
+  let endTime = document.getElementById("endTime").value;
+  let duration = document.getElementById("durationSelect").value;
+
+  if(!teacherDocId ||!allocationID ||!day ||!startTime ||!endTime || !duration){ 
+    alert("Complete all fields including Period Duration"); 
+    return; 
+  }
+  if(startTime >= endTime){ 
+    alert("End time must be after start time"); 
+    return; 
+  }
+
+  let alloc = allocations.find(a=>a.id==allocationID);
+  let teacher = teachers.find(t=>t.docId==teacherDocId);
+
+  // 1. CHECK TEACHER CLASH
+  const teacherClashSnap = await getDocs(query(collection(db,"timetable"), where("teacherID","==",teacherDocId), where("day","==",day)));
+  let teacherClash = false;
+  teacherClashSnap.forEach(d=>{
+    let t = d.data();
+    if(isOverlap(startTime, endTime, t.startTime, t.endTime)){ teacherClash = true; }
+  });
+  if(teacherClash){ 
+    alert(`CLASH: ${teacher.firstName} ${teacher.surname} already has a class during this time on ${day}`); 
+    return; 
+  }
+
+  // 2. CHECK CLASS CLASH - NEW
+  const classClashSnap = await getDocs(query(collection(db,"timetable"), where("class","==",alloc.class), where("day","==",day)));
+  let classClash = false;
+  classClashSnap.forEach(d=>{
+    let t = d.data();
+    if(isOverlap(startTime, endTime, t.startTime, t.endTime)){ classClash = true; }
+  });
+  if(classClash){ 
+    alert(`CLASH: ${alloc.class} already has a subject scheduled during this time on ${day}`); 
+    return; 
+  }
+
+  await addDoc(collection(db,"timetable"),{
+    teacherID: teacherDocId,
+    staffID: alloc.staffID,
+    teacherName: alloc.teacherName,
+    allocationID: allocationID,
+    subjectID: alloc.subjectID,
+    subjectName: alloc.subjectName,
+    class: alloc.class,
+    day: day,
+    startTime: startTime,
+    endTime: endTime,
+    duration: parseInt(duration),
+    createdAt: new Date()
+  });
+  alert("Period added successfully");
+  document.getElementById("startTime").value = "";
+  document.getElementById("endTime").value = "";
+  document.getElementById("durationSelect").value = "";
+  loadTimetable();
+}
+
+// LOAD TIMETABLE
+async function loadTimetable(){
+  const tbody = document.getElementById("timetableTable");
+  tbody.innerHTML = "Loading...";
+  const snap = await getDocs(collection(db,"timetable")); 
+  
+  if(snap.empty){ tbody.innerHTML = "<tr><td colspan='6'>No periods set yet</td></tr>"; return; }
+  
+  let rows = [];
+  snap.forEach(d=> rows.push({id:d.id,...d.data()}));
+
+  const dayOrder = {Monday:1,Tuesday:2,Wednesday:3,Thursday:4,Friday:5};
+  rows.sort((a,b)=> dayOrder[a.day]-dayOrder[b.day] || a.startTime.localeCompare(b.startTime));
+
+  tbody.innerHTML = "";
+  rows.forEach(t=>{
+    tbody.innerHTML += `<tr>
+      <td>${t.day}</td>
+      <td>${t.startTime} - ${t.endTime}</td>
+      <td>${t.teacherName}</td>
+      <td>${t.subjectName}</td>
+      <td>${t.class}</td>
+      <td><button class="delete" onclick="deletePeriod('${t.id}')">Delete</button></td>
+    </tr>`;
+  });
+}
+window.deletePeriod = async function(id){
+  if(confirm("Delete this period?")){ await deleteDoc(doc(db,"timetable",id)); loadTimetable(); }
+}
+</script>
+</body>
+</html>

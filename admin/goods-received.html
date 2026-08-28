@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goods Received | Greysol Academy</title>
+
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+*{
+    box-sizing:border-box;
+    font-family:"Segoe UI",Arial,sans-serif;
+}
+
+:root{
+    --navy:#001f3f;
+    --navy2:#003366;
+    --blue:#1769aa;
+    --green:#1f9d55;
+    --red:#c0392b;
+    --orange:#f39c12;
+    --purple:#6f42c1;
+    --teal:#008c95;
+    --light:#f4f7fb;
+    --border:#e5e9ef;
+    --muted:#6b7280;
+    --white:#fff;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:var(--light);
+}
+
+body{
+    overflow:hidden;
+    color:#1f2937;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:270px;
+    height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    z-index:1100;
+    background:var(--navy);
+    color:#fff;
+    overflow-y:auto;
+    transition:width .25s ease,left .25s ease;
+}
+
+.logo{
+    padding:18px 15px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.14);
+}
+
+.logo img{
+    width:66px;
+    height:66px;
+    object-fit:contain;
+}
+
+.logo h2{
+    font-size:17px;
+    margin:8px 0 3px;
+}
+
+.logo p{
+    margin:0;
+    font-size:12px;
+    opacity:.7;
+}
+
+.menu{
+    padding:8px 0 20px;
+}
+
+.section-label{
+    padding:15px 24px 6px;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1.1px;
+    opacity:.5;
+}
+
+.menu a,
+.menu-header{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:12px 22px;
+    color:#fff;
+    text-decoration:none;
+    cursor:pointer;
+    font-size:13px;
+    min-height:46px;
+}
+
+.menu a i,
+.menu-header>i:first-child{
+    width:18px;
+    text-align:center;
+}
+
+.menu a:hover,
+.menu-header:hover{
+    background:rgba(255,255,255,.08);
+}
+
+.menu a.active{
+    background:rgba(255,255,255,.13);
+    border-left:4px solid var(--green);
+    padding-left:18px;
+}
+
+.arrow{
+    margin-left:auto!important;
+    width:auto!important;
+    font-size:11px!important;
+    transition:transform .25s ease;
+}
+
+.submenu{
+    max-height:0;
+    overflow:hidden;
+    background:rgba(0,0,0,.17);
+    transition:max-height .3s ease;
+}
+
+.menu-group.active .submenu{
+    max-height:700px;
+}
+
+.menu-group.active .arrow{
+    transform:rotate(180deg);
+}
+
+.submenu a{
+    padding-left:54px;
+    font-size:12px;
+}
+
+.submenu a.active{
+    padding-left:50px;
+}
+
+.sidebar::-webkit-scrollbar{
+    width:5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.2);
+    border-radius:10px;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:270px;
+    width:calc(100% - 270px);
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    transition:margin-left .25s ease,width .25s ease;
+}
+
+.topbar{
+    height:70px;
+    flex:0 0 70px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+    box-shadow:0 2px 10px rgba(0,0,0,.07);
+    z-index:900;
+}
+
+.top-left{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.topbar h2{
+    margin:0;
+    color:var(--navy);
+    font-size:20px;
+}
+
+.hamburger{
+    font-size:21px;
+    color:var(--navy);
+    cursor:pointer;
+}
+
+.mobile-menu{
+    display:none;
+}
+
+.user-info{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.user-avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:var(--navy);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+}
+
+.user-text{
+    text-align:right;
+}
+
+.user-text strong{
+    display:block;
+    font-size:13px;
+    color:var(--navy);
+}
+
+.user-text span{
+    font-size:11px;
+    color:var(--muted);
+}
+
+.content{
+    flex:1;
+    overflow-y:auto;
+    padding:22px 25px 35px;
+}
+
+/* PAGE HEADER */
+
+.page-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.page-head h1{
+    margin:0 0 4px;
+    color:var(--navy);
+    font-size:22px;
+}
+
+.page-head p{
+    margin:0;
+    font-size:12px;
+    color:var(--muted);
+}
+
+.btn{
+    border:0;
+    border-radius:8px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:700;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+}
+
+.btn-primary{
+    background:var(--navy);
+    color:#fff;
+}
+
+.btn-primary:hover{
+    background:var(--navy2);
+}
+
+.btn-green{
+    background:var(--green);
+    color:#fff;
+}
+
+.btn-red{
+    background:var(--red);
+    color:#fff;
+}
+
+.btn-light{
+    background:#fff;
+    color:#344054;
+    border:1px solid var(--border);
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+/* CARDS */
+
+.card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
+    margin-bottom:16px;
+}
+
+.card-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.card-header h3{
+    margin:0;
+    color:var(--navy);
+    font-size:14px;
+}
+
+.card-header span{
+    font-size:11px;
+    color:var(--muted);
+}
+
+/* SUMMARY */
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-bottom:16px;
+}
+
+.summary{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:15px;
+}
+
+.summary-title{
+    color:var(--muted);
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+}
+
+.summary-value{
+    color:var(--navy);
+    font-size:21px;
+    font-weight:800;
+    margin-top:8px;
+}
+
+/* SELECT */
+
+.po-selector{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:12px;
+    align-items:end;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.field label{
+    font-size:11px;
+    font-weight:700;
+    color:#475467;
+}
+
+.field input,
+.field select,
+.field textarea{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px 11px;
+    outline:none;
+    background:#fff;
+    color:#27364a;
+    font-size:12px;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+    border-color:var(--blue);
+}
+
+/* PO INFO */
+
+.po-info{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:15px;
+}
+
+.info-box{
+    background:#f8fafc;
+    border:1px solid #edf0f4;
+    border-radius:8px;
+    padding:11px;
+}
+
+.info-label{
+    font-size:9px;
+    color:var(--muted);
+    text-transform:uppercase;
+    font-weight:700;
+}
+
+.info-value{
+    margin-top:4px;
+    font-size:12px;
+    font-weight:700;
+    color:var(--navy);
+}
+
+/* TABLE */
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#f5f7fa;
+    color:#536174;
+    text-align:left;
+    padding:11px 9px;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+    border-bottom:1px solid var(--border);
+}
+
+td{
+    padding:10px 9px;
+    font-size:11px;
+    border-bottom:1px solid #eef1f4;
+    color:#344054;
+    vertical-align:middle;
+}
+
+tr:last-child td{
+    border-bottom:0;
+}
+
+.qty-input{
+    width:90px!important;
+    text-align:center;
+}
+
+.item-name{
+    font-weight:700;
+    color:#27364a;
+}
+
+.item-description{
+    display:block;
+    font-size:10px;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+.remaining{
+    font-weight:800;
+    color:var(--orange);
+}
+
+.received{
+    font-weight:800;
+    color:var(--green);
+}
+
+/* STATUS */
+
+.badge{
+    display:inline-flex;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:9px;
+    font-weight:800;
+}
+
+.badge-blue{
+    background:#e8f1fb;
+    color:#14598e;
+}
+
+.badge-green{
+    background:#e8f7ef;
+    color:#187844;
+}
+
+.badge-orange{
+    background:#fff4df;
+    color:#a76600;
+}
+
+.badge-red{
+    background:#fbeceb;
+    color:#a83227;
+}
+
+/* FORM GRID */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+}
+
+.form-grid .full{
+    grid-column:1/-1;
+}
+
+.actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:16px;
+}
+
+/* EMPTY */
+
+.empty{
+    padding:30px 10px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.empty i{
+    font-size:28px;
+    margin-bottom:9px;
+    display:block;
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:2500;
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    background:#fff;
+    width:min(600px,100%);
+    max-height:90vh;
+    overflow-y:auto;
+    border-radius:12px;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
+
+.modal-head{
+    padding:17px 20px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.modal-head h3{
+    margin:0;
+    color:var(--navy);
+    font-size:15px;
+}
+
+.close{
+    border:0;
+    background:none;
+    cursor:pointer;
+    font-size:18px;
+    color:var(--muted);
+}
+
+.modal-body{
+    padding:20px;
+}
+
+/* LOADER */
+
+#pageLoader{
+    position:fixed;
+    inset:0;
+    background:rgba(244,247,251,.92);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:3000;
+}
+
+#pageLoader i{
+    font-size:42px;
+    color:var(--navy);
+    animation:spin 1s linear infinite;
+}
+
+#pageLoader p{
+    font-size:12px;
+    color:var(--muted);
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+/* MOBILE */
+
+@media(max-width:1100px){
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .po-info{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .form-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:992px){
+
+    .sidebar{
+        left:-270px;
+    }
+
+    .sidebar.open{
+        left:0;
+    }
+
+    .main{
+        margin-left:0;
+        width:100%;
+    }
+
+    .mobile-menu{
+        display:block;
+    }
+
+    .overlay{
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.4);
+        z-index:1050;
+    }
+
+    .overlay.show{
+        display:block;
+    }
+}
+
+@media(max-width:650px){
+
+    .content{
+        padding:15px;
+    }
+
+    .topbar{
+        padding:0 15px;
+    }
+
+    .user-text{
+        display:none;
+    }
+
+    .page-head{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .summary-grid{
+        grid-template-columns:1fr;
+    }
+
+    .po-info{
+        grid-template-columns:1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .po-selector{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+    <h2>GREYSOL ACADEMY</h2>
+    <p id="portalRole">Accountant Portal</p>
+  </div>
+
+  <div class="menu">
+    <a href="accounting-dashboard.html">
+      <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+    </a>
+    <a href="staff-profile.html">
+      <i class="fa-solid fa-user"></i><span>Staff Profile</span>
+    </a>
+
+    <div class="section-label">Operations</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Sales & Receivables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="students.html"><i class="fa-solid fa-user-graduate"></i> Students / Customers</a>
+        <a href="quotations.html"><i class="fa-solid fa-file-signature"></i> Quotations</a>
+        <a href="invoice-list.html"><i class="fa-solid fa-file-invoice"></i> Invoices</a>
+        <a href="credit-notes.html"><i class="fa-solid fa-file-circle-minus"></i> Credit Notes</a>
+        <a href="receipts-list.html"><i class="fa-solid fa-money-bill-wave"></i> Customer Payments</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="accounts-receivable.html"><i class="fa-solid fa-hand-holding-dollar"></i> Accounts Receivable</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Receivables Aging</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-cart-shopping"></i><span>Purchases & Payables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="suppliers.html"><i class="fa-solid fa-truck-field"></i> Suppliers</a>
+        <a href="requisitions.html"><i class="fa-solid fa-file-circle-plus"></i> Purchase Requisitions</a>
+        <a href="requisition-create.html"><i class="fa-solid fa-plus"></i> Create Requisition</a>
+        <a href="purchase-orders.html"><i class="fa-solid fa-clipboard-list"></i> Purchase Orders</a>
+        <a href="goods-received.html" class="active"><i class="fa-solid fa-box-open"></i> Goods Received</a>
+        <a href="bills.html"><i class="fa-solid fa-file-invoice"></i> Bills</a>
+        <a href="supplier-payments.html"><i class="fa-solid fa-money-check-dollar"></i> Supplier Payments</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="accounts-payable.html"><i class="fa-solid fa-money-bill-transfer"></i> Accounts Payable</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Payables Aging</a>
+      </div>
+    </div>
+
+    <div class="section-label">Cash Management</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-building-columns"></i><span>Banking</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="bank-accounts.html"><i class="fa-solid fa-building-columns"></i> Bank Accounts</a>
+        <a href="cash-accounts.html"><i class="fa-solid fa-wallet"></i> Cash Accounts</a>
+        <a href="bank-transactions.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Bank Transactions</a>
+        <a href="bank-transfer.html"><i class="fa-solid fa-right-left"></i> Transfers</a>
+        <a href="bank-reconciliation.html"><i class="fa-solid fa-scale-balanced"></i> Bank Reconciliation</a>
+        <a href="reconciliation-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Reconciliation History</a>
+      </div>
+    </div>
+
+    <div class="section-label">General Accounting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-book"></i><span>Accounting</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="chart-of-accounts.html"><i class="fa-solid fa-list"></i> Chart of Accounts</a>
+        <a href="journal-entry.html"><i class="fa-solid fa-book-journal-whills"></i> Journal Entry</a>
+        <a href="journal-list.html"><i class="fa-solid fa-list-check"></i> Journal List</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="ledger.html"><i class="fa-solid fa-table-list"></i> Account Ledger</a>
+        <a href="#"><i class="fa-solid fa-repeat"></i> Recurring Journals</a>
+        <a href="#"><i class="fa-solid fa-lock"></i> Period Closing</a>
+        <a href="accounting-settings.html"><i class="fa-solid fa-gear"></i>Settings</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-receipt"></i><span>Expenses</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="expenses.html"><i class="fa-solid fa-file-circle-plus"></i> Expense Entry</a>
+        <a href="expense-list.html"><i class="fa-solid fa-list"></i> Expense List</a>
+        <a href="expense-categories.html"><i class="fa-solid fa-tags"></i> Expense Categories</a>
+        <a href="expense-claims.html"><i class="fa-solid fa-hand-holding-dollar"></i> Expense Claims</a>
+      </div>
+    </div>
+
+    <div class="section-label">People & Statutory</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-users-gear"></i><span>HR & Payroll</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="employees.html"><i class="fa-solid fa-users"></i> Employees</a>
+        <a href="#"><i class="fa-solid fa-user-tag"></i> Employee Categories</a>
+        <a href="attendance.html"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="payroll-settings.html"><i class="fa-solid fa-gears"></i> Payroll Settings</a>
+        <a href="payroll-run.html"><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</a>
+        <a href="payslips.html"><i class="fa-solid fa-file-invoice-dollar"></i> Payslips</a>
+        <a href="payroll-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Payroll History</a>
+        <a href="payroll-journal.html"><i class="fa-solid fa-book"></i> Payroll Journal</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-chart-column"></i> Payroll Reports</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-percent"></i><span>Taxes</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="vat.html"><i class="fa-solid fa-percent"></i> VAT</a>
+        <a href="vat-transactions.html"><i class="fa-solid fa-receipt"></i> VAT Transactions</a>
+        <a href="vat-return.html"><i class="fa-solid fa-file-circle-check"></i> VAT Return</a>
+        <a href="#"><i class="fa-solid fa-file-invoice"></i> Withholding Tax</a>
+        <a href="paye.html"><i class="fa-solid fa-user-shield"></i> PAYE</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-chart-column"></i> Tax Reports</a>
+      </div>
+    </div>
+
+    <div class="section-label">Reporting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-chart-pie"></i><span>Reports</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-user-clock"></i> AR Aging</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-file-circle-exclamation"></i> AP Aging</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="expense-report.html"><i class="fa-solid fa-receipt"></i> Expense Report</a>
+        <a href="revenue-report.html"><i class="fa-solid fa-arrow-trend-up"></i> Revenue Report</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-percent"></i> Tax Reports</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-users"></i> Payroll Reports</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+      </div>
+    </div>
+
+    <div class="section-label">Administration</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-user-shield"></i><span>Administration</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="userlist.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="#"><i class="fa-solid fa-key"></i> Roles & Permissions</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+        <a href="#"><i class="fa-solid fa-check-double"></i> Approval Workflows</a>
+        <a href="#"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="#"><i class="fa-solid fa-building"></i> Company Profile</a>
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> Financial Year</a>
+        <a href="#"><i class="fa-solid fa-calendar-check"></i> Accounting Periods</a>
+        <a href="#"><i class="fa-solid fa-percent"></i> Tax Settings</a>
+        <a href="#"><i class="fa-solid fa-hashtag"></i> Numbering</a>
+        <a href="#"><i class="fa-solid fa-sliders"></i> System Settings</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+    </a>
+  </div>
+</aside>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main">
+
+<header class="topbar">
+
+<div class="top-left">
+
+<i class="fa-solid fa-bars hamburger mobile-menu"
+onclick="toggleSidebar()"></i>
+
+<h2>Goods Received</h2>
+
+</div>
+
+<div class="user-info">
+
+<div class="user-text">
+<strong id="staffName">Loading...</strong>
+<span id="staffRole">Accountant</span>
+</div>
+
+<div class="user-avatar" id="avatar">A</div>
+
+</div>
+
+</header>
+
+
+<section class="content">
+
+<div class="page-head">
+
+<div>
+<h1>Goods Received Notes</h1>
+<p>Record goods or services received against approved purchase orders.</p>
+</div>
+
+<a href="purchase-orders.html" class="btn btn-light">
+<i class="fa-solid fa-clipboard-list"></i>
+Purchase Orders
+</a>
+
+</div>
+
+
+<!-- SUMMARY -->
+
+<div class="summary-grid">
+
+<div class="summary">
+<div class="summary-title">Open Purchase Orders</div>
+<div class="summary-value" id="openPOCount">0</div>
+</div>
+
+<div class="summary">
+<div class="summary-title">Partially Received</div>
+<div class="summary-value" id="partialPOCount">0</div>
+</div>
+
+<div class="summary">
+<div class="summary-title">Fully Received</div>
+<div class="summary-value" id="completePOCount">0</div>
+</div>
+
+<div class="summary">
+<div class="summary-title">GRNs Recorded</div>
+<div class="summary-value" id="grnCount">0</div>
+</div>
+
+</div>
+
+
+<!-- SELECT PO -->
+
+<div class="card">
+
+<div class="card-header">
+<h3>Select Purchase Order</h3>
+<span>Only approved / issued orders can be received</span>
+</div>
+
+<div class="po-selector">
+
+<div class="field">
+
+<label>Purchase Order</label>
+
+<select id="poSelect">
+
+<option value="">
+Select purchase order...
+</option>
+
+</select>
+
+</div>
+
+<button class="btn btn-primary"
+id="loadPOBtn"
+onclick="loadSelectedPO()">
+
+<i class="fa-solid fa-folder-open"></i>
+Load Order
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- PO DETAILS -->
+
+<div class="card" id="poCard" style="display:none">
+
+<div class="card-header">
+
+<h3>Purchase Order Details</h3>
+
+<span id="poStatusBadge" class="badge badge-blue">
+Approved
+</span>
+
+</div>
+
+
+<div class="po-info">
+
+<div class="info-box">
+<div class="info-label">PO Number</div>
+<div class="info-value" id="poNumber">-</div>
+</div>
+
+<div class="info-box">
+<div class="info-label">Supplier</div>
+<div class="info-value" id="poSupplier">-</div>
+</div>
+
+<div class="info-box">
+<div class="info-label">PO Date</div>
+<div class="info-value" id="poDate">-</div>
+</div>
+
+<div class="info-box">
+<div class="info-label">Total Amount</div>
+<div class="info-value" id="poTotal">MWK 0</div>
+</div>
+
+</div>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>#</th>
+<th>Item / Description</th>
+<th>Ordered</th>
+<th>Previously Received</th>
+<th>Remaining</th>
+<th>Receive Now</th>
+<th>Unit</th>
+</tr>
+
+</thead>
+
+<tbody id="poItems">
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- GRN FORM -->
+
+<div style="margin-top:20px">
+
+<div class="card-header">
+<h3>Goods Received Information</h3>
+<span>Complete this section before saving the GRN</span>
+</div>
+
+<div class="form-grid">
+
+<div class="field">
+
+<label>GRN Date *</label>
+
+<input
+type="date"
+id="grnDate"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>Delivery Note Number</label>
+
+<input
+type="text"
+id="deliveryNoteNo"
+placeholder="Supplier delivery note"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>Supplier Invoice Number</label>
+
+<input
+type="text"
+id="supplierInvoiceNo"
+placeholder="If supplied"
+>
+
+</div>
+
+
+<div class="field full">
+
+<label>Received By</label>
+
+<input
+type="text"
+id="receivedBy"
+readonly
+>
+
+</div>
+
+
+<div class="field full">
+
+<label>Notes</label>
+
+<textarea
+id="grnNotes"
+rows="3"
+placeholder="Condition of goods, shortages, damages, remarks..."
+></textarea>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="btn btn-light"
+onclick="clearPO()">
+
+<i class="fa-solid fa-xmark"></i>
+Clear
+
+</button>
+
+<button
+class="btn btn-green"
+id="saveGRNBtn"
+onclick="saveGRN()">
+
+<i class="fa-solid fa-box-open"></i>
+Save Goods Received
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- RECENT GRNs -->
+
+<div class="card">
+
+<div class="card-header">
+
+<h3>Recent Goods Received Notes</h3>
+
+<span>Latest 15 records</span>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Date</th>
+<th>GRN Number</th>
+<th>PO Number</th>
+<th>Supplier</th>
+<th>Items</th>
+<th>Received By</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody id="grnTable">
+
+<tr>
+<td colspan="7" class="empty">
+Loading goods received records...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- LOADER -->
+
+<div id="pageLoader">
+
+<i class="fa-solid fa-circle-notch"></i>
+
+<p>Loading goods received...</p>
+
+</div>
+
+
+<script type="module">
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = { apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw", projectId:"greysol-academy" };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* =========================================================
+   LOGIN
+========================================================= */
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+if(!loggedUser || String(loggedUser.role).toLowerCase()!== "accountant" ){
+    alert("Access Denied. Accountants Only.");
+    window.location.href="staff-login.html";
+}
+document.getElementById("staffName").textContent = loggedUser?.username || "Accountant";
+document.getElementById("staffRole").textContent = loggedUser?.role || "Accountant";
+document.getElementById("portalRole").textContent = (loggedUser?.role || "Accountant")+" Portal";
+document.getElementById("avatar").textContent = (loggedUser?.username || "A").charAt(0).toUpperCase();
+document.getElementById("receivedBy").value = loggedUser?.username || "Accountant";
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+document.querySelectorAll(".menu-header").forEach(header=>{ header.addEventListener("click",()=>{ header.parentElement.classList.toggle("active"); }); });
+window.toggleSidebar=function(){ document.getElementById("sidebar").classList.toggle("open"); document.getElementById("overlay").classList.toggle("show"); };
+document.getElementById("logoutBtn").addEventListener("click",e=>{ e.preventDefault(); localStorage.removeItem("loggedUser"); window.location.href="staff-login.html"; });
+
+/* =========================================================
+   GLOBAL DATA
+========================================================= */
+let purchaseOrders=[];
+let goodsReceived=[];
+let selectedPO=null;
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("grnDate").value=today;
+
+/* =========================================================
+   HELPERS
+========================================================= */
+function num(value){ const n=Number(value); return Number.isFinite(n)? n : 0; }
+function money(value){ return "MWK " + num(value).toLocaleString("en-US",{ minimumFractionDigits:2, maximumFractionDigits:2 }); }
+function escapeHtml(value){ return String(value?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+function dateText(value){
+    if(!value) return "-";
+    try{
+        if(typeof value.toDate==="function"){ return value.toDate().toLocaleDateString("en-GB"); }
+        if(value.seconds){ return new Date(value.seconds*1000).toLocaleDateString("en-GB"); }
+        const d=new Date(value); if(isNaN(d)) return "-"; return d.toLocaleDateString("en-GB");
+    }catch{ return "-"; }
+}
+function getPOItems(po){ if(Array.isArray(po.items)) return po.items; if(Array.isArray(po.lineItems)) return po.lineItems; if(Array.isArray(po.products)) return po.products; return []; }
+function itemName(item){ return item.itemName || item.name || item.productName || item.description || "Unnamed item"; }
+function orderedQty(item){ return num(item.quantity?? item.qty?? item.orderedQuantity?? item.requestedQuantity); }
+function receivedQty(item,index,po){
+    if(Array.isArray(po.receivedItems) && po.receivedItems[index]){ return num(po.receivedItems[index].receivedQuantity); }
+    if(item.receivedQuantity!== undefined) return num(item.receivedQuantity);
+    if(item.receivedQty!== undefined) return num(item.receivedQty);
+    return 0;
+}
+function poStatus(po){ return String(po.status || po.approvalStatus || po.orderStatus || "").toLowerCase(); }
+
+/* =========================================================
+   ELIGIBLE PURCHASE ORDERS
+========================================================= */
+function isEligiblePO(po){
+    const status=poStatus(po);
+    const approved = status==="approved" || status==="issued" || status==="ordered" || status==="partially received" || status==="partial" || status==="partially_received";
+    if(!approved) return false;
+    const items=getPOItems(po); if(!items.length) return false;
+    let remaining=0;
+    items.forEach((item,index)=>{ remaining += Math.max(0, orderedQty(item) - receivedQty(item,index,po)); });
+    return remaining>0;
+}
+
+/* =========================================================
+   LOAD DATA
+========================================================= */
+async function loadData(){
+    try{
+        const poSnap = await getDocs(collection(db,"purchaseOrders"));
+        purchaseOrders = poSnap.docs.map(d=>({ id:d.id,...d.data() }));
+    }catch(error){
+        console.error("Purchase Orders error:",error);
+        try{ const poSnap = await getDocs(collection(db,"purchase_orders")); purchaseOrders = poSnap.docs.map(d=>({ id:d.id,...d.data() })); }
+        catch(error2){ console.error(error2); purchaseOrders=[]; }
+    }
+    try{
+        const grnSnap = await getDocs(collection(db,"goodsReceived"));
+        goodsReceived = grnSnap.docs.map(d=>({ id:d.id,...d.data() }));
+    }catch(error){ console.error("GRN loading error:",error); goodsReceived=[]; }
+    renderSummary();
+    renderPOSelect();
+    renderGRNs();
+    document.getElementById("pageLoader").style.display="none";
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+function renderSummary(){
+    let open=0; let partial=0; let complete=0;
+    purchaseOrders.forEach(po=>{
+        const items=getPOItems(po);
+        let ordered=0; let received=0;
+        items.forEach((item,index)=>{ ordered += orderedQty(item); received += receivedQty(item,index,po); });
+        const status=poStatus(po);
+        if(status==="approved" || status==="issued" || status==="ordered"){
+            if(received===0) open++; else if(received<ordered) partial++; else complete++;
+        }
+        if(status.includes("partial")){ partial++; }
+        if(status.includes("received") &&!status.includes("partial")){ complete++; }
+    });
+    document.getElementById("openPOCount").textContent=open;
+    document.getElementById("partialPOCount").textContent=partial;
+    document.getElementById("completePOCount").textContent=complete;
+    document.getElementById("grnCount").textContent=goodsReceived.length;
+}
+
+/* =========================================================
+   PO SELECT - NOW SHOWS CODE
+========================================================= */
+function renderPOSelect(){
+    const select= document.getElementById("poSelect");
+    select.innerHTML= `<option value="">Select purchase order...</option>`;
+    const eligible = purchaseOrders.filter(isEligiblePO).sort((a,b)=>{
+        const ad = new Date(a.poDate || a.orderDate || a.createdAt || 0);
+        const bd = new Date(b.poDate || b.orderDate || b.createdAt || 0);
+        return bd-ad;
+    });
+    eligible.forEach(po=>{
+        const option= document.createElement("option");
+        option.value=po.id;
+        option.textContent= `${po.poNumber || po.purchaseOrderNo || po.orderNo || po.reference || po.id} — ${po.supplierCode || ''} ${po.supplierName || po.supplier || po.vendorName || "Supplier"}`; // ADDED CODE
+        select.appendChild(option);
+    });
+    if(!eligible.length){ select.innerHTML= `<option value="">No outstanding approved purchase orders</option>`; }
+}
+
+/* =========================================================
+   LOAD SELECTED PO
+========================================================= */
+window.loadSelectedPO=function(){
+    const id= document.getElementById("poSelect").value;
+    if(!id){ alert("Please select a purchase order."); return; }
+    selectedPO= purchaseOrders.find(po=>po.id===id);
+    if(!selectedPO){ alert("Purchase order could not be found."); return; }
+    renderSelectedPO();
+};
+
+/* =========================================================
+   RENDER SELECTED PO
+========================================================= */
+function renderSelectedPO(){
+    document.getElementById("poCard").style.display="block";
+    document.getElementById("poNumber").textContent= selectedPO.poNumber || selectedPO.purchaseOrderNo || selectedPO.orderNo || selectedPO.reference || selectedPO.id;
+    document.getElementById("poSupplier").textContent= `${selectedPO.supplierCode || ''} ${selectedPO.supplierName || selectedPO.supplier || selectedPO.vendorName || "-"}`; // ADDED CODE
+    document.getElementById("poDate").textContent= dateText(selectedPO.poDate || selectedPO.orderDate || selectedPO.createdAt);
+    document.getElementById("poTotal").textContent= money(selectedPO.grandTotal?? selectedPO.totalAmount?? selectedPO.total?? 0);
+    const status= poStatus(selectedPO);
+    const badge= document.getElementById("poStatusBadge");
+    badge.textContent= status? status.toUpperCase() : "APPROVED";
+    badge.className= "badge "+ (status.includes("partial")? "badge-orange" : "badge-blue");
+    renderPOItems();
+}
+
+/* =========================================================
+   RENDER ITEMS
+========================================================= */
+function renderPOItems(){
+    const tbody= document.getElementById("poItems");
+    const items= getPOItems(selectedPO);
+    if(!items.length){
+        tbody.innerHTML= `<tr><td colspan="7" class="empty"><i class="fa-solid fa-box-open"></i>No items found on this purchase order.</td></tr>`;
+        return;
+    }
+    tbody.innerHTML= items.map((item,index)=>{
+        const ordered= orderedQty(item);
+        const previous= receivedQty(item,index,selectedPO);
+        const remaining= Math.max(0, ordered-previous);
+        const unit= item.unit || item.unitName || item.measurement || "-";
+        return `
+        <tr>
+            <td>${index+1}</td>
+            <td><span class="item-name">${escapeHtml(itemName(item))}</span>${item.description && item.description!==itemName(item)? `<span class="item-description">${escapeHtml(item.description)}</span>` : ""}</td>
+            <td>${ordered}</td>
+            <td class="received">${previous}</td>
+            <td class="remaining">${remaining}</td>
+            <td><input type="number" min="0" max="${remaining}" step="0.01" class="qty-input receive-qty" data-index="${index}" value="0" ${remaining<=0?"disabled":""}></td>
+            <td>${escapeHtml(unit)}</td>
+        </tr>`;
+    }).join("");
+}
+
+/* =========================================================
+   COLLECT RECEIVED ITEMS
+========================================================= */
+function collectReceivedItems(){
+    const items= getPOItems(selectedPO);
+    const inputs= document.querySelectorAll(".receive-qty");
+    const receivedItems=[]; let totalReceived=0; let hasQuantity=false;
+    inputs.forEach(input=>{
+        const index= Number(input.dataset.index);
+        const qty= num(input.value);
+        const item= items[index];
+        const ordered= orderedQty(item);
+        const previous= receivedQty(item,index,selectedPO);
+        const remaining= Math.max(0, ordered-previous);
+        if(qty<0){ throw new Error(`Invalid quantity for ${itemName(item)}`); }
+        if(qty>remaining){ throw new Error(`Received quantity for "${itemName(item)}" cannot exceed the remaining quantity of ${remaining}.`); }
+        if(qty>0) hasQuantity=true;
+        totalReceived += qty;
+        receivedItems.push({
+            itemId: item.itemId || item.productId || item.id || "",
+            itemName: itemName(item),
+            description: item.description || "",
+            unit: item.unit || item.unitName || "",
+            orderedQuantity: ordered,
+            previouslyReceived: previous,
+            receivedQuantity: qty,
+            remainingAfterReceipt: remaining-qty,
+            unitPrice: num(item.unitPrice?? item.price?? item.rate),
+            lineTotal: qty * num(item.unitPrice?? item.price?? item.rate)
+        });
+    });
+    if(!hasQuantity){ throw new Error("Enter at least one quantity received."); }
+    return { receivedItems, totalReceived };
+}
+
+/* =========================================================
+   SAVE GRN - NOW INCLUDES SUPPLIERCODE
+========================================================= */
+window.saveGRN=async function(){
+    if(!selectedPO){ alert("Please select a purchase order first."); return; }
+    const saveBtn= document.getElementById("saveGRNBtn");
+    try{
+        const { receivedItems, totalReceived }=collectReceivedItems();
+        const grnDate= document.getElementById("grnDate").value;
+        if(!grnDate){ throw new Error("GRN date is required."); }
+        saveBtn.disabled=true; saveBtn.innerHTML= `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+
+        const poItems= getPOItems(selectedPO);
+        const updatedItems= poItems.map((item,index)=>{
+            const oldReceived= receivedQty(item,index,selectedPO);
+            const current= receivedItems[index];
+            const newReceived= oldReceived + num(current?.receivedQuantity);
+            return {...item, receivedQuantity: newReceived, receivedQty: newReceived };
+        });
+
+        let orderedTotal=0; let receivedTotal=0;
+        updatedItems.forEach((item,index)=>{
+            orderedTotal += orderedQty(item);
+            receivedTotal += receivedQty(item,index,{receivedItems:updatedItems});
+        });
+
+        let newPOStatus= "Partially Received";
+        if(receivedTotal>=orderedTotal){ newPOStatus= "Fully Received"; }
+
+        const grnNumber= await generateGRNNumber();
+
+        const grnData={
+            grnNumber,
+            grnDate,
+            purchaseOrderId: selectedPO.id,
+            purchaseOrderNumber: selectedPO.poNumber || selectedPO.purchaseOrderNo || selectedPO.orderNo || selectedPO.reference || selectedPO.id,
+
+            supplierId: selectedPO.supplierId || selectedPO.vendorId || "",
+            supplierCode: selectedPO.supplierCode || "", // NEW
+            supplierName: selectedPO.supplierName || selectedPO.supplier || selectedPO.vendorName || "", // FIXED
+
+            deliveryNoteNumber: document.getElementById("deliveryNoteNo").value.trim(),
+            supplierInvoiceNumber: document.getElementById("supplierInvoiceNo").value.trim(),
+            receivedBy: loggedUser?.username || "Accountant",
+            receivedByRole: loggedUser?.role || "Accountant",
+            receivedItems,
+            totalItemsReceived: receivedItems.filter(x=>x.receivedQuantity>0).length,
+            totalQuantityReceived: totalReceived,
+            status: "Received",
+            notes: document.getElementById("grnNotes").value.trim(),
+            createdAt: serverTimestamp(),
+            createdBy: loggedUser?.username || "Accountant"
+        };
+
+        const grnRef= await addDoc(collection(db,"goodsReceived"),grnData);
+
+        await updateDoc(doc(db,"purchaseOrders",selectedPO.id),{
+            items: updatedItems,
+            receivedItems: updatedItems,
+            receivedQuantity: receivedTotal,
+            remainingQuantity: Math.max(0,orderedTotal-receivedTotal),
+            status: newPOStatus,
+            lastReceivedDate: grnDate,
+            lastGRNNumber: grnNumber,
+            updatedAt: serverTimestamp(),
+            updatedBy: loggedUser?.username || "Accountant"
+        });
+
+        alert(`Goods Received successfully.\n\nGRN: ${grnNumber}`);
+        await loadData();
+        clearPO();
+    }catch(error){
+        console.error("Save GRN error:",error);
+        alert(error.message || "Failed to save goods received. Please try again.");
+    }finally{
+        saveBtn.disabled=false;
+        saveBtn.innerHTML= `<i class="fa-solid fa-box-open"></i> Save Goods Received`;
+    }
+};
+
+/* =========================================================
+   GRN NUMBER
+========================================================= */
+async function generateGRNNumber(){
+    const year= new Date().getFullYear();
+    const prefix= `GRN-${year}-`;
+    let highest=0;
+    goodsReceived.forEach(grn=>{
+        const number= String(grn.grnNumber || grn.reference || "");
+        if(number.startsWith(prefix)){
+            const n= parseInt(number.replace(prefix,""),10);
+            if(!isNaN(n)) highest= Math.max(highest,n);
+        }
+    });
+    return prefix+ String(highest+1).padStart(5,"0");
+}
+
+/* =========================================================
+   CLEAR
+========================================================= */
+window.clearPO=function(){
+    selectedPO=null;
+    document.getElementById("poSelect").value="";
+    document.getElementById("poCard").style.display="none";
+    document.getElementById("deliveryNoteNo").value="";
+    document.getElementById("supplierInvoiceNo").value="";
+    document.getElementById("grnNotes").value="";
+    document.getElementById("grnDate").value=today;
+};
+
+/* =========================================================
+   RECENT GRNs - NOW SHOWS CODE
+========================================================= */
+function renderGRNs(){
+    const tbody= document.getElementById("grnTable");
+    if(!goodsReceived.length){
+        tbody.innerHTML= `<tr><td colspan="7" class="empty"><i class="fa-solid fa-box-open"></i>No goods received notes have been recorded yet.</td></tr>`;
+        return;
+    }
+    const rows= [...goodsReceived].sort((a,b)=>{
+        const ad= new Date(a.grnDate || a.createdAt || 0);
+        const bd= new Date(b.grnDate || b.createdAt || 0);
+        return bd-ad;
+    }).slice(0,15);
+
+    tbody.innerHTML= rows.map(grn=>{
+        const items= Array.isArray(grn.receivedItems)? grn.receivedItems.filter(x=>num(x.receivedQuantity)>0).length : 0;
+        return `
+        <tr>
+            <td>${dateText(grn.grnDate || grn.createdAt)}</td>
+            <td class="ref" style="font-weight:700;color:var(--blue)">${escapeHtml(grn.grnNumber || grn.id)}</td>
+            <td>${escapeHtml(grn.purchaseOrderNumber || "-")}</td>
+            <td>${escapeHtml(grn.supplierCode || "")} ${escapeHtml(grn.supplierName || "-")}</td> <!-- ADDED CODE -->
+            <td>${items}</td>
+            <td>${escapeHtml(grn.receivedBy || grn.createdBy || "-")}</td>
+            <td><span class="badge badge-green">${escapeHtml(grn.status || "Received")}</span></td>
+        </tr>`;
+    }).join("");
+}
+
+/* =========================================================
+   START
+========================================================= */
+loadData();
+</script>
+
+</body>
+</html>

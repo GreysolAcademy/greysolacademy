@@ -1,0 +1,2616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payments | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+
+:root{
+    --navy:#001f3f;
+    --blue:#003366;
+    --light:#f4f7fb;
+    --green:#27ae60;
+    --orange:#f39c12;
+    --red:#c0392b
+}
+
+html,body{
+    margin:0;
+    background:var(--light);
+    height:100%;
+    overflow:hidden
+}
+
+body{display:flex}
+
+/* ================= LOADER ================= */
+
+.main-loader{
+    position:absolute;
+    inset:0;
+    background:rgba(244,247,251,.9);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    color:var(--navy);
+    z-index:100;
+    transition:.3s;
+}
+
+.main-loader.hidden{
+    opacity:0;
+    pointer-events:none
+}
+
+.spinner{
+    width:50px;
+    height:50px;
+    border:4px solid rgba(0,31,63,.25);
+    border-top:4px solid var(--navy);
+    border-radius:50%;
+    animation:spin 1s linear infinite
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg);}
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    width:270px;
+    background:var(--navy);
+    color:white;
+    height:100vh;
+    overflow:auto;
+    position:fixed;
+    left:0;
+    z-index:1000;
+    transition:.3s;
+    scrollbar-width:none;
+    -ms-overflow-style:none
+}
+
+.sidebar::-webkit-scrollbar{
+    display:none
+}
+
+.logo{
+    padding:20px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.2)
+}
+
+.logo img{
+    width:80px
+}
+
+.logo h2{
+    margin:10px 0 5px;
+    font-size:18px
+}
+
+.logo p{
+    margin:0;
+    opacity:.8;
+    font-size:13px
+}
+
+.menu{
+    padding:10px 0
+}
+
+.menu a,
+.menu-header{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:15px 25px;
+    color:white;
+    text-decoration:none;
+    cursor:pointer;
+    transition:.25s
+}
+
+.menu a:hover,
+.menu-header:hover{
+    background:rgba(255,255,255,.12)
+}
+
+.menu a.active{
+    background:rgba(255,255,255,.2)
+}
+
+.arrow{
+    margin-left:auto;
+    transition:.3s
+}
+
+.menu-group.active .arrow{
+    transform:rotate(180deg)
+}
+
+.submenu{
+    max-height:0;
+    overflow:hidden;
+    background:rgba(0,0,0,.15);
+    transition:max-height .35s
+}
+
+.menu-group.active .submenu{
+    max-height:700px
+}
+
+.submenu a{
+    padding-left:55px;
+    font-size:14px
+}
+
+.overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:999
+}
+
+.overlay.show{
+    display:block
+}
+
+.menu-toggle{
+    display:none;
+    font-size:24px;
+    cursor:pointer;
+    color:var(--navy)
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    margin-left:270px;
+    height:100vh;
+    overflow:hidden;
+    position:relative
+}
+
+.topbar{
+    height:75px;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 30px;
+    box-shadow:0 3px 10px rgba(0,0,0,.1);
+    flex-shrink:0
+}
+
+.user-info{
+    color:var(--navy);
+    font-weight:bold;
+    text-align:right
+}
+
+.user-info small{
+    display:block;
+    font-weight:normal;
+    font-size:12px;
+    opacity:.8
+}
+
+.content{
+    flex:1;
+    padding:30px;
+    overflow:auto
+}
+
+.box{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    margin-bottom:25px;
+    box-shadow:0 5px 20px rgba(0,0,0,.1)
+}
+
+h2,h3{
+    color:var(--navy)
+}
+
+input,select,button{
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    width:100%;
+    margin-bottom:10px
+}
+
+button{
+    background:var(--navy);
+    color:white;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    justify-content:center
+}
+
+button:hover{
+    background:var(--blue)
+}
+
+button:disabled{
+    background:#ccc;
+    cursor:not-allowed
+}
+
+.search-area{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:10px
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px
+}
+
+th{
+    background:var(--navy);
+    color:white;
+    padding:12px;
+    text-align:left
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid #ddd
+}
+
+.text-right{
+    text-align:right
+}
+
+.status{
+    padding:6px 12px;
+    border-radius:20px;
+    color:white;
+    display:inline-block;
+    font-size:12px;
+    font-weight:bold
+}
+
+.paid{
+    background:var(--green)
+}
+
+.partial{
+    background:var(--orange)
+}
+
+.unpaid{
+    background:var(--red)
+}
+
+.hidden{
+    display:none
+}
+
+.alert{
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:15px;
+    background:#fff3cd;
+    color:#856404;
+    border:1px solid #ffeeba
+}
+
+.payment-summary{
+    background:#f4f7fb;
+    padding:15px;
+    border-radius:10px;
+    margin:15px 0
+}
+
+.payment-summary h4{
+    margin:0 0 10px 0;
+    color:var(--navy)
+}
+
+.grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px
+}
+
+/* ================= EDIT NOTICE ================= */
+
+.edit-notice{
+    background:#e8f1ff;
+    border:1px solid #b8d2f2;
+    color:#003366;
+    padding:12px 15px;
+    border-radius:8px;
+    margin-bottom:15px;
+    display:none
+}
+
+.edit-notice.show{
+    display:block
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1100px){
+
+    .sidebar{
+        left:-270px
+    }
+
+    .sidebar.show{
+        left:0
+    }
+
+    .main{
+        margin-left:0
+    }
+
+    .menu-toggle{
+        display:block
+    }
+
+    .topbar{
+        padding:0 15px
+    }
+
+    .content{
+        padding:15px
+    }
+
+    .grid-2{
+        grid-template-columns:1fr
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- ================= ACCOUNTING SIDEBAR ================= -->
+
+<div class="sidebar" id="sidebar">
+
+    <div class="logo">
+        <img src="../images/logo1 - Copy.png">
+        <h2>GREYSOL ACADEMY</h2>
+        <p>Accountant Portal</p>
+    </div>
+
+    <div class="menu">
+
+        <a href="accountant-dashboard.html">
+            <i class="fa-solid fa-gauge"></i>
+            Dashboard
+        </a>
+
+        <a href="chart-of-accounts.html">
+            <i class="fa-solid fa-book"></i>
+            Chart of Accounts
+        </a>
+
+        <a href="journal-list.html">
+            <i class="fa-solid fa-book-journal-whills"></i>
+            Journal Entries
+        </a>
+
+        <a href="invoice-list.html">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+            Invoices
+        </a>
+
+        <a href="expenses.html">
+            <i class="fa-solid fa-receipt"></i>
+            Expenses
+        </a>
+
+        <a href="payments.html" class="active">
+            <i class="fa-solid fa-money-bill-wave"></i>
+            Payments
+        </a>
+
+        <div class="menu-group" id="reportsGroup">
+
+            <div class="menu-header" id="reportsHeader">
+                <i class="fa-solid fa-chart-pie"></i>
+                Reports
+                <i class="fa-solid fa-chevron-down arrow"></i>
+            </div>
+
+            <div class="submenu">
+
+                <a href="report-trial-balance.html">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    Trial Balance
+                </a>
+
+                <a href="report-income-statement.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Income Statement
+                </a>
+
+                <a href="report-balance-sheet.html">
+                    <i class="fa-solid fa-building-columns"></i>
+                    Balance Sheet
+                </a>
+
+                <a href="report-cash-flow.html">
+                    <i class="fa-solid fa-water"></i>
+                    Cash Flow Statement
+                </a>
+
+                <a href="report-ledger.html">
+                    <i class="fa-solid fa-book-open"></i>
+                    General Ledger
+                </a>
+
+                <a href="report-accounts-receivable.html">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                    A/R Aging
+                </a>
+
+                <a href="report-accounts-payable.html">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    A/P Aging
+                </a>
+
+            </div>
+        </div>
+
+        <a href="accounting-settings.html">
+            <i class="fa-solid fa-gear"></i>
+            Accounting Settings
+        </a>
+
+        <a href="staff-login.html" id="logoutBtn">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+    </div>
+</div>
+
+<!-- ================= MAIN ================= -->
+
+<div class="main">
+
+    <div class="main-loader" id="mainLoader">
+        <div class="spinner"></div>
+        <p style="margin-top:15px">Loading Payments...</p>
+    </div>
+
+    <div class="topbar">
+
+        <div style="display:flex;align-items:center;gap:15px">
+
+            <i class="fa-solid fa-bars menu-toggle" id="menuToggle"></i>
+
+            <h2 id="pageTitle">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                Bulk Payments
+            </h2>
+
+        </div>
+
+        <div class="user-info">
+            <span id="staffName">Loading...</span>
+            <small id="staffRole">-</small>
+        </div>
+
+    </div>
+
+    <div class="content">
+
+        <!-- FILTER -->
+
+        <div class="box">
+
+            <div class="alert hidden" id="settingsAlert">
+                Please configure Accounting Settings first
+            </div>
+
+            <h2>Filter Invoices</h2>
+
+            <div class="search-area">
+
+                <input
+                    type="text"
+                    id="searchStudent"
+                    placeholder="Filter by Student ID, Name, Class or Invoice No"
+                >
+
+                <button id="searchBtn">
+                    <i class="fa-solid fa-filter"></i>
+                    Filter
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- INVOICES -->
+
+        <div class="box">
+
+            <h2>Outstanding Invoices</h2>
+
+            <div class="edit-notice" id="editNotice">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <b>Edit Payment:</b>
+                Only invoices originally included in this payment are shown.
+            </div>
+
+            <table id="invoicesTable" class="hidden">
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width:5%">
+                            <input type="checkbox" id="selectAll">
+                        </th>
+
+                        <th>Student</th>
+
+                        <th>Student ID</th>
+
+                        <th>Class</th>
+
+                        <th>Invoice No</th>
+
+                        <th>Term</th>
+
+                        <th>Invoice Date</th>
+
+                        <th class="text-right">Balance</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="invoicesBody"></tbody>
+
+            </table>
+
+        </div>
+
+        <!-- PAYMENT -->
+
+        <div class="box hidden" id="paymentBox">
+
+            <h2 id="paymentBoxTitle">
+                Record Payment
+            </h2>
+
+            <div class="payment-summary">
+
+                <h4>Payment Summary</h4>
+
+                <div class="grid-2">
+
+                    <div>
+                        <b>Invoices Selected:</b>
+                        <span id="selectedCount">0</span>
+                    </div>
+
+                    <div>
+                        <b>Total Due:</b>
+                        <span id="selectedTotal">MWK 0</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="grid-2">
+
+                <div>
+
+                    <label>Payment Date</label>
+
+                    <input
+                        type="date"
+                        id="paymentDate"
+                    >
+
+                </div>
+
+                <div>
+
+                    <label>Amount Received</label>
+
+                    <input
+                        type="number"
+                        id="paymentAmount"
+                        placeholder="Enter total amount paid"
+                        min="0"
+                        step="0.01"
+                    >
+
+                </div>
+
+                <div>
+
+                    <label>
+                        Payment Method
+                        <small>Accounts 1001-1005</small>
+                    </label>
+
+                    <select id="paymentMethod">
+
+                        <option value="">
+                            -- Select Cash/Bank Account --
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div>
+
+                    <label>Reference / Slip No</label>
+
+                    <input
+                        type="text"
+                        id="paymentRef"
+                        placeholder="e.g. Bank Slip No"
+                    >
+
+                </div>
+
+            </div>
+
+            <br>
+
+            <button id="savePayment">
+
+                <i class="fa-solid fa-floppy-disk"></i>
+
+                SAVE PAYMENT & PRINT RECEIPT
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= SIDEBAR SCRIPT ================= -->
+
+<script>
+
+document.getElementById("reportsHeader").addEventListener("click", function(){
+
+    document
+        .getElementById("reportsGroup")
+        .classList.toggle("active");
+
+});
+
+document.getElementById("menuToggle").onclick = () => {
+
+    document
+        .getElementById("sidebar")
+        .classList.add("show");
+
+    document
+        .getElementById("overlay")
+        .classList.add("show");
+
+};
+
+document.getElementById("overlay").onclick = () => {
+
+    document
+        .getElementById("sidebar")
+        .classList.remove("show");
+
+    document
+        .getElementById("overlay")
+        .classList.remove("show");
+
+};
+
+</script>
+
+<!-- ================= FIREBASE ================= -->
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    getDoc,
+    Timestamp,
+    runTransaction,
+    orderBy,
+    limit
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+const app = initializeApp({
+    apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",
+    projectId:"greysol-academy"
+});
+
+const db = getFirestore(app);
+
+const loader = document.getElementById("mainLoader");
+
+
+/* =========================================================
+   LOGGED USER
+========================================================= */
+
+const loggedUser =
+    JSON.parse(localStorage.getItem("loggedUser"));
+
+const allowedRoles = [
+    "administrator",
+    "bursar",
+    "accountant"
+];
+
+const userRole =
+    (loggedUser?.role || "")
+    .toString()
+    .trim()
+    .toLowerCase();
+
+if(
+    !loggedUser ||
+    !allowedRoles.includes(userRole)
+){
+
+    alert("Access Denied");
+
+    window.location.href =
+        "staff-login.html";
+
+}
+
+document.getElementById("staffName").innerHTML =
+    loggedUser.username;
+
+document.getElementById("staffRole").innerHTML =
+    loggedUser.role;
+
+
+document.getElementById("logoutBtn").onclick = (e) => {
+
+    e.preventDefault();
+
+    localStorage.removeItem("loggedUser");
+
+    window.location.href =
+        "staff-login.html";
+
+};
+
+
+/* =========================================================
+   DEFAULT DATE
+========================================================= */
+
+document.getElementById("paymentDate").valueAsDate =
+    new Date();
+
+
+/* =========================================================
+   EDIT MODE
+========================================================= */
+
+const urlParams =
+    new URLSearchParams(window.location.search);
+
+const editReceiptId =
+    urlParams.get("edit");
+
+let isEditMode = false;
+
+let originalReceipt = null;
+
+let originalAllocations = [];
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+let allInvoices = [];
+
+let settings = {};
+
+let cashAccounts = {};
+
+
+/* =========================================================
+   PREVENT STALE PAGE WHEN RETURNING FROM RECEIPT
+========================================================= */
+
+window.addEventListener("pageshow", function(event){
+
+    if(
+        event.persisted ||
+        performance.getEntriesByType("navigation")[0]?.type === "back_forward"
+    ){
+
+        window.location.reload();
+
+    }
+
+});
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+async function loadInitData(){
+
+    loader.classList.remove("hidden");
+
+    try{
+
+        const [
+            settingsSnap,
+            coaSnap
+        ] = await Promise.all([
+
+            getDoc(
+                doc(
+                    db,
+                    "settings",
+                    "accounting"
+                )
+            ),
+
+            getDocs(
+                collection(
+                    db,
+                    "chartOfAccounts"
+                )
+            )
+
+        ]);
+
+
+        /* SETTINGS */
+
+        if(settingsSnap.exists()){
+
+            settings =
+                settingsSnap.data();
+
+        }else{
+
+            document
+                .getElementById("settingsAlert")
+                .classList
+                .remove("hidden");
+
+        }
+
+
+        /* PAYMENT ACCOUNTS */
+
+        const select =
+            document.getElementById("paymentMethod");
+
+        select.innerHTML =
+            `<option value="">
+                -- Select Cash/Bank Account --
+             </option>`;
+
+
+        coaSnap.forEach(d => {
+
+            const acc =
+                d.data();
+
+            const code =
+                Number(acc.accountCode);
+
+            /*
+                Keep your existing account range.
+                Accounts 1001-1005 can represent
+                cash OR bank accounts.
+            */
+
+            if(
+                code >= 1001 &&
+                code <= 1005
+            ){
+
+                select.innerHTML += `
+
+                    <option value="${acc.accountCode}">
+                        ${acc.accountCode} - ${acc.accountName}
+                    </option>
+
+                `;
+
+                cashAccounts[
+                    acc.accountCode
+                ] = acc.accountName;
+
+            }
+
+        });
+
+
+        /* EDIT MODE */
+
+        if(editReceiptId){
+
+            isEditMode = true;
+
+            document
+                .getElementById("pageTitle")
+                .innerHTML =
+                '<i class="fa-solid fa-pen"></i> Edit Payment';
+
+            document
+                .getElementById("paymentBoxTitle")
+                .innerText =
+                "Update Payment";
+
+            document
+                .getElementById("savePayment")
+                .innerHTML =
+                '<i class="fa-solid fa-floppy-disk"></i> UPDATE PAYMENT';
+
+            document
+                .getElementById("editNotice")
+                .classList
+                .add("show");
+
+            await loadReceiptForEdit(
+                editReceiptId
+            );
+
+        }
+
+
+        await loadAllInvoices();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        document
+            .getElementById("invoicesBody")
+            .innerHTML = `
+
+                <tr>
+
+                    <td colspan="9"
+                        style="color:red">
+
+                        Error loading data:
+                        ${error.message}
+
+                    </td>
+
+                </tr>
+
+            `;
+
+    }finally{
+
+        loader.classList.add("hidden");
+
+    }
+
+}
+
+loadInitData();
+
+
+/* =========================================================
+   LOAD RECEIPT FOR EDIT
+========================================================= */
+
+async function loadReceiptForEdit(id){
+
+    const receiptDoc =
+        await getDoc(
+            doc(
+                db,
+                "receipts",
+                id
+            )
+        );
+
+
+    if(!receiptDoc.exists()){
+
+        alert("Receipt not found");
+
+        return;
+
+    }
+
+
+    originalReceipt = {
+
+        id:receiptDoc.id,
+        ...receiptDoc.data()
+
+    };
+
+
+    originalAllocations =
+        originalReceipt.allocations || [];
+
+
+    if(originalReceipt.paymentDate){
+
+        const date =
+            originalReceipt.paymentDate
+            .toDate();
+
+        document
+            .getElementById("paymentDate")
+            .value =
+            date.toISOString()
+            .split("T")[0];
+
+    }
+
+
+    document
+        .getElementById("paymentAmount")
+        .value =
+        originalReceipt.amount || "";
+
+
+    document
+        .getElementById("paymentMethod")
+        .value =
+        originalReceipt.paymentMethodCode || "";
+
+
+    document
+        .getElementById("paymentRef")
+        .value =
+        originalReceipt.reference || "";
+
+}
+
+
+/* =========================================================
+   LOAD INVOICES
+========================================================= */
+
+async function loadAllInvoices(){
+
+    const q =
+        query(
+            collection(db,"invoices"),
+            where(
+                "status",
+                "in",
+                [
+                    "Unpaid",
+                    "Partial",
+                    "Paid"
+                ]
+            )
+        );
+
+
+    const snap =
+        await getDocs(q);
+
+
+    allInvoices =
+        snap.docs.map(d => ({
+            id:d.id,
+            ...d.data()
+        }));
+
+
+    /*
+       Sort oldest invoice first.
+    */
+
+    allInvoices.sort(
+        (a,b) =>
+            (a.invoiceDate?.toMillis() || 0) -
+            (b.invoiceDate?.toMillis() || 0)
+    );
+
+
+    displayInvoices(
+        allInvoices
+    );
+
+
+    document
+        .getElementById("invoicesTable")
+        .classList
+        .remove("hidden");
+
+}
+
+
+/* =========================================================
+   DISPLAY INVOICES
+========================================================= */
+
+function displayInvoices(list){
+
+    const tbody =
+        document.getElementById("invoicesBody");
+
+    tbody.innerHTML = "";
+
+
+    /*
+       IMPORTANT:
+
+       Normal payment mode:
+       show ONLY invoices with balance > 0.
+
+       Edit mode:
+       show ONLY invoices that were originally
+       allocated to this payment.
+
+       This allows a fully paid invoice to remain
+       visible during editing so the original
+       payment can be recalculated.
+    */
+
+    let displayList;
+
+
+    if(isEditMode){
+
+        const originalInvoiceNumbers =
+            originalAllocations.map(
+                a => a.invoiceNo
+            );
+
+
+        displayList =
+            allInvoices.filter(inv =>
+                originalInvoiceNumbers.includes(
+                    inv.invoiceNo
+                )
+            );
+
+    }else{
+
+        displayList =
+            list.filter(inv =>
+                Number(inv.balance || 0) > 0
+            );
+
+    }
+
+
+    if(displayList.length === 0){
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td colspan="9"
+                    style="text-align:center;padding:25px">
+
+                    ${
+                        isEditMode
+                        ? "No invoices associated with this payment."
+                        : "No outstanding invoices found."
+                    }
+
+                </td>
+
+            </tr>
+
+        `;
+
+        document
+            .getElementById("paymentBox")
+            .classList
+            .add("hidden");
+
+        return;
+
+    }
+
+
+    displayList.forEach(inv => {
+
+
+        let isChecked = false;
+
+        if(isEditMode){
+
+            isChecked =
+                originalAllocations.some(
+                    a =>
+                        a.invoiceNo ===
+                        inv.invoiceNo
+                );
+
+        }
+
+
+        /*
+           In edit mode, use the amount that
+           existed before this payment was edited.
+
+           This means if the invoice was fully
+           paid, its original balance for this
+           payment is reconstructed.
+        */
+
+        let displayBalance =
+            Number(inv.balance || 0);
+
+
+        if(isEditMode){
+
+            const oldAllocation =
+                originalAllocations.find(
+                    a =>
+                        a.invoiceNo ===
+                        inv.invoiceNo
+                );
+
+
+            if(oldAllocation){
+
+                displayBalance +=
+                    Number(oldAllocation.amount || 0);
+
+            }
+
+        }
+
+
+        const safeBalance =
+            Math.max(
+                0,
+                displayBalance
+            );
+
+
+        const status =
+            Number(inv.balance || 0) <= 0
+            ? "Paid"
+            : inv.status;
+
+
+        const statusClass =
+            status.toLowerCase();
+
+
+        tbody.innerHTML += `
+
+            <tr>
+
+                <td>
+
+                    <input
+                        type="checkbox"
+                        class="invoiceCheck"
+                        ${isChecked ? "checked" : ""}
+                        data-id="${inv.id}"
+                        data-balance="${safeBalance}"
+                        data-original-balance="${Number(inv.balance || 0)}"
+                        data-student="${inv.studentID || ""}"
+                        data-invoiceno="${inv.invoiceNo || ""}"
+                    >
+
+                </td>
+
+                <td>
+                    ${inv.studentName || ""}
+                </td>
+
+                <td>
+                    ${inv.studentID || ""}
+                </td>
+
+                <td>
+                    ${inv.class || ""}
+                </td>
+
+                <td>
+                    <b>${inv.invoiceNo || ""}</b>
+                </td>
+
+                <td>
+                    ${inv.term || ""}
+                </td>
+
+                <td>
+                    ${formatDate(inv.invoiceDate)}
+                </td>
+
+                <td class="text-right">
+                    MWK ${safeBalance.toLocaleString()}
+                </td>
+
+                <td>
+
+                    <span class="status ${statusClass}">
+                        ${status}
+                    </span>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+
+    document
+        .getElementById("paymentBox")
+        .classList
+        .remove("hidden");
+
+
+    updateSummary();
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+document
+    .getElementById("searchBtn")
+    .onclick =
+    filterInvoices;
+
+
+document
+    .getElementById("searchStudent")
+    .addEventListener(
+        "keyup",
+        e => {
+
+            if(e.key === "Enter"){
+
+                filterInvoices();
+
+            }
+
+        }
+    );
+
+
+function filterInvoices(){
+
+    const text =
+        document
+            .getElementById("searchStudent")
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    if(text === ""){
+
+        displayInvoices(
+            allInvoices
+        );
+
+        return;
+
+    }
+
+
+    const filtered =
+        allInvoices.filter(inv =>
+
+            (inv.studentName || "")
+                .toLowerCase()
+                .includes(text)
+
+            ||
+
+            (inv.studentID || "")
+                .toLowerCase()
+                .includes(text)
+
+            ||
+
+            (inv.class || "")
+                .toLowerCase()
+                .includes(text)
+
+            ||
+
+            (inv.invoiceNo || "")
+                .toLowerCase()
+                .includes(text)
+
+        );
+
+
+    displayInvoices(
+        filtered
+    );
+
+}
+
+
+/* =========================================================
+   SELECT ALL
+========================================================= */
+
+document
+    .getElementById("selectAll")
+    .onchange = e => {
+
+        document
+            .querySelectorAll(".invoiceCheck")
+            .forEach(c => {
+
+                c.checked =
+                    e.target.checked;
+
+            });
+
+
+        updateSummary();
+
+    };
+
+
+document.addEventListener(
+    "change",
+    e => {
+
+        if(
+            e.target.classList
+            .contains("invoiceCheck")
+        ){
+
+            updateSummary();
+
+        }
+
+    }
+);
+
+
+document
+    .getElementById("paymentAmount")
+    .oninput =
+    updateSummary;
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+function updateSummary(){
+
+    const selected =
+        document.querySelectorAll(
+            ".invoiceCheck:checked"
+        );
+
+
+    let total = 0;
+
+
+    selected.forEach(c => {
+
+        total +=
+            Number(
+                c.dataset.balance || 0
+            );
+
+    });
+
+
+    document
+        .getElementById("selectedCount")
+        .innerText =
+        selected.length;
+
+
+    document
+        .getElementById("selectedTotal")
+        .innerText =
+        "MWK " +
+        total.toLocaleString();
+
+}
+
+
+/* =========================================================
+   GENERATE RECEIPT NUMBER
+========================================================= */
+
+async function generateReceiptNo(){
+
+    const q =
+        query(
+            collection(db,"receipts"),
+            orderBy(
+                "createdAt",
+                "desc"
+            ),
+            limit(1)
+        );
+
+
+    const snap =
+        await getDocs(q);
+
+
+    let number = 1;
+
+
+    if(!snap.empty){
+
+        const latest =
+            snap.docs[0]
+            .data()
+            .receiptNo || "RCP00000";
+
+
+        const match =
+            latest.match(/\d+$/);
+
+
+        if(match){
+
+            number =
+                Number(match[0]) + 1;
+
+        }
+
+    }
+
+
+    return (
+        "RCP" +
+        String(number)
+            .padStart(5,"0")
+    );
+
+}
+
+
+/* =========================================================
+   GENERATE JOURNAL NUMBER
+========================================================= */
+
+async function generateJournalNo(){
+
+    const q =
+        query(
+            collection(db,"journalEntries"),
+            orderBy(
+                "createdAt",
+                "desc"
+            ),
+            limit(1)
+        );
+
+
+    const snap =
+        await getDocs(q);
+
+
+    let number = 1;
+
+
+    if(!snap.empty){
+
+        const latest =
+            snap.docs[0]
+            .data()
+            .journalNo || "JV00000";
+
+
+        const match =
+            latest.match(/\d+$/);
+
+
+        if(match){
+
+            number =
+                Number(match[0]) + 1;
+
+        }
+
+    }
+
+
+    return (
+        "JV" +
+        String(number)
+            .padStart(5,"0")
+    );
+
+}
+
+
+/* =========================================================
+   SAVE / UPDATE PAYMENT
+========================================================= */
+
+document
+    .getElementById("savePayment")
+    .onclick =
+    async () => {
+
+
+        const selected =
+            document.querySelectorAll(
+                ".invoiceCheck:checked"
+            );
+
+
+        /*
+           Basic validation
+        */
+
+        if(selected.length === 0){
+
+            alert(
+                "Select at least 1 invoice."
+            );
+
+            return;
+
+        }
+
+
+        const paymentDate =
+            document
+                .getElementById("paymentDate")
+                .value;
+
+
+        const amount =
+            Number(
+                document
+                    .getElementById("paymentAmount")
+                    .value
+            );
+
+
+        const methodCode =
+            document
+                .getElementById("paymentMethod")
+                .value;
+
+
+        const methodName =
+            cashAccounts[
+                methodCode
+            ];
+
+
+        const ref =
+            document
+                .getElementById("paymentRef")
+                .value
+                .trim();
+
+
+        if(
+            !paymentDate ||
+            amount <= 0 ||
+            !methodCode
+        ){
+
+            alert(
+                "Fill all payment details."
+            );
+
+            return;
+
+        }
+
+
+        if(!settings.receivableAccount){
+
+            alert(
+                "Configure Accounting Settings first."
+            );
+
+            return;
+
+        }
+
+
+        /*
+           =====================================================
+           IMPORTANT AMOUNT VALIDATION
+           =====================================================
+
+           Calculate the maximum amount that can
+           legally be allocated to the selected
+           invoices.
+        */
+
+        let selectedTotal = 0;
+
+
+        selected.forEach(c => {
+
+            selectedTotal +=
+                Number(
+                    c.dataset.balance || 0
+                );
+
+        });
+
+
+        /*
+           Payment cannot exceed invoice balance.
+
+           For edit mode, the selected invoice
+           balance includes its original allocation.
+        */
+
+        if(
+            amount >
+            selectedTotal
+        ){
+
+            alert(
+                "Payment amount cannot exceed the total outstanding amount of the selected invoices.\n\n" +
+                "Maximum allowed: MWK " +
+                selectedTotal.toLocaleString()
+            );
+
+            return;
+
+        }
+
+
+        /*
+           =====================================================
+           DISABLE BUTTON
+           =====================================================
+        */
+
+        const saveButton =
+            document.getElementById(
+                "savePayment"
+            );
+
+
+        saveButton.disabled = true;
+
+
+        saveButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+
+        let receiptRefId =
+            editReceiptId || "";
+
+
+        try{
+
+
+            await runTransaction(
+                db,
+                async transaction => {
+
+
+                    let receiptRef;
+
+                    let journalRef;
+
+                    let receiptNo;
+
+                    let journalNo;
+
+
+                    /* =================================================
+                       EDIT MODE
+                    ================================================= */
+
+                    if(isEditMode){
+
+
+                        /*
+                           Reverse the original allocations
+                           first.
+                        */
+
+                        for(
+                            const oldAlloc
+                            of originalAllocations
+                        ){
+
+
+                            const inv =
+                                allInvoices.find(
+                                    i =>
+                                        i.invoiceNo ===
+                                        oldAlloc.invoiceNo
+                                );
+
+
+                            if(inv){
+
+
+                                const oldAmount =
+                                    Number(
+                                        oldAlloc.amount || 0
+                                    );
+
+
+                                const currentPaid =
+                                    Number(
+                                        inv.amountPaid || 0
+                                    );
+
+
+                                const currentBalance =
+                                    Number(
+                                        inv.balance || 0
+                                    );
+
+
+                                const restoredPaid =
+                                    Math.max(
+                                        0,
+                                        currentPaid -
+                                        oldAmount
+                                    );
+
+
+                                const restoredBalance =
+                                    currentBalance +
+                                    oldAmount;
+
+
+                                let restoredStatus =
+                                    "Unpaid";
+
+
+                                if(
+                                    restoredBalance <= 0
+                                ){
+
+                                    restoredStatus =
+                                        "Paid";
+
+                                }else if(
+                                    restoredPaid > 0
+                                ){
+
+                                    restoredStatus =
+                                        "Partial";
+
+                                }
+
+
+                                transaction.update(
+                                    doc(
+                                        db,
+                                        "invoices",
+                                        inv.id
+                                    ),
+                                    {
+
+                                        amountPaid:
+                                            restoredPaid,
+
+                                        balance:
+                                            restoredBalance,
+
+                                        status:
+                                            restoredStatus
+
+                                    }
+                                );
+
+                            }
+
+                        }
+
+
+                        receiptRef =
+                            doc(
+                                db,
+                                "receipts",
+                                editReceiptId
+                            );
+
+
+                        receiptNo =
+                            originalReceipt.receiptNo;
+
+
+                        /*
+                           Find existing journal
+                           belonging to this receipt.
+                        */
+
+                        const journalSnap =
+                            await getDocs(
+                                query(
+                                    collection(
+                                        db,
+                                        "journalEntries"
+                                    ),
+                                    where(
+                                        "reference",
+                                        "==",
+                                        receiptNo
+                                    ),
+                                    limit(1)
+                                )
+                            );
+
+
+                        if(
+                            !journalSnap.empty
+                        ){
+
+                            journalRef =
+                                doc(
+                                    db,
+                                    "journalEntries",
+                                    journalSnap.docs[0].id
+                                );
+
+                        }else{
+
+                            journalRef =
+                                doc(
+                                    collection(
+                                        db,
+                                        "journalEntries"
+                                    )
+                                );
+
+                        }
+
+                    }else{
+
+
+                        /*
+                           NEW PAYMENT
+                        */
+
+                        receiptNo =
+                            await generateReceiptNo();
+
+
+                        journalNo =
+                            await generateJournalNo();
+
+
+                        receiptRef =
+                            doc(
+                                collection(
+                                    db,
+                                    "receipts"
+                                )
+                            );
+
+
+                        journalRef =
+                            doc(
+                                collection(
+                                    db,
+                                    "journalEntries"
+                                )
+                            );
+
+
+                        receiptRefId =
+                            receiptRef.id;
+
+                    }
+
+
+                    /* =================================================
+                       ALLOCATE PAYMENT
+                    ================================================= */
+
+                    let remainingAmount =
+                        amount;
+
+
+                    let allocations = [];
+
+
+                    let invoiceUpdates = [];
+
+
+                    /*
+                       Oldest invoice first.
+                    */
+
+                    const sortedSelected =
+                        Array
+                            .from(selected)
+                            .sort(
+                                (a,b) => {
+
+                                    const invA =
+                                        allInvoices.find(
+                                            i =>
+                                                i.id ===
+                                                a.dataset.id
+                                        );
+
+
+                                    const invB =
+                                        allInvoices.find(
+                                            i =>
+                                                i.id ===
+                                                b.dataset.id
+                                        );
+
+
+                                    return (
+                                        invA?.invoiceDate
+                                            ?.toMillis() || 0
+                                    ) -
+                                    (
+                                        invB?.invoiceDate
+                                            ?.toMillis() || 0
+                                    );
+
+                                }
+                            );
+
+
+                    for(
+                        const checkbox
+                        of sortedSelected
+                    ){
+
+
+                        if(
+                            remainingAmount <= 0
+                        ){
+
+                            break;
+
+                        }
+
+
+                        const invId =
+                            checkbox.dataset.id;
+
+
+                        const inv =
+                            allInvoices.find(
+                                i =>
+                                    i.id === invId
+                            );
+
+
+                        if(!inv){
+
+                            continue;
+
+                        }
+
+
+                        /*
+                           Existing balance.
+
+                           In edit mode, add back
+                           the original allocation
+                           because it was reversed.
+                        */
+
+                        const oldAllocation =
+                            isEditMode
+                            ? (
+                                originalAllocations.find(
+                                    a =>
+                                        a.invoiceNo ===
+                                        inv.invoiceNo
+                                )
+                              )
+                            : null;
+
+
+                        const oldAmount =
+                            Number(
+                                oldAllocation?.amount || 0
+                            );
+
+
+                        const availableBalance =
+                            Number(
+                                inv.balance || 0
+                            ) +
+                            oldAmount;
+
+
+                        /*
+                           NEVER allocate more than
+                           this invoice can accept.
+                        */
+
+                        const payAmount =
+                            Math.min(
+                                remainingAmount,
+                                Math.max(
+                                    0,
+                                    availableBalance
+                                )
+                            );
+
+
+                        if(
+                            payAmount <= 0
+                        ){
+
+                            continue;
+
+                        }
+
+
+                        const currentPaid =
+                            Number(
+                                inv.amountPaid || 0
+                            );
+
+
+                        /*
+                           If editing, the old payment
+                           was reversed first, so calculate
+                           the new amount paid correctly.
+                        */
+
+                        const newPaid =
+                            currentPaid -
+                            oldAmount +
+                            payAmount;
+
+
+                        const newBalance =
+                            Number(
+                                inv.balance || 0
+                            ) +
+                            oldAmount -
+                            payAmount;
+
+
+                        let newStatus =
+                            "Unpaid";
+
+
+                        if(
+                            newBalance <= 0
+                        ){
+
+                            newStatus =
+                                "Paid";
+
+                        }else if(
+                            newPaid > 0
+                        ){
+
+                            newStatus =
+                                "Partial";
+
+                        }
+
+
+                        allocations.push({
+
+                            invoiceNo:
+                                inv.invoiceNo,
+
+                            studentID:
+                                inv.studentID,
+
+                            studentName:
+                                inv.studentName,
+
+                            amount:
+                                payAmount
+
+                        });
+
+
+                        invoiceUpdates.push({
+
+                            ref:
+                                doc(
+                                    db,
+                                    "invoices",
+                                    invId
+                                ),
+
+                            newPaid:
+                                Math.max(
+                                    0,
+                                    newPaid
+                                ),
+
+                            newBalance:
+                                Math.max(
+                                    0,
+                                    newBalance
+                                ),
+
+                            newStatus:
+                                newStatus
+
+                        });
+
+
+                        remainingAmount -=
+                            payAmount;
+
+                    }
+
+
+                    /*
+                       FINAL SAFETY CHECK
+                    */
+
+                    if(
+                        remainingAmount > 0.009
+                    ){
+
+                        throw new Error(
+                            "The payment amount exceeds the available invoice balances."
+                        );
+
+                    }
+
+
+                    /*
+                       Update invoices
+                    */
+
+                    invoiceUpdates.forEach(
+                        u => {
+
+                            transaction.update(
+                                u.ref,
+                                {
+
+                                    amountPaid:
+                                        u.newPaid,
+
+                                    balance:
+                                        u.newBalance,
+
+                                    status:
+                                        u.newStatus
+
+                                }
+                            );
+
+                        }
+                    );
+
+
+                    /* =================================================
+                       RECEIPT
+                    ================================================= */
+
+                    const receiptData = {
+
+                        receiptNo:
+                            receiptNo,
+
+                        paymentDate:
+                            Timestamp.fromDate(
+                                new Date(paymentDate)
+                            ),
+
+                        amount:
+                            amount,
+
+                        allocations:
+                            allocations,
+
+                        paymentMethod:
+                            methodName,
+
+                        paymentMethodCode:
+                            methodCode,
+
+                        reference:
+                            ref,
+
+                        updatedAt:
+                            Timestamp.now()
+
+                    };
+
+
+                    if(!isEditMode){
+
+                        receiptData.createdBy =
+                            loggedUser.username;
+
+                        receiptData.createdAt =
+                            Timestamp.now();
+
+                    }
+
+
+                    transaction.set(
+                        receiptRef,
+                        receiptData,
+                        {
+                            merge:true
+                        }
+                    );
+
+
+                    /* =================================================
+                       JOURNAL
+                    ================================================= */
+
+                    const lines = [
+
+                        {
+                            accountCode:
+                                methodCode,
+
+                            accountName:
+                                methodName,
+
+                            debit:
+                                amount,
+
+                            credit:
+                                0
+                        },
+
+                        {
+                            accountCode:
+                                settings.receivableAccount,
+
+                            accountName:
+                                "Accounts Receivable",
+
+                            debit:
+                                0,
+
+                            credit:
+                                amount
+                        }
+
+                    ];
+
+
+                    let existingJournalNo =
+                        journalNo;
+
+
+                    /*
+                       If editing and journal exists,
+                       preserve its journal number.
+                    */
+
+                    if(
+                        isEditMode &&
+                        journalRef
+                    ){
+
+                        const existingJournal =
+                            await getDoc(
+                                journalRef
+                            );
+
+
+                        if(
+                            existingJournal.exists()
+                        ){
+
+                            existingJournalNo =
+                                existingJournal
+                                    .data()
+                                    .journalNo ||
+                                await generateJournalNo();
+
+                        }
+
+                    }
+
+
+                    const journalData = {
+
+                        journalNo:
+                            existingJournalNo,
+
+                        date:
+                            Timestamp.fromDate(
+                                new Date(paymentDate)
+                            ),
+
+                        reference:
+                            receiptNo,
+
+                        description:
+                            `Payment - ${allocations.length} invoice(s)`,
+
+                        lines:
+                            lines,
+
+                        totalDebit:
+                            amount,
+
+                        totalCredit:
+                            amount,
+
+                        source:
+                            "Receipt",
+
+                        sourceId:
+                            receiptRef.id,
+
+                        updatedAt:
+                            Timestamp.now()
+
+                    };
+
+
+                    if(!isEditMode){
+
+                        journalData.createdBy =
+                            loggedUser.username;
+
+                        journalData.createdAt =
+                            Timestamp.now();
+
+                        journalData.postedBy =
+                            loggedUser.username;
+
+                        journalData.postedAt =
+                            Timestamp.now();
+
+                    }
+
+
+                    transaction.set(
+                        journalRef,
+                        journalData,
+                        {
+                            merge:true
+                        }
+                    );
+
+
+                }
+            );
+
+
+            /* =========================================================
+               SUCCESS
+            ========================================================= */
+
+            alert(
+                isEditMode
+                ? "Payment Updated Successfully"
+                : "Payment, Receipt and Journal created successfully"
+            );
+
+
+            /*
+               Add a return parameter.
+
+               The receipt page can use this if desired,
+               while pageshow above will also refresh when
+               the user comes back with browser Back.
+            */
+
+            window.location.href =
+                `receipt-print.html?id=${receiptRefId}&return=payments.html`;
+
+
+        }catch(error){
+
+            console.error(error);
+
+
+            alert(
+                "Error: " +
+                error.message
+            );
+
+
+            saveButton.disabled =
+                false;
+
+
+            saveButton.innerHTML =
+                isEditMode
+
+                ?
+
+                '<i class="fa-solid fa-floppy-disk"></i> UPDATE PAYMENT'
+
+                :
+
+                '<i class="fa-solid fa-floppy-disk"></i> SAVE PAYMENT & PRINT RECEIPT';
+
+        }
+
+    };
+
+
+/* =========================================================
+   FORMAT DATE
+========================================================= */
+
+function formatDate(timestamp){
+
+    if(!timestamp){
+
+        return "-";
+
+    }
+
+
+    const date =
+        timestamp.toDate
+        ? timestamp.toDate()
+        : new Date(timestamp);
+
+
+    return date.toLocaleDateString(
+        "en-GB"
+    );
+
+}
+
+</script>
+
+</body>
+</html>

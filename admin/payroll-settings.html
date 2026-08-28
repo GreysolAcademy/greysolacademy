@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payroll Settings | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI",Arial,sans-serif
+}
+
+:root{
+  --navy:#001f3f;
+  --navy2:#003366;
+  --blue:#1769aa;
+  --green:#1f9d55;
+  --red:#c0392b;
+  --orange:#f39c12;
+  --purple:#6f42c1;
+  --teal:#008c95;
+  --light:#f4f7fb;
+  --border:#e5e9ef;
+  --muted:#6b7280;
+  --white:#fff;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--light)
+}
+
+body{
+  overflow:hidden;
+  color:#1f2937
+}
+
+/* =========================
+   SIDEBAR - SAME AS DASHBOARD
+========================= */
+
+.sidebar{
+  width:270px;
+  height:100vh;
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:1100;
+  background:var(--navy);
+  color:#fff;
+  overflow-y:auto;
+  transition:width .25s ease,left .25s ease;
+}
+
+.logo{
+  padding:18px 15px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.14)
+}
+
+.logo img{
+  width:66px;
+  height:66px;
+  object-fit:contain
+}
+
+.logo h2{
+  font-size:17px;
+  margin:8px 0 3px
+}
+
+.logo p{
+  margin:0;
+  font-size:12px;
+  opacity:.7
+}
+
+.menu{
+  padding:8px 0 20px
+}
+
+.section-label{
+  padding:15px 24px 6px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1.1px;
+  opacity:.5
+}
+
+.menu a,
+.menu-header{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:12px 22px;
+  color:#fff;
+  text-decoration:none;
+  cursor:pointer;
+  font-size:13px;
+  min-height:46px;
+}
+
+.menu a i,
+.menu-header>i:first-child{
+  width:18px;
+  text-align:center
+}
+
+.menu a:hover,
+.menu-header:hover{
+  background:rgba(255,255,255,.08)
+}
+
+.menu a.active{
+  background:rgba(255,255,255,.13);
+  border-left:4px solid var(--green);
+  padding-left:18px
+}
+
+.arrow{
+  margin-left:auto!important;
+  width:auto!important;
+  font-size:11px!important;
+  transition:transform .25s ease
+}
+
+.submenu{
+  max-height:0;
+  overflow:hidden;
+  background:rgba(0,0,0,.17);
+  transition:max-height .3s ease
+}
+
+.menu-group.active .submenu{
+  max-height:600px
+}
+
+.menu-group.active .arrow{
+  transform:rotate(180deg)
+}
+
+.submenu a{
+  padding-left:54px;
+  font-size:12px
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+  margin-left:270px;
+  width:calc(100% - 270px);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  transition:margin-left .25s ease,width .25s ease
+}
+
+.topbar{
+  height:70px;
+  flex:0 0 70px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px;
+  box-shadow:0 2px 10px rgba(0,0,0,.07);
+  z-index:900
+}
+
+.top-left{
+  display:flex;
+  align-items:center;
+  gap:14px
+}
+
+.topbar h2{
+  margin:0;
+  color:var(--navy);
+  font-size:20px
+}
+
+.hamburger{
+  font-size:21px;
+  color:var(--navy);
+  cursor:pointer
+}
+
+.mobile-menu{
+  display:none
+}
+
+/* USER */
+
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:12px
+}
+
+.user-avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--navy);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700
+}
+
+.user-text{
+  text-align:right
+}
+
+.user-text strong{
+  display:block;
+  font-size:13px;
+  color:var(--navy)
+}
+
+.user-text span{
+  font-size:11px;
+  color:var(--muted)
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content{
+  flex:1;
+  overflow-y:auto;
+  padding:22px 25px 35px
+}
+
+.box{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  margin-bottom:16px
+}
+
+.card-title{
+  font-size:15px;
+  font-weight:700;
+  color:var(--navy);
+  margin:0 0 20px;
+  border-bottom:1px solid var(--border);
+  padding-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:9px
+}
+
+.card-title i{
+  color:var(--green)
+}
+
+/* FORM */
+
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px 20px
+}
+
+.grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:18px
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column
+}
+
+label{
+  font-size:12px;
+  font-weight:600;
+  color:#374151;
+  margin-bottom:7px
+}
+
+input,
+select{
+  width:100%;
+  padding:10px 11px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  color:#27364a;
+  font-size:12px;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s
+}
+
+input:focus,
+select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(23,105,170,.08)
+}
+
+/* BUTTONS */
+
+.actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap
+}
+
+.btn{
+  padding:10px 16px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size:12px
+}
+
+.btn-primary{
+  background:var(--blue);
+  color:#fff
+}
+
+.btn-success{
+  background:var(--green);
+  color:#fff
+}
+
+.btn-danger{
+  background:var(--red);
+  color:#fff;
+  padding:9px 12px
+}
+
+.btn:hover{
+  opacity:.92
+}
+
+/* PAYE BRACKETS */
+
+.bracket-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 50px;
+  gap:10px;
+  margin-bottom:10px;
+  align-items:center
+}
+
+.brackets-header{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 50px;
+  gap:10px;
+  margin-bottom:7px
+}
+
+.brackets-header span{
+  font-size:10px;
+  color:var(--muted);
+  text-transform:uppercase;
+  font-weight:700;
+  letter-spacing:.4px
+}
+
+.brackets-empty{
+  font-size:12px;
+  color:var(--muted);
+  padding:12px 0
+}
+
+/* LOADER */
+
+.main-loader{
+  position:fixed;
+  inset:0;
+  background:rgba(244,247,251,.92);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  color:var(--navy);
+  z-index:3000;
+  transition:opacity .2s ease
+}
+
+.main-loader.hidden{
+  opacity:0;
+  pointer-events:none
+}
+
+.spinner{
+  width:50px;
+  height:50px;
+  border:4px solid rgba(0,31,63,.25);
+  border-top:4px solid var(--navy);
+  border-radius:50%;
+  animation:spin 1s linear infinite
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* TOAST / MESSAGE */
+
+.save-status{
+  display:none;
+  margin-top:15px;
+  padding:11px 13px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:600
+}
+
+.save-status.success{
+  display:block;
+  background:#eaf8ef;
+  color:#16753d;
+  border:1px solid #bce5ca
+}
+
+.save-status.error{
+  display:block;
+  background:#fdeeee;
+  color:#a5281d;
+  border:1px solid #efc1bc
+}
+
+/* MOBILE */
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  z-index:1050
+}
+
+.overlay.show{
+  display:block
+}
+
+@media(max-width:992px){
+
+  .sidebar{
+    left:-270px
+  }
+
+  .sidebar.open{
+    left:0
+  }
+
+  .main{
+    margin-left:0;
+    width:100%
+  }
+
+  .mobile-menu{
+    display:block
+  }
+
+  .topbar{
+    padding:0 15px
+  }
+
+  .content{
+    padding:15px
+  }
+
+  .grid-2,
+  .grid-3{
+    grid-template-columns:1fr
+  }
+
+  .bracket-row,
+  .brackets-header{
+    grid-template-columns:1fr 1fr 1fr 45px
+  }
+
+  .user-text{
+    display:none
+  }
+}
+
+@media(max-width:600px){
+
+  .box{
+    padding:15px
+  }
+
+  .topbar h2{
+    font-size:17px
+  }
+
+  .bracket-row{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .bracket-row .bracketRate{
+    grid-column:1
+  }
+
+  .bracket-row .removeBtn{
+    grid-column:2;
+    grid-row:2
+  }
+
+  .brackets-header{
+    display:none
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+    <h2>GREYSOL ACADEMY</h2>
+    <p id="portalRole">Accountant Portal</p>
+  </div>
+
+  <div class="menu">
+    <a href="accounting-dashboard.html">
+      <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+    </a>
+
+    <div class="section-label">Operations</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Sales & Receivables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="students.html"><i class="fa-solid fa-user-graduate"></i> Students / Customers</a>
+        <a href="quotations.html"><i class="fa-solid fa-file-signature"></i> Quotations</a>
+        <a href="invoice-list.html"><i class="fa-solid fa-file-invoice"></i> Invoices</a>
+        <a href="credit-notes.html"><i class="fa-solid fa-file-circle-minus"></i> Credit Notes</a>
+        <a href="receipts-list.html"><i class="fa-solid fa-money-bill-wave"></i> Customer Payments</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="accounts-receivable.html"><i class="fa-solid fa-hand-holding-dollar"></i> Accounts Receivable</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Receivables Aging</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-cart-shopping"></i><span>Purchases & Payables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="suppliers.html"><i class="fa-solid fa-truck-field"></i> Suppliers</a>
+        <a href="requisitions.html"><i class="fa-solid fa-file-circle-plus"></i> Purchase Requisitions</a>
+        <a href="requisition-create.html"><i class="fa-solid fa-plus"></i> Create Requisition</a>
+        <a href="purchase-orders.html"><i class="fa-solid fa-clipboard-list"></i> Purchase Orders</a>
+        <a href="goods-received.html"><i class="fa-solid fa-box-open"></i> Goods Received</a>
+        <a href="bills.html"><i class="fa-solid fa-file-invoice"></i> Bills</a>
+        <a href="supplier-payments.html"><i class="fa-solid fa-money-check-dollar"></i> Supplier Payments</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="accounts-payable.html"><i class="fa-solid fa-money-bill-transfer"></i> Accounts Payable</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Payables Aging</a>
+      </div>
+    </div>
+
+    <div class="section-label">Cash Management</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-building-columns"></i><span>Banking</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="bank-accounts.html"><i class="fa-solid fa-building-columns"></i> Bank Accounts</a>
+        <a href="cash-accounts.html"><i class="fa-solid fa-wallet"></i> Cash Accounts</a>
+        <a href="bank-transactions.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Bank Transactions</a>
+        <a href="bank-transfer.html"><i class="fa-solid fa-right-left"></i> Transfers</a>
+        <a href="bank-reconciliation.html"><i class="fa-solid fa-scale-balanced"></i> Bank Reconciliation</a>
+        <a href="reconciliation-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Reconciliation History</a>
+      </div>
+    </div>
+
+    <div class="section-label">General Accounting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-book"></i><span>Accounting</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="chart-of-accounts.html"><i class="fa-solid fa-list"></i> Chart of Accounts</a>
+        <a href="journal-entry.html"><i class="fa-solid fa-book-journal-whills"></i> Journal Entry</a>
+        <a href="journal-list.html"><i class="fa-solid fa-list-check"></i> Journal List</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="ledger.html"><i class="fa-solid fa-table-list"></i> Account Ledger</a>
+        <a href="#"><i class="fa-solid fa-repeat"></i> Recurring Journals</a>
+        <a href="#"><i class="fa-solid fa-lock"></i> Period Closing</a>
+        <a href="accounting-settings.html"><i class="fa-solid fa-gear"></i>Settings</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-receipt"></i><span>Expenses</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="expenses.html"><i class="fa-solid fa-file-circle-plus"></i> Expense Entry</a>
+        <a href="expense-list.html"><i class="fa-solid fa-list"></i> Expense List</a>
+        <a href="expense-categories.html"><i class="fa-solid fa-tags"></i> Expense Categories</a>
+        <a href="expense-claims.html"><i class="fa-solid fa-hand-holding-dollar"></i> Expense Claims</a>
+      </div>
+    </div>
+
+    <div class="section-label">People & Statutory</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-users-gear"></i><span>HR & Payroll</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="employees.html"><i class="fa-solid fa-users"></i> Employees</a>
+        <a href="#"><i class="fa-solid fa-user-tag"></i> Employee Categories</a>
+        <a href="attendance.html"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="payroll-settings.html" class="active"><i class="fa-solid fa-gears"></i> Payroll Settings</a>
+        <a href="payroll-run.html"><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</a>
+        <a href="payslips.html"><i class="fa-solid fa-file-invoice-dollar"></i> Payslips</a>
+        <a href="payroll-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Payroll History</a>
+        <a href="payroll-journal.html"><i class="fa-solid fa-book"></i> Payroll Journal</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-chart-column"></i> Payroll Reports</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-percent"></i><span>Taxes</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="vat.html"><i class="fa-solid fa-percent"></i> VAT</a>
+        <a href="vat-transactions.html"><i class="fa-solid fa-receipt"></i> VAT Transactions</a>
+        <a href="vat-return.html"><i class="fa-solid fa-file-circle-check"></i> VAT Return</a>
+        <a href="#"><i class="fa-solid fa-file-invoice"></i> Withholding Tax</a>
+        <a href="paye.html"><i class="fa-solid fa-user-shield"></i> PAYE</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-chart-column"></i> Tax Reports</a>
+      </div>
+    </div>
+
+    <div class="section-label">Reporting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-chart-pie"></i><span>Reports</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-user-clock"></i> AR Aging</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-file-circle-exclamation"></i> AP Aging</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="expense-report.html"><i class="fa-solid fa-receipt"></i> Expense Report</a>
+        <a href="revenue-report.html"><i class="fa-solid fa-arrow-trend-up"></i> Revenue Report</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-percent"></i> Tax Reports</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-users"></i> Payroll Reports</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+      </div>
+    </div>
+
+    <div class="section-label">Administration</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-user-shield"></i><span>Administration</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="userlist.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="#"><i class="fa-solid fa-key"></i> Roles & Permissions</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+        <a href="#"><i class="fa-solid fa-check-double"></i> Approval Workflows</a>
+        <a href="#"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="#"><i class="fa-solid fa-building"></i> Company Profile</a>
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> Financial Year</a>
+        <a href="#"><i class="fa-solid fa-calendar-check"></i> Accounting Periods</a>
+        <a href="#"><i class="fa-solid fa-percent"></i> Tax Settings</a>
+        <a href="#"><i class="fa-solid fa-hashtag"></i> Numbering</a>
+        <a href="#"><i class="fa-solid fa-sliders"></i> System Settings</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+    </a>
+  </div>
+</aside>
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<div class="main">
+
+  <div class="main-loader" id="mainLoader">
+    <div class="spinner"></div>
+    <p style="margin-top:15px">Loading Payroll Settings...</p>
+  </div>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+
+    <div class="top-left">
+
+      <i
+        class="fa-solid fa-bars hamburger mobile-menu"
+        onclick="toggleSidebar()">
+      </i>
+
+      <h2>
+        <i class="fa-solid fa-gears"></i>
+        Payroll Settings
+      </h2>
+
+    </div>
+
+    <div class="user-info">
+
+      <div class="user-text">
+        <strong id="staffName">Loading...</strong>
+        <span id="staffRole">Accountant</span>
+      </div>
+
+      <div class="user-avatar" id="avatar">A</div>
+
+    </div>
+
+  </header>
+
+  <!-- CONTENT -->
+  <section class="content">
+
+    <form id="settingsForm">
+
+      <!-- ACCOUNTING ACCOUNTS -->
+      <div class="box">
+
+        <div class="card-title">
+          <i class="fa-solid fa-book"></i>
+          Accounting Accounts
+        </div>
+
+        <div class="grid-2">
+
+          <div class="form-group">
+            <label>Salary Expense</label>
+            <select id="salaryExpenseAccount"></select>
+          </div>
+
+          <div class="form-group">
+            <label>Pension Expense</label>
+            <select id="pensionExpenseAccount"></select>
+          </div>
+
+          <div class="form-group">
+            <label>Salaries Payable</label>
+            <select id="receivableAccount"></select>
+          </div>
+
+          <div class="form-group">
+            <label>Pension Payable</label>
+            <select id="pensionPayableAccount"></select>
+          </div>
+
+          <div class="form-group">
+            <label>PAYE Payable</label>
+            <select id="payePayableAccount"></select>
+          </div>
+
+          <div class="form-group">
+            <label>Staff Advance Receivable</label>
+            <select id="advanceAccount"></select>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- RATES -->
+      <div class="box">
+
+        <div class="card-title">
+          <i class="fa-solid fa-percent"></i>
+          Payroll Rates & Working Parameters
+        </div>
+
+        <div class="grid-3">
+
+          <div class="form-group">
+            <label>Employee Pension %</label>
+            <input
+              type="number"
+              id="pensionRate"
+              value="5"
+              step="0.1"
+              min="0">
+          </div>
+
+          <div class="form-group">
+            <label>Employer Pension %</label>
+            <input
+              type="number"
+              id="employerPensionRate"
+              value="10"
+              step="0.1"
+              min="0">
+          </div>
+
+          <div class="form-group">
+            <label>Working Days / Month</label>
+            <input
+              type="number"
+              id="workingDays"
+              value="22"
+              min="1">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PAYE -->
+      <div class="box">
+
+        <div class="card-title">
+          <i class="fa-solid fa-scale-balanced"></i>
+          PAYE Tax Brackets — MWK
+        </div>
+
+        <div class="brackets-header">
+          <span>From (MWK)</span>
+          <span>To (MWK)</span>
+          <span>Rate (%)</span>
+          <span></span>
+        </div>
+
+        <div id="bracketsContainer"></div>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="addBracket">
+
+          <i class="fa-solid fa-plus"></i>
+          Add Bracket
+
+        </button>
+
+      </div>
+
+
+      <!-- SAVE -->
+      <div class="box">
+
+        <div class="actions">
+
+          <button
+            type="submit"
+            class="btn btn-success"
+            id="saveSettingsBtn">
+
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Payroll Settings
+
+          </button>
+
+        </div>
+
+        <div id="saveStatus" class="save-status"></div>
+
+      </div>
+
+    </form>
+
+  </section>
+
+</div>
+
+
+<script>
+/* =========================
+   ROLE CHECK + USER INFO
+========================= */
+
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+
+if(!loggedUser || loggedUser.role !== "Accountant"){
+
+  alert("Access Denied. Accountants Only.");
+
+  window.location.href = "staff-login.html";
+
+}
+
+document.getElementById("staffName").textContent =
+  loggedUser?.username || "Accountant";
+
+document.getElementById("staffRole").textContent =
+  loggedUser?.role || "Accountant";
+
+document.getElementById("portalRole").textContent =
+  (loggedUser?.role || "Accountant") + " Portal";
+
+document.getElementById("avatar").textContent =
+  (loggedUser?.username || "A").charAt(0).toUpperCase();
+
+
+/* =========================
+   SIDEBAR
+   ONLY ONE SUBMENU OPEN
+========================= */
+
+document.querySelectorAll(".menu-header").forEach(header => {
+
+  header.addEventListener("click", () => {
+
+    const clickedGroup = header.parentElement;
+
+    document.querySelectorAll(".menu-group").forEach(group => {
+
+      if(group !== clickedGroup){
+        group.classList.remove("active");
+      }
+
+    });
+
+    clickedGroup.classList.toggle("active");
+
+  });
+
+});
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+document.getElementById("logoutBtn").addEventListener("click", e => {
+
+  e.preventDefault();
+
+  localStorage.removeItem("loggedUser");
+
+  window.location.href = "staff-login.html";
+
+});
+
+
+/* =========================
+   MOBILE SIDEBAR
+========================= */
+
+function toggleSidebar(){
+
+  document.getElementById("sidebar").classList.toggle("open");
+
+  document.getElementById("overlay").classList.toggle("show");
+
+}
+</script>
+
+
+<script type="module">
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  getDocs,
+  collection
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+/* =========================
+   FIREBASE
+========================= */
+
+const app = initializeApp({
+  apiKey:"AIzaSyAgoW4eu_hvrWHSxJci0qUWeUXOr-msgw",
+  projectId:"greysol-academy"
+});
+
+const db = getFirestore(app);
+
+const loader = document.getElementById("mainLoader");
+
+
+/* =========================
+   LOAD CHART OF ACCOUNTS
+========================= */
+
+async function loadCOA(){
+
+  try{
+
+    const snap = await getDocs(
+      collection(db,"chartOfAccounts")
+    );
+
+    let html = '<option value="">-- Select Account --</option>';
+
+    snap.forEach(d => {
+
+      const account = d.data();
+
+      html += `
+        <option value="${account.accountCode}">
+          ${account.accountCode} - ${account.accountName}
+        </option>
+      `;
+
+    });
+
+    [
+      "salaryExpenseAccount",
+      "pensionExpenseAccount",
+      "receivableAccount",
+      "pensionPayableAccount",
+      "payePayableAccount",
+      "advanceAccount"
+    ].forEach(id => {
+
+      document.getElementById(id).innerHTML = html;
+
+    });
+
+  }catch(error){
+
+    console.error("Error loading Chart of Accounts:",error);
+
+    showStatus(
+      "Unable to load Chart of Accounts: " + error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   PAYE BRACKETS
+========================= */
+
+function addBracketRow(from="",to="",rate=""){
+
+  const div = document.createElement("div");
+
+  div.className = "bracket-row";
+
+  div.innerHTML = `
+
+    <input
+      type="number"
+      placeholder="From"
+      class="bracketFrom"
+      value="${from}"
+      min="0">
+
+    <input
+      type="number"
+      placeholder="To"
+      class="bracketTo"
+      value="${to}"
+      min="0">
+
+    <input
+      type="number"
+      placeholder="Rate %"
+      class="bracketRate"
+      value="${rate}"
+      step="0.1"
+      min="0">
+
+    <button
+      type="button"
+      class="btn btn-danger removeBtn"
+      title="Remove bracket">
+
+      <i class="fa-solid fa-trash"></i>
+
+    </button>
+
+  `;
+
+  div.querySelector(".removeBtn").onclick = () => {
+
+    div.remove();
+
+  };
+
+  document
+    .getElementById("bracketsContainer")
+    .appendChild(div);
+
+}
+
+
+/* ADD BRACKET */
+
+document.getElementById("addBracket").onclick = () => {
+
+  addBracketRow();
+
+};
+
+
+/* =========================
+   STATUS MESSAGE
+========================= */
+
+function showStatus(message,type){
+
+  const status =
+    document.getElementById("saveStatus");
+
+  status.textContent = message;
+
+  status.className =
+    "save-status " + type;
+
+}
+
+
+/* =========================
+   LOAD SETTINGS
+========================= */
+
+async function loadSettings(){
+
+  try{
+
+    const snap = await getDoc(
+      doc(db,"payrollSettings","main")
+    );
+
+    if(!snap.exists()){
+
+      return;
+
+    }
+
+    const s = snap.data();
+
+    Object.keys(s).forEach(k => {
+
+      const element =
+        document.getElementById(k);
+
+      if(element){
+
+        element.value =
+          k.includes("Rate")
+            ? s[k] * 100
+            : s[k];
+
+      }
+
+    });
+
+
+    /* PAYE BRACKETS */
+
+    document
+      .getElementById("bracketsContainer")
+      .innerHTML = "";
+
+    if(s.payeRates?.length){
+
+      s.payeRates.forEach(b => {
+
+        addBracketRow(
+          b.from,
+          b.to,
+          b.rate * 100
+        );
+
+      });
+
+    }
+
+  }catch(error){
+
+    console.error("Error loading payroll settings:",error);
+
+    showStatus(
+      "Unable to load payroll settings: " + error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   SAVE SETTINGS
+========================= */
+
+document.getElementById("settingsForm").onsubmit =
+async (e) => {
+
+  e.preventDefault();
+
+  const saveBtn =
+    document.getElementById("saveSettingsBtn");
+
+  saveBtn.disabled = true;
+
+  saveBtn.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    Saving...
+  `;
+
+  try{
+
+    const payeRates = [
+      ...document.querySelectorAll(".bracket-row")
+    ].map(row => ({
+
+      from:Number(
+        row.querySelector(".bracketFrom").value
+      ),
+
+      to:Number(
+        row.querySelector(".bracketTo").value
+      ),
+
+      rate:Number(
+        row.querySelector(".bracketRate").value
+      ) / 100
+
+    }));
+
+
+    const data = {
+
+      salaryExpenseAccount:
+        document.getElementById(
+          "salaryExpenseAccount"
+        ).value,
+
+      pensionExpenseAccount:
+        document.getElementById(
+          "pensionExpenseAccount"
+        ).value,
+
+      receivableAccount:
+        document.getElementById(
+          "receivableAccount"
+        ).value,
+
+      pensionPayableAccount:
+        document.getElementById(
+          "pensionPayableAccount"
+        ).value,
+
+      payePayableAccount:
+        document.getElementById(
+          "payePayableAccount"
+        ).value,
+
+      advanceAccount:
+        document.getElementById(
+          "advanceAccount"
+        ).value,
+
+      pensionRate:
+        Number(
+          document.getElementById(
+            "pensionRate"
+          ).value
+        ) / 100,
+
+      employerPensionRate:
+        Number(
+          document.getElementById(
+            "employerPensionRate"
+          ).value
+        ) / 100,
+
+      workingDays:
+        Number(
+          document.getElementById(
+            "workingDays"
+          ).value
+        ),
+
+      payeRates
+
+    };
+
+
+    await setDoc(
+      doc(db,"payrollSettings","main"),
+      data
+    );
+
+
+    showStatus(
+      "Payroll settings saved successfully.",
+      "success"
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showStatus(
+      "Error saving settings: " + error.message,
+      "error"
+    );
+
+  }finally{
+
+    saveBtn.disabled = false;
+
+    saveBtn.innerHTML = `
+      <i class="fa-solid fa-floppy-disk"></i>
+      Save Payroll Settings
+    `;
+
+  }
+
+};
+
+
+/* =========================
+   INITIAL LOAD
+========================= */
+
+async function initializePage(){
+
+  loader.classList.remove("hidden");
+
+  try{
+
+    await loadCOA();
+    await loadSettings();
+
+  }finally{
+
+    loader.classList.add("hidden");
+
+  }
+
+}
+
+initializePage();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>
+Student Portal Login
+</title>
+
+
+<style>
+
+
+*{
+
+box-sizing:border-box;
+
+font-family:'Segoe UI',Arial,sans-serif;
+
+}
+
+
+
+body{
+
+margin:0;
+
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+
+background:
+
+linear-gradient(
+rgba(0,31,63,.85),
+rgba(0,31,63,.85)
+),
+
+url("images/students-bg.jpg");
+
+
+background-size:cover;
+
+background-position:center;
+
+
+}
+
+
+
+.login-box{
+
+
+background:white;
+
+width:400px;
+
+padding:40px;
+
+border-radius:15px;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.3);
+
+
+text-align:center;
+
+
+}
+
+
+
+.logo{
+
+
+width:120px;
+
+height:120px;
+
+object-fit:contain;
+
+
+}
+
+
+
+h2{
+
+color:#001f3f;
+
+}
+
+
+
+input{
+
+
+width:100%;
+
+padding:14px;
+
+margin-top:15px;
+
+border:1px solid #ccc;
+
+border-radius:8px;
+
+
+}
+
+
+
+button{
+
+
+width:100%;
+
+padding:14px;
+
+margin-top:20px;
+
+border:none;
+
+border-radius:8px;
+
+background:#001f3f;
+
+color:white;
+
+font-size:16px;
+
+cursor:pointer;
+
+
+}
+
+
+
+button:hover{
+
+background:#003366;
+
+}
+
+
+
+
+a{
+
+display:block;
+
+margin-top:20px;
+
+color:#001f3f;
+
+text-decoration:none;
+
+}
+
+
+
+#error{
+
+color:red;
+
+margin-top:15px;
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+
+<div class="login-box">
+
+
+<img src="../images/logo1 - Copy.png"
+class="logo">
+
+
+<h2>
+Student Portal
+</h2>
+
+
+<p>
+Login to view your results
+</p>
+
+
+
+
+<input
+type="text"
+id="studentID"
+placeholder="Student ID">
+
+
+<input
+type="password"
+id="password"
+placeholder="Password">
+
+
+
+<button
+id="loginBtn">
+
+Login
+
+</button>
+
+
+
+<p id="error"></p>
+
+
+
+<a href="../student-registration/registration.html">
+
+New student? Register here
+
+</a>
+
+
+</div>
+
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp }
+
+from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+
+import {
+
+getAuth,
+
+signInWithEmailAndPassword
+
+}
+
+from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+
+import {
+
+getFirestore,
+
+collection,
+
+query,
+
+where,
+
+getDocs
+
+}
+
+from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+
+
+
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",
+  authDomain: "greysol-academy.firebaseapp.com",
+  projectId: "greysol-academy",
+  storageBucket: "greysol-academy.firebasestorage.app",
+  messagingSenderId: "700477093508",
+  appId: "1:700477093508:web:d1f95a63483b8e9ab934d1",
+  measurementId: "G-XY8XSZJ9HE"
+};
+
+
+
+
+const app =
+initializeApp(firebaseConfig);
+
+
+
+const auth =
+getAuth(app);
+
+
+
+const db =
+getFirestore(app);
+
+
+
+
+
+
+const loginBtn =
+document.getElementById("loginBtn");
+
+
+const studentID =
+document.getElementById("studentID");
+
+
+const password =
+document.getElementById("password");
+
+
+const error =
+document.getElementById("error");
+
+
+
+
+
+
+
+loginBtn.onclick = async()=>{
+
+
+
+let id =
+studentID.value.trim().toUpperCase();
+
+
+let pass =
+password.value.trim();
+
+
+
+
+error.innerHTML="";
+
+
+
+
+
+if(id==="" || pass===""){
+
+
+error.innerHTML =
+"Enter Student ID and Password";
+
+
+return;
+
+
+}
+
+
+
+
+
+
+try{
+
+
+
+// SEARCH STUDENT ID
+
+
+const q =
+
+query(
+
+collection(db,"students"),
+
+where(
+
+"studentID",
+
+"==",
+
+id
+
+)
+
+);
+
+
+
+
+
+const snapshot =
+await getDocs(q);
+
+
+
+
+
+if(snapshot.empty){
+
+
+error.innerHTML =
+"Student ID not found";
+
+
+return;
+
+
+}
+
+
+
+
+
+
+const student =
+snapshot.docs[0].data();
+
+
+
+
+
+
+
+// GET HIDDEN EMAIL CREATED DURING REGISTRATION
+
+
+const email =
+student.loginEmail;
+
+
+
+
+
+if(!email){
+
+
+error.innerHTML =
+"Student account email missing";
+
+
+return;
+
+
+}
+
+
+
+
+
+
+
+// LOGIN USING HIDDEN EMAIL
+
+
+await signInWithEmailAndPassword(
+
+auth,
+
+email,
+
+pass
+
+);
+
+
+
+
+
+
+
+localStorage.setItem(
+
+"student",
+
+JSON.stringify(student)
+
+);
+
+
+
+
+
+
+
+window.location.href =
+"../student-dashboard.html";
+
+
+
+
+
+}
+
+
+catch(e){
+
+
+console.log(e);
+
+
+
+error.innerHTML =
+"Invalid Student ID or Password";
+
+
+}
+
+
+
+};
+
+
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greysol Academy | Approve Results</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--light:#f4f7fb;--green:#27ae60;--orange:#f39c12;--red:#e74c3c}
+body{margin:0;background:var(--light);display:flex;height:100vh;overflow:hidden}
+.sidebar{width:270px;background:var(--navy);color:white;height:100vh;overflow:auto;position:fixed;left:0}
+.logo{text-align:center;padding:20px;border-bottom:1px solid rgba(255,255,255,.2)}
+.menu a{display:flex;align-items:center;gap:15px;padding:15px 25px;color:white;text-decoration:none}
+.menu a.active{background:rgba(255,255,255,.1)}
+.main{flex:1;display:flex;flex-direction:column;margin-left:270px}
+.topbar{height:75px;background:white;display:flex;justify-content:space-between;align-items:center;padding:0 30px;box-shadow:0 3px 10px rgba(0,0,0,.1)}
+.content{padding:30px;overflow:auto}
+.box{background:white;padding:25px;border-radius:15px;margin-bottom:25px;box-shadow:0 5px 20px rgba(0,0,0,.1)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:20px}
+select{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc}
+.btn{padding:8px 15px;border:none;border-radius:6px;cursor:pointer;font-weight:bold;margin:2px}
+.btn-load{background:var(--navy);color:white;padding:12px 25px}
+.btn-approve{background:var(--green);color:white}
+.btn-reject{background:var(--red);color:white}
+.btn-approve-all{background:var(--green);color:white;width:100%;padding:12px;margin-top:15px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:var(--navy);color:white;padding:12px;text-align:left}
+td{padding:10px;border-bottom:1px solid #ddd}
+.badge-pending{background:var(--orange);color:white;padding:4px 8px;border-radius:12px;font-size:12px}
+.alert{padding:12px;border-radius:8px;margin-bottom:15px}
+.alert-success{background:#d4edda;color:#155724}
+.alert-danger{background:#f8d7da;color:#721c24}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo"><h2>GREYSOL ACADEMY</h2><p>Admin Portal</p></div>
+  <div class="menu">
+    <a href="admin-dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+    <a href="headteacher-approve-results.html" class="active"><i class="fa-solid fa-check-double"></i> Approve Results</a>
+    <a href="staff-login.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar"><h2>Approve Student Results</h2><span id="adminName"></span></div>
+  <div class="content">
+    <div id="alertBox"></div>
+
+    <div class="box">
+      <h3><i class="fa-solid fa-filter"></i> Filter Pending Results</h3>
+      <div class="form-grid">
+        <div><label>Class</label><select id="classFilter"><option value="">All Classes</option></select></div>
+        <div><label>Subject</label><select id="subjectFilter"><option value="">All Subjects</option></select></div>
+        <div><label>Term</label><select id="termFilter"><option value="">All Terms</option><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
+        <div><label>Year</label><input type="number" id="yearFilter" value="2026"></div>
+      </div>
+      <button class="btn-load" id="loadBtn"><i class="fa-solid fa-search"></i> Load Pending Results</button>
+    </div>
+
+    <div class="box">
+      <h3><i class="fa-solid fa-list-check"></i> Pending Results <span id="countBadge"></span></h3>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th><input type="checkbox" id="selectAll"></th><th>Student</th><th>Class</th><th>Subject</th><th>Term</th><th>Total</th><th>Grade</th><th>Teacher</th><th>Action</th></tr>
+          </thead>
+          <tbody id="pendingTable"><tr><td colspan="9">Click Load to see pending results</td></tr></tbody>
+        </table>
+      </div>
+      <button class="btn-approve-all" id="approveAllBtn"><i class="fa-solid fa-check-double"></i> Approve Selected</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where, updateDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",authDomain:"greysol-academy.firebaseapp.com",projectId:"greysol-academy"});
+const db = getFirestore(app);
+
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+if(!loggedUser){ window.location.href="staff-login.html"; }
+document.getElementById("adminName").innerText = loggedUser.username;
+
+function showAlert(msg, type="success"){
+  document.getElementById("alertBox").innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(()=>document.getElementById("alertBox").innerHTML="",4000);
+}
+
+// LOAD FILTERS
+async function loadFilters(){
+  let classes = new Set();
+  let subjects = new Set();
+
+  const allocSnap = await getDocs(collection(db,"allocations"));
+  allocSnap.forEach(d=>{
+    let a = d.data();
+    if(a.class) classes.add(a.class);
+    if(a.subjectName) subjects.add(a.subjectName);
+  });
+
+  const resSnap = await getDocs(collection(db,"results"));
+  resSnap.forEach(d=>{
+    let r = d.data();
+    if(r.className) classes.add(r.className);
+    if(r.subjectName) subjects.add(r.subjectName);
+  });
+
+  classes.forEach(c=> document.getElementById("classFilter").innerHTML += `<option>${c}</option>`);
+  subjects.forEach(s=> document.getElementById("subjectFilter").innerHTML += `<option>${s}</option>`);
+}
+loadFilters();
+
+// LOAD PENDING RESULTS
+async function loadPending(){
+  document.getElementById("loadBtn").disabled = true;
+  document.getElementById("loadBtn").innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Loading...`;
+
+  const classF = document.getElementById("classFilter").value;
+  const subjectF = document.getElementById("subjectFilter").value;
+  const termF = document.getElementById("termFilter").value;
+  const yearF = parseInt(document.getElementById("yearFilter").value);
+
+  let q = query(collection(db,"results"), where("status","==","Pending"));
+  if(classF) q = query(q, where("className","==",classF));
+  if(subjectF) q = query(q, where("subjectName","==",subjectF));
+  if(termF) q = query(q, where("term","==",termF));
+  if(yearF) q = query(q, where("year","==",yearF));
+
+  try{
+    const snap = await getDocs(q);
+    const tbody = document.getElementById("pendingTable");
+    tbody.innerHTML = "";
+    document.getElementById("countBadge").innerHTML = `<span class="badge-pending">${snap.size} Pending</span>`;
+
+    if(snap.empty){
+      tbody.innerHTML = `<tr><td colspan="9">No pending results found</td></tr>`;
+    } else {
+      for(let d of snap.docs){
+        let r = d.data();
+        
+        const stuDoc = await getDoc(doc(db,"students",r.studentID));
+        const student = stuDoc.exists()? `${stuDoc.data().firstName} ${stuDoc.data().surname}` : r.studentID;
+        
+        const staffSnap = await getDocs(query(collection(db,"staff"), where("staffID","==",r.staffID)));
+        const teacher = staffSnap.empty? r.staffID : `${staffSnap.docs[0].data().firstName} ${staffSnap.docs[0].data().surname}`;
+
+        tbody.innerHTML += `<tr data-docid="${d.id}">
+          <td><input type="checkbox" class="rowCheck"></td>
+          <td>${student}</td>
+          <td>${r.className}</td>
+          <td>${r.subjectName}</td>
+          <td>${r.term} ${r.year}</td>
+          <td><b>${r.total}</b></td>
+          <td>${r.grade}</td>
+          <td>${teacher}</td>
+          <td>
+            <button class="btn btn-approve" data-id="${d.id}" data-action="approve">Approve</button>
+            <button class="btn btn-reject" data-id="${d.id}" data-action="reject">Reject</button>
+          </td>
+        </tr>`;
+      }
+    }
+  }catch(err){
+    showAlert("Error: " + err.message, "danger");
+  }
+
+  document.getElementById("loadBtn").disabled = false;
+  document.getElementById("loadBtn").innerHTML = `<i class="fa-solid fa-search"></i> Load Pending Results`;
+}
+
+// ATTACH BUTTON CLICKS WITH JS
+document.getElementById("loadBtn").addEventListener("click", loadPending);
+
+document.getElementById("pendingTable").addEventListener("click", async function(e){
+  if(e.target.tagName === "BUTTON"){
+    const id = e.target.getAttribute("data-id");
+    const action = e.target.getAttribute("data-action");
+    if(action === "approve"){
+      await updateDoc(doc(db,"results",id), {status:"Approved", approvedAt:new Date(), approvedBy:loggedUser.username});
+      showAlert("Result Approved");
+      loadPending();
+    }
+    if(action === "reject"){
+      await updateDoc(doc(db,"results",id), {status:"Rejected", rejectedAt:new Date(), rejectedBy:loggedUser.username});
+      showAlert("Result Rejected", "danger");
+      loadPending();
+    }
+  }
+});
+
+document.getElementById("approveAllBtn").addEventListener("click", async function(){
+  let checked = document.querySelectorAll(".rowCheck:checked");
+  if(checked.length === 0){ showAlert("Select at least one result", "danger"); return; }
+  for(let chk of checked){
+    let docID = chk.closest("tr").getAttribute("data-docid");
+    await updateDoc(doc(db,"results",docID), {status:"Approved", approvedAt:new Date(), approvedBy:loggedUser.username});
+  }
+  showAlert(`${checked.length} results approved successfully`);
+  loadPending();
+});
+
+document.getElementById("selectAll").addEventListener("change", function(){
+  document.querySelectorAll(".rowCheck").forEach(cb=>cb.checked = this.checked);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Account Ledger | Greysol Academy</title>
+
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
+
+:root{
+  --navy:#001f3f;
+  --navy2:#003366;
+  --blue:#1769aa;
+  --green:#1f9d55;
+  --red:#c0392b;
+  --orange:#f39c12;
+  --purple:#6f42c1;
+  --teal:#008c95;
+  --light:#f4f7fb;
+  --border:#e5e9ef;
+  --muted:#6b7280;
+  --white:#fff;
+}
+
+html,
+body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--light);
+}
+
+body{
+  overflow:hidden;
+  color:#1f2937;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar{
+  width:270px;
+  height:100vh;
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:1100;
+  background:var(--navy);
+  color:#fff;
+  overflow-y:auto;
+  transition:width .25s ease,left .25s ease;
+}
+
+.logo{
+  padding:18px 15px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+
+.logo img{
+  width:66px;
+  height:66px;
+  object-fit:contain;
+}
+
+.logo h2{
+  font-size:17px;
+  margin:8px 0 3px;
+}
+
+.logo p{
+  margin:0;
+  font-size:12px;
+  opacity:.7;
+}
+
+.menu{
+  padding:8px 0 20px;
+}
+
+.section-label{
+  padding:15px 24px 6px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1.1px;
+  opacity:.5;
+}
+
+.menu a,
+.menu-header{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:12px 22px;
+  color:#fff;
+  text-decoration:none;
+  cursor:pointer;
+  font-size:13px;
+  min-height:46px;
+}
+
+.menu a i,
+.menu-header>i:first-child{
+  width:18px;
+  text-align:center;
+}
+
+.menu a:hover,
+.menu-header:hover{
+  background:rgba(255,255,255,.08);
+}
+
+.menu a.active{
+  background:rgba(255,255,255,.13);
+  border-left:4px solid var(--green);
+  padding-left:18px;
+}
+
+.arrow{
+  margin-left:auto!important;
+  width:auto!important;
+  font-size:11px!important;
+  transition:transform .25s ease;
+}
+
+.submenu{
+  max-height:0;
+  overflow:hidden;
+  background:rgba(0,0,0,.17);
+  transition:max-height .3s ease;
+}
+
+.menu-group.active .submenu{
+  max-height:600px;
+}
+
+.menu-group.active .arrow{
+  transform:rotate(180deg);
+}
+
+.submenu a{
+  padding-left:54px;
+  font-size:12px;
+}
+
+.submenu a.active{
+  padding-left:50px;
+}
+
+.sidebar::-webkit-scrollbar{
+  width:5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.2);
+  border-radius:10px;
+}
+
+.menu-group{
+  position:relative;
+}
+
+.menu-header span{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.menu a span{
+  white-space:nowrap;
+}
+
+@media(min-width:993px){
+  .sidebar{
+    scrollbar-width:thin;
+  }
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+  margin-left:270px;
+  width:calc(100% - 270px);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  transition:margin-left .25s ease,width .25s ease;
+}
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.topbar{
+  height:70px;
+  flex:0 0 70px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px;
+  box-shadow:0 2px 10px rgba(0,0,0,.07);
+  z-index:900;
+}
+
+.top-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.topbar h2{
+  margin:0;
+  color:var(--navy);
+  font-size:20px;
+}
+
+.hamburger{
+  font-size:21px;
+  color:var(--navy);
+  cursor:pointer;
+}
+
+.mobile-menu{
+  display:none;
+}
+
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.user-avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--navy);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+}
+
+.user-text{
+  text-align:right;
+}
+
+.user-text strong{
+  display:block;
+  font-size:13px;
+  color:var(--navy);
+}
+
+.user-text span{
+  font-size:11px;
+  color:var(--muted);
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content{
+  flex:1;
+  overflow-y:auto;
+  padding:22px 25px 35px;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.page-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:15px;
+  margin-bottom:18px;
+}
+
+.page-head h1{
+  font-size:21px;
+  color:var(--navy);
+  margin:0 0 4px;
+}
+
+.page-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:12px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  margin-bottom:16px;
+}
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+.filters{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:flex-end;
+}
+
+.filter-field{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.filter-field label{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:700;
+}
+
+.filters select,
+.filters input{
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:8px;
+  padding:10px 12px;
+  color:#27364a;
+  outline:none;
+  min-width:200px;
+}
+
+.filters select:focus,
+.filters input:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(23,105,170,.08);
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn{
+  border:none;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:11px;
+  color:#fff;
+  background:var(--navy2);
+  transition:.2s ease;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  opacity:.94;
+}
+
+.btn.search{
+  background:var(--navy);
+}
+
+.btn.print{
+  background:var(--green);
+}
+
+.btn.excel{
+  background:#1d6f42;
+}
+
+
+/* =========================================================
+   LEDGER HEADER
+========================================================= */
+
+.ledger-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  background:var(--navy);
+  color:white;
+  padding:17px 18px;
+  border-radius:11px;
+  margin-bottom:15px;
+}
+
+.ledger-header h3{
+  margin:0;
+  font-size:16px;
+}
+
+.ledger-header p{
+  margin:4px 0 0;
+  font-size:11px;
+  opacity:.85;
+}
+
+.header-actions{
+  display:flex;
+  gap:8px;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+
+th{
+  background:#f5f7fa;
+  color:#536174;
+  text-align:left;
+  padding:11px 10px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+
+td{
+  padding:11px 10px;
+  font-size:11px;
+  border-bottom:1px solid #eef1f4;
+  color:#344054;
+}
+
+tr:last-child td{
+  border-bottom:0;
+}
+
+.amount-debit{
+  color:var(--green);
+  font-weight:700;
+  text-align:right;
+}
+
+.amount-credit{
+  color:var(--red);
+  font-weight:700;
+  text-align:right;
+}
+
+.balance{
+  font-weight:700;
+  text-align:right;
+  color:var(--navy);
+}
+
+.totals-row{
+  background:#f4f7fb;
+  font-weight:800;
+}
+
+.totals-row td{
+  color:var(--navy);
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.error{
+  color:var(--red);
+  background:#ffe6e6;
+  padding:13px 15px;
+  border-radius:8px;
+  margin-bottom:15px;
+  font-size:12px;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty{
+  padding:30px 10px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+
+
+/* =========================================================
+   LOADER — SAME STYLE AS DASHBOARD
+========================================================= */
+
+#pageLoader{
+  position:fixed;
+  inset:0;
+  background:rgba(244,247,251,.92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  z-index:3000;
+}
+
+#pageLoader i{
+  font-size:42px;
+  color:var(--navy);
+  animation:spin 1s linear infinite;
+}
+
+#pageLoader p{
+  font-size:12px;
+  color:var(--muted);
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:992px){
+
+  .sidebar{
+    left:-270px;
+  }
+
+  .sidebar.open{
+    left:0;
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  .mobile-menu{
+    display:block;
+  }
+
+  .overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.4);
+    z-index:1050;
+  }
+
+  .overlay.show{
+    display:block;
+  }
+
+}
+
+@media(max-width:650px){
+
+  .content{
+    padding:15px;
+  }
+
+  .topbar{
+    padding:0 15px;
+  }
+
+  .user-text{
+    display:none;
+  }
+
+  .page-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .filters{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .filter-field{
+    width:100%;
+  }
+
+  .filters select,
+  .filters input{
+    width:100%;
+    min-width:0;
+  }
+
+  .filters .btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  .ledger-header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .header-actions{
+    width:100%;
+  }
+
+  .header-actions .btn{
+    flex:1;
+    justify-content:center;
+  }
+
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print{
+
+  body *{
+    visibility:hidden;
+  }
+
+  #printArea,
+  #printArea *{
+    visibility:visible;
+  }
+
+  #printArea{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    box-shadow:none;
+    border:none;
+  }
+
+  .sidebar,
+  .topbar,
+  .filters,
+  .btn,
+  .page-head,
+  #errorBox{
+    display:none!important;
+  }
+
+  th{
+    background:#001f3f!important;
+    color:white!important;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     OVERLAY
+===================================================== -->
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+    <h2>GREYSOL ACADEMY</h2>
+    <p id="portalRole">Accountant Portal</p>
+  </div>
+
+  <div class="menu">
+    <a href="accounting-dashboard.html">
+      <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+    </a>
+    <a href="staff-profile.html">
+      <i class="fa-solid fa-user"></i><span>Staff Profile</span>
+    </a>
+
+    <div class="section-label">Operations</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Sales & Receivables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="students.html"><i class="fa-solid fa-user-graduate"></i> Students / Customers</a>
+        <a href="quotations.html"><i class="fa-solid fa-file-signature"></i> Quotations</a>
+        <a href="invoice-list.html"><i class="fa-solid fa-file-invoice"></i> Invoices</a>
+        <a href="credit-notes.html"><i class="fa-solid fa-file-circle-minus"></i> Credit Notes</a>
+        <a href="receipts-list.html"><i class="fa-solid fa-money-bill-wave"></i> Customer Payments</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="accounts-receivable.html"><i class="fa-solid fa-hand-holding-dollar"></i> Accounts Receivable</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Receivables Aging</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-cart-shopping"></i><span>Purchases & Payables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="suppliers.html"><i class="fa-solid fa-truck-field"></i> Suppliers</a>
+        <a href="requisitions.html"><i class="fa-solid fa-file-circle-plus"></i> Purchase Requisitions</a>
+        <a href="requisition-create.html"><i class="fa-solid fa-plus"></i> Create Requisition</a>
+        <a href="purchase-orders.html"><i class="fa-solid fa-clipboard-list"></i> Purchase Orders</a>
+        <a href="goods-received.html"><i class="fa-solid fa-box-open"></i> Goods Received</a>
+        <a href="bills.html"><i class="fa-solid fa-file-invoice"></i> Bills</a>
+        <a href="supplier-payments.html"><i class="fa-solid fa-money-check-dollar"></i> Supplier Payments</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="accounts-payable.html"><i class="fa-solid fa-money-bill-transfer"></i> Accounts Payable</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Payables Aging</a>
+      </div>
+    </div>
+
+    <div class="section-label">Cash Management</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-building-columns"></i><span>Banking</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="bank-accounts.html"><i class="fa-solid fa-building-columns"></i> Bank Accounts</a>
+        <a href="cash-accounts.html"><i class="fa-solid fa-wallet"></i> Cash Accounts</a>
+        <a href="bank-transactions.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Bank Transactions</a>
+        <a href="bank-transfer.html"><i class="fa-solid fa-right-left"></i> Transfers</a>
+        <a href="bank-reconciliation.html"><i class="fa-solid fa-scale-balanced"></i> Bank Reconciliation</a>
+        <a href="reconciliation-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Reconciliation History</a>
+      </div>
+    </div>
+
+    <div class="section-label">General Accounting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-book"></i><span>Accounting</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="chart-of-accounts.html"><i class="fa-solid fa-list"></i> Chart of Accounts</a>
+        <a href="journal-entry.html"><i class="fa-solid fa-book-journal-whills"></i> Journal Entry</a>
+        <a href="journal-list.html"><i class="fa-solid fa-list-check"></i> Journal List</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="ledger.html" class="active"><i class="fa-solid fa-table-list"></i> Account Ledger</a>
+        <a href="#"><i class="fa-solid fa-repeat"></i> Recurring Journals</a>
+        <a href="#"><i class="fa-solid fa-lock"></i> Period Closing</a>
+        <a href="accounting-settings.html"><i class="fa-solid fa-gear"></i>Settings</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-receipt"></i><span>Expenses</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="expenses.html"><i class="fa-solid fa-file-circle-plus"></i> Expense Entry</a>
+        <a href="expense-list.html"><i class="fa-solid fa-list"></i> Expense List</a>
+        <a href="expense-categories.html"><i class="fa-solid fa-tags"></i> Expense Categories</a>
+        <a href="expense-claims.html"><i class="fa-solid fa-hand-holding-dollar"></i> Expense Claims</a>
+      </div>
+    </div>
+
+    <div class="section-label">People & Statutory</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-users-gear"></i><span>HR & Payroll</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="employees.html"><i class="fa-solid fa-users"></i> Employees</a>
+        <a href="#"><i class="fa-solid fa-user-tag"></i> Employee Categories</a>
+        <a href="attendance.html"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="payroll-settings.html"><i class="fa-solid fa-gears"></i> Payroll Settings</a>
+        <a href="payroll-run.html"><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</a>
+        <a href="payslips.html"><i class="fa-solid fa-file-invoice-dollar"></i> Payslips</a>
+        <a href="payroll-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Payroll History</a>
+        <a href="payroll-journal.html"><i class="fa-solid fa-book"></i> Payroll Journal</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-chart-column"></i> Payroll Reports</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-percent"></i><span>Taxes</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="vat.html"><i class="fa-solid fa-percent"></i> VAT</a>
+        <a href="vat-transactions.html"><i class="fa-solid fa-receipt"></i> VAT Transactions</a>
+        <a href="vat-return.html"><i class="fa-solid fa-file-circle-check"></i> VAT Return</a>
+        <a href="#"><i class="fa-solid fa-file-invoice"></i> Withholding Tax</a>
+        <a href="paye.html"><i class="fa-solid fa-user-shield"></i> PAYE</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-chart-column"></i> Tax Reports</a>
+      </div>
+    </div>
+
+    <div class="section-label">Reporting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-chart-pie"></i><span>Reports</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-user-clock"></i> AR Aging</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-file-circle-exclamation"></i> AP Aging</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="expense-report.html"><i class="fa-solid fa-receipt"></i> Expense Report</a>
+        <a href="revenue-report.html"><i class="fa-solid fa-arrow-trend-up"></i> Revenue Report</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-percent"></i> Tax Reports</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-users"></i> Payroll Reports</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+      </div>
+    </div>
+
+    <div class="section-label">Administration</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-user-shield"></i><span>Administration</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="userlist.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="#"><i class="fa-solid fa-key"></i> Roles & Permissions</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+        <a href="#"><i class="fa-solid fa-check-double"></i> Approval Workflows</a>
+        <a href="#"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="#"><i class="fa-solid fa-building"></i> Company Profile</a>
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> Financial Year</a>
+        <a href="#"><i class="fa-solid fa-calendar-check"></i> Accounting Periods</a>
+        <a href="#"><i class="fa-solid fa-percent"></i> Tax Settings</a>
+        <a href="#"><i class="fa-solid fa-hashtag"></i> Numbering</a>
+        <a href="#"><i class="fa-solid fa-sliders"></i> System Settings</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+    </a>
+  </div>
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+
+  <!-- TOPBAR -->
+
+  <header class="topbar">
+
+    <div class="top-left">
+
+      <i
+        class="fa-solid fa-bars hamburger mobile-menu"
+        onclick="toggleSidebar()">
+      </i>
+
+      <h2>Account Ledger</h2>
+
+    </div>
+
+
+    <div class="user-info">
+
+      <div class="user-text">
+
+        <strong id="staffName">Loading...</strong>
+
+        <span id="staffRole">Accountant</span>
+
+      </div>
+
+      <div class="user-avatar" id="avatar">
+        A
+      </div>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- CONTENT -->
+
+  <section class="content">
+
+
+    <!-- PAGE HEADING -->
+
+    <div class="page-head">
+
+      <div>
+
+        <h1>General Ledger</h1>
+
+        <p>
+          View detailed account transactions and running balances
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- ERROR -->
+
+    <div id="errorBox"></div>
+
+
+    <!-- FILTER CARD -->
+
+    <div class="card">
+
+      <div class="filters">
+
+
+        <div class="filter-field">
+
+          <label>Select Account</label>
+
+          <select id="accountSelect">
+
+            <option value="">
+              -- Loading Accounts --
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="filter-field">
+
+          <label>From Date</label>
+
+          <input
+            type="date"
+            id="fromDate">
+
+        </div>
+
+
+        <div class="filter-field">
+
+          <label>To Date</label>
+
+          <input
+            type="date"
+            id="toDate">
+
+        </div>
+
+
+        <button
+          class="btn search"
+          onclick="loadLedger()">
+
+          <i class="fa-solid fa-magnifying-glass"></i>
+
+          View Ledger
+
+        </button>
+
+
+      </div>
+
+    </div>
+
+
+    <!-- LEDGER RESULT -->
+
+    <div id="ledgerResult" style="display:none">
+
+
+      <div class="ledger-header">
+
+
+        <div>
+
+          <h3 id="ledgerAccountName">
+            Account Name
+          </h3>
+
+          <p id="ledgerAccountCode">
+            Code:
+          </p>
+
+          <p id="ledgerDateRange">
+            Period:
+          </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+          <button
+            class="btn excel"
+            onclick="exportToExcel()">
+
+            <i class="fa-solid fa-file-excel"></i>
+
+            Export Excel
+
+          </button>
+
+
+          <button
+            class="btn print"
+            onclick="printLedger()">
+
+            <i class="fa-solid fa-print"></i>
+
+            Print
+
+          </button>
+
+        </div>
+
+
+      </div>
+
+
+
+      <div class="card" id="printArea">
+
+
+        <div
+          style="
+            text-align:center;
+            margin-bottom:15px;
+          ">
+
+          <h2>GREYSOL ACADEMY</h2>
+
+          <h4>GENERAL LEDGER</h4>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+          <table id="ledgerTableExport">
+
+            <thead>
+
+              <tr>
+
+                <th>Date</th>
+
+                <th>Journal No</th>
+
+                <th>Description</th>
+
+                <th>Reference</th>
+
+                <th style="text-align:right">
+                  Debit
+                </th>
+
+                <th style="text-align:right">
+                  Credit
+                </th>
+
+                <th style="text-align:right">
+                  Balance
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody id="ledgerTable">
+
+              <tr>
+
+                <td
+                  colspan="7"
+                  class="empty">
+
+                  Select an account to view ledger
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  </section>
+
+</main>
+
+
+
+<!-- =====================================================
+     PAGE LOADER
+===================================================== -->
+
+<div id="pageLoader">
+
+  <i class="fa-solid fa-circle-notch"></i>
+
+  <p>Loading general ledger...</p>
+
+</div>
+
+
+
+<script type="module">
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const app = initializeApp({
+
+  apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",
+
+  projectId:"greysol-academy"
+
+});
+
+
+const db = getFirestore(app);
+
+
+
+/* =========================================================
+   LOGGED USER
+========================================================= */
+
+const loggedUser =
+  JSON.parse(localStorage.getItem("loggedUser"));
+
+const userRole =
+  (loggedUser?.role || "")
+  .toString()
+  .trim()
+  .toLowerCase();
+
+
+if(!loggedUser || userRole !== "accountant"){
+
+  alert(
+    "Access Denied. This page is for Accountants only."
+  );
+
+  window.location.href =
+    "staff-login.html";
+
+}
+
+
+document.getElementById("staffName").textContent =
+  loggedUser?.username || "Accountant";
+
+
+document.getElementById("staffRole").textContent =
+  loggedUser?.role || "Accountant";
+
+
+document.getElementById("portalRole").textContent =
+  (loggedUser?.role || "Accountant") +
+  " Portal";
+
+
+document.getElementById("avatar").textContent =
+  (loggedUser?.username || "A")
+  .charAt(0)
+  .toUpperCase();
+
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+document
+  .querySelectorAll(".menu-header")
+  .forEach(header => {
+
+    header.addEventListener("click", () => {
+
+      header
+        .parentElement
+        .classList
+        .toggle("active");
+
+    });
+
+  });
+
+
+function toggleSidebar(){
+
+  document
+    .getElementById("sidebar")
+    .classList
+    .toggle("open");
+
+  document
+    .getElementById("overlay")
+    .classList
+    .toggle("show");
+
+}
+
+window.toggleSidebar = toggleSidebar;
+
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+document
+  .getElementById("logoutBtn")
+  .addEventListener("click", e => {
+
+    e.preventDefault();
+
+    localStorage.removeItem("loggedUser");
+
+    window.location.href =
+      "staff-login.html";
+
+  });
+
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+let allAccounts = [];
+
+let allJournals = [];
+
+let currentTransactions = [];
+
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function showError(msg){
+
+  document.getElementById("errorBox").innerHTML = `
+
+    <div class="error">
+
+      <i class="fa-solid fa-triangle-exclamation"></i>
+
+      ${msg}
+
+    </div>
+
+  `;
+
+}
+
+
+function getField(obj,...keys){
+
+  for(const key of keys){
+
+    if(
+      obj[key] !== undefined &&
+      obj[key] !== null
+    ){
+
+      return obj[key];
+
+    }
+
+  }
+
+  return "";
+
+}
+
+
+/* =========================================================
+   DATE HELPER
+========================================================= */
+
+function getJournalDate(j){
+
+  try{
+
+    if(
+      j.date &&
+      typeof j.date.toDate === "function"
+    ){
+
+      return j.date.toDate();
+
+    }
+
+    if(
+      j.transactionDate &&
+      typeof j.transactionDate.toDate === "function"
+    ){
+
+      return j.transactionDate.toDate();
+
+    }
+
+    if(
+      j.postingDate &&
+      typeof j.postingDate.toDate === "function"
+    ){
+
+      return j.postingDate.toDate();
+
+    }
+
+    const raw =
+      j.date ||
+      j.transactionDate ||
+      j.postingDate;
+
+    const d = new Date(raw);
+
+    if(!isNaN(d.getTime())){
+
+      return d;
+
+    }
+
+  }catch(e){
+
+    console.warn(
+      "Unable to read journal date",
+      e
+    );
+
+  }
+
+  return null;
+
+}
+
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function init(){
+
+  try{
+
+
+    /* ---------------------------------------------
+       LOAD CHART OF ACCOUNTS
+    --------------------------------------------- */
+
+    const accSnap =
+      await getDocs(
+        collection(
+          db,
+          "chartOfAccounts"
+        )
+      );
+
+
+    allAccounts =
+      accSnap.docs.map(d => ({
+        id:d.id,
+        ...d.data()
+      }));
+
+
+    const select =
+      document.getElementById(
+        "accountSelect"
+      );
+
+
+    select.innerHTML = `
+
+      <option value="">
+        -- Select Account --
+      </option>
+
+    `;
+
+
+    allAccounts
+      .sort((a,b) =>
+        String(
+          getField(
+            a,
+            "code",
+            "accountCode",
+            "id"
+          )
+        ).localeCompare(
+          String(
+            getField(
+              b,
+              "code",
+              "accountCode",
+              "id"
+            )
+          )
+        )
+      )
+      .forEach(acc => {
+
+
+        const code =
+          getField(
+            acc,
+            "code",
+            "accountCode",
+            "id"
+          );
+
+
+        const name =
+          getField(
+            acc,
+            "name",
+            "accountName",
+            "description"
+          );
+
+
+        if(code && name){
+
+          select.innerHTML += `
+
+            <option value="${code}">
+              ${code} - ${name}
+            </option>
+
+          `;
+
+        }
+
+      });
+
+
+
+    /* ---------------------------------------------
+       LOAD JOURNAL ENTRIES
+    --------------------------------------------- */
+
+    const journalSnap =
+      await getDocs(
+        collection(
+          db,
+          "journalEntries"
+        )
+      );
+
+
+    allJournals =
+      journalSnap.docs.map(d => ({
+        id:d.id,
+        ...d.data()
+      }));
+
+
+
+    /* ---------------------------------------------
+       DEFAULT DATE RANGE
+    --------------------------------------------- */
+
+    const today =
+      new Date();
+
+
+    const startOfYear =
+      new Date(
+        today.getFullYear(),
+        0,
+        1
+      );
+
+
+    document.getElementById(
+      "fromDate"
+    ).value =
+      startOfYear
+        .toISOString()
+        .split("T")[0];
+
+
+    document.getElementById(
+      "toDate"
+    ).value =
+      today
+        .toISOString()
+        .split("T")[0];
+
+
+
+    /* ---------------------------------------------
+       CHECK URL FOR ACCOUNT
+       
+       Example:
+       ledger.html?account=1010
+    --------------------------------------------- */
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    const requestedAccount =
+      params.get("account");
+
+
+    if(requestedAccount){
+
+      const matchingAccount =
+        allAccounts.find(acc => {
+
+          const code =
+            getField(
+              acc,
+              "code",
+              "accountCode",
+              "id"
+            );
+
+          return String(code)
+            .trim()
+            ===
+            String(requestedAccount)
+            .trim();
+
+        });
+
+
+      if(matchingAccount){
+
+        const code =
+          getField(
+            matchingAccount,
+            "code",
+            "accountCode",
+            "id"
+          );
+
+
+        select.value = code;
+
+
+        /*
+         * Automatically load the ledger.
+         */
+        setTimeout(() => {
+
+          window.loadLedger();
+
+        },100);
+
+      }else{
+
+        showError(
+          "The requested account was not found in the Chart of Accounts."
+        );
+
+      }
+
+    }
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showError(
+      "Error loading data: " +
+      error.message
+    );
+
+  }finally{
+
+    document.getElementById(
+      "pageLoader"
+    ).style.display =
+      "none";
+
+  }
+
+}
+
+
+
+/* =========================================================
+   LOAD LEDGER
+========================================================= */
+
+window.loadLedger = () => {
+
+
+  const accountCode =
+    document.getElementById(
+      "accountSelect"
+    ).value;
+
+
+  const fromValue =
+    document.getElementById(
+      "fromDate"
+    ).value;
+
+
+  const toValue =
+    document.getElementById(
+      "toDate"
+    ).value;
+
+
+  if(!accountCode){
+
+    alert(
+      "Please select an account"
+    );
+
+    return;
+
+  }
+
+
+  if(!fromValue || !toValue){
+
+    alert(
+      "Please select both dates"
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * Use local dates rather than UTC
+   * so date filtering is consistent.
+   */
+
+  const fromDate =
+    new Date(
+      fromValue + "T00:00:00"
+    );
+
+
+  const toDate =
+    new Date(
+      toValue + "T23:59:59.999"
+    );
+
+
+
+  const account =
+    allAccounts.find(a =>
+      String(
+        getField(
+          a,
+          "code",
+          "accountCode",
+          "id"
+        )
+      ).trim()
+      ===
+      String(accountCode).trim()
+    );
+
+
+  if(!account){
+
+    alert(
+      "Selected account could not be found."
+    );
+
+    return;
+
+  }
+
+
+
+  document.getElementById(
+    "ledgerAccountName"
+  ).innerText =
+    getField(
+      account,
+      "name",
+      "accountName",
+      "description"
+    );
+
+
+  document.getElementById(
+    "ledgerAccountCode"
+  ).innerText =
+    `Code: ${accountCode} | Type: ${
+      getField(
+        account,
+        "type",
+        "accountType"
+      )
+    }`;
+
+
+  document.getElementById(
+    "ledgerDateRange"
+  ).innerText =
+    `Period: ${
+      fromDate.toLocaleDateString("en-GB")
+    } to ${
+      toDate.toLocaleDateString("en-GB")
+    }`;
+
+
+  document.getElementById(
+    "ledgerResult"
+  ).style.display =
+    "block";
+
+
+
+  /* ---------------------------------------------
+     FIND TRANSACTIONS
+  --------------------------------------------- */
+
+  let transactions = [];
+
+
+  allJournals.forEach(j => {
+
+
+    /*
+     * Ignore draft entries.
+     */
+
+    if(
+      String(
+        j.status || "posted"
+      ).toLowerCase()
+      ===
+      "draft"
+    ){
+
+      return;
+
+    }
+
+
+    const jDate =
+      getJournalDate(j);
+
+
+    if(!jDate){
+
+      return;
+
+    }
+
+
+    if(
+      jDate < fromDate ||
+      jDate > toDate
+    ){
+
+      return;
+
+    }
+
+
+    const lines =
+      Array.isArray(j.lines)
+        ? j.lines
+        : Array.isArray(j.entries)
+          ? j.entries
+          : [];
+
+
+    lines.forEach(line => {
+
+
+      const lineCode =
+        getField(
+          line,
+          "accountCode",
+          "code"
+        );
+
+
+      /*
+       * Primary match = account code
+       */
+
+      if(
+        String(lineCode).trim()
+        ===
+        String(accountCode).trim()
+      ){
+
+        transactions.push({
+
+          date:jDate,
+
+          journalNo:
+            j.journalNo ||
+            j.id,
+
+          description:
+            j.description ||
+            "",
+
+          reference:
+            j.reference ||
+            "",
+
+          debit:
+            Number(line.debit || 0),
+
+          credit:
+            Number(line.credit || 0)
+
+        });
+
+      }
+
+    });
+
+  });
+
+
+
+  /* ---------------------------------------------
+     SORT
+  --------------------------------------------- */
+
+  transactions.sort(
+    (a,b) =>
+      a.date - b.date
+  );
+
+
+  currentTransactions =
+    transactions;
+
+
+
+  /* ---------------------------------------------
+     RENDER
+  --------------------------------------------- */
+
+  let balance = 0;
+
+  let totalDebit = 0;
+
+  let totalCredit = 0;
+
+
+  const tbody =
+    document.getElementById(
+      "ledgerTable"
+    );
+
+
+  tbody.innerHTML = "";
+
+
+
+  if(!transactions.length){
+
+    tbody.innerHTML = `
+
+      <tr>
+
+        <td
+          colspan="7"
+          class="empty">
+
+          No transactions found for this account
+          within the selected period.
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+
+  transactions.forEach(t => {
+
+
+    balance +=
+      t.debit -
+      t.credit;
+
+
+    totalDebit +=
+      t.debit;
+
+
+    totalCredit +=
+      t.credit;
+
+
+    tbody.innerHTML += `
+
+      <tr>
+
+        <td>
+          ${t.date.toLocaleDateString("en-GB")}
+        </td>
+
+        <td>
+          ${t.journalNo}
+        </td>
+
+        <td>
+          ${t.description}
+        </td>
+
+        <td>
+          ${t.reference || "-"}
+        </td>
+
+        <td class="amount-debit">
+
+          ${
+            t.debit
+              ? "MWK " +
+                t.debit.toLocaleString()
+              : "-"
+          }
+
+        </td>
+
+        <td class="amount-credit">
+
+          ${
+            t.credit
+              ? "MWK " +
+                t.credit.toLocaleString()
+              : "-"
+          }
+
+        </td>
+
+        <td class="balance">
+
+          MWK ${balance.toLocaleString()}
+
+        </td>
+
+      </tr>
+
+    `;
+
+  });
+
+
+
+  /* ---------------------------------------------
+     TOTALS
+  --------------------------------------------- */
+
+  tbody.innerHTML += `
+
+    <tr class="totals-row">
+
+      <td colspan="4">
+        TOTALS
+      </td>
+
+      <td class="amount-debit">
+
+        MWK ${totalDebit.toLocaleString()}
+
+      </td>
+
+      <td class="amount-credit">
+
+        MWK ${totalCredit.toLocaleString()}
+
+      </td>
+
+      <td class="balance">
+
+        MWK ${balance.toLocaleString()}
+
+      </td>
+
+    </tr>
+
+  `;
+
+};
+
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+window.printLedger = () => {
+
+  window.print();
+
+};
+
+
+
+/* =========================================================
+   EXCEL EXPORT
+========================================================= */
+
+window.exportToExcel = () => {
+
+
+  if(
+    currentTransactions.length === 0
+  ){
+
+    alert(
+      "Please load a ledger first"
+    );
+
+    return;
+
+  }
+
+
+  const accountName =
+    document.getElementById(
+      "ledgerAccountName"
+    ).innerText;
+
+
+  const accountCode =
+    document.getElementById(
+      "ledgerAccountCode"
+    ).innerText;
+
+
+  const dateRange =
+    document.getElementById(
+      "ledgerDateRange"
+    ).innerText;
+
+
+
+  let data = [];
+
+
+  data.push([
+    "GREYSOL ACADEMY"
+  ]);
+
+
+  data.push([
+    "GENERAL LEDGER"
+  ]);
+
+
+  data.push([
+    accountName
+  ]);
+
+
+  data.push([
+    accountCode
+  ]);
+
+
+  data.push([
+    dateRange
+  ]);
+
+
+  data.push([]);
+
+
+  data.push([
+    "Date",
+    "Journal No",
+    "Description",
+    "Reference",
+    "Debit",
+    "Credit",
+    "Balance"
+  ]);
+
+
+
+  let balance = 0;
+
+  let totalDebit = 0;
+
+  let totalCredit = 0;
+
+
+
+  currentTransactions.forEach(t => {
+
+
+    balance +=
+      t.debit -
+      t.credit;
+
+
+    totalDebit +=
+      t.debit;
+
+
+    totalCredit +=
+      t.credit;
+
+
+    data.push([
+
+      t.date.toLocaleDateString("en-GB"),
+
+      t.journalNo,
+
+      t.description,
+
+      t.reference || "",
+
+      t.debit,
+
+      t.credit,
+
+      balance
+
+    ]);
+
+  });
+
+
+
+  data.push([]);
+
+
+  data.push([
+
+    "TOTALS",
+    "",
+    "",
+    "",
+    totalDebit,
+    totalCredit,
+    balance
+
+  ]);
+
+
+
+  const ws =
+    XLSX.utils.aoa_to_sheet(
+      data
+    );
+
+
+  ws["!cols"] = [
+
+    {wch:12},
+    {wch:15},
+    {wch:30},
+    {wch:20},
+    {wch:15},
+    {wch:15},
+    {wch:15}
+
+  ];
+
+
+
+  const wb =
+    XLSX.utils.book_new();
+
+
+  XLSX.utils.book_append_sheet(
+    wb,
+    ws,
+    "Ledger"
+  );
+
+
+
+  const selectedCode =
+    document.getElementById(
+      "accountSelect"
+    ).value;
+
+
+  const fileName =
+    `Ledger_${selectedCode}_${new Date()
+      .toISOString()
+      .split("T")[0]}.xlsx`;
+
+
+  XLSX.writeFile(
+    wb,
+    fileName
+  );
+
+};
+
+
+
+/* =========================================================
+   START
+========================================================= */
+
+init();
+
+</script>
+
+</body>
+</html>

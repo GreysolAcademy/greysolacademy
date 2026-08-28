@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expenses | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif}
+:root{
+  --navy:#001f3f;--navy2:#003366;--blue:#1769aa;--green:#1f9d55;
+  --red:#c0392b;--orange:#f39c12;--purple:#6f42c1;--teal:#008c95;
+  --light:#f4f7fb;--border:#e5e9ef;--muted:#6b7280;--white:#fff;
+}
+html,body{margin:0;width:100%;height:100%;background:var(--light)}
+body{overflow:hidden;color:#1f2937}
+
+/* SIDEBAR - EXACT FROM YOUR DASHBOARD */
+.sidebar{
+  width:270px;height:100vh;position:fixed;left:0;top:0;z-index:1100;
+  background:var(--navy);color:#fff;overflow-y:auto;transition:width.25s ease,left.25s ease;
+}
+.logo{padding:18px 15px;text-align:center;border-bottom:1px solid rgba(255,255,255,.14)}
+.logo img{width:66px;height:66px;object-fit:contain}
+.logo h2{font-size:17px;margin:8px 0 3px}
+.logo p{margin:0;font-size:12px;opacity:.7}
+.menu{padding:8px 0 20px}
+.section-label{padding:15px 24px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.1px;opacity:.5}
+.menu a,.menu-header{
+  display:flex;align-items:center;gap:13px;padding:12px 22px;color:#fff;
+  text-decoration:none;cursor:pointer;font-size:13px;min-height:46px;
+}
+.menu a i,.menu-header>i:first-child{width:18px;text-align:center}
+.menu a:hover,.menu-header:hover{background:rgba(255,255,255,.08)}
+.menu a.active{background:rgba(255,255,255,.13);border-left:4px solid var(--green);padding-left:18px}
+.arrow{margin-left:auto!important;width:auto!important;font-size:11px!important;transition:transform.25s ease}
+.submenu{max-height:0;overflow:hidden;background:rgba(0,0,0,.17);transition:max-height.3s ease}
+.menu-group.active .submenu{max-height:600px}
+.menu-group.active .arrow{transform:rotate(180deg)}
+.submenu a{padding-left:54px;font-size:12px}
+
+/* MAIN - EXACT FROM DASHBOARD */
+.main{margin-left:270px;width:calc(100% - 270px);height:100vh;display:flex;flex-direction:column;transition:margin-left.25s ease,width.25s ease}
+.topbar{
+  height:70px;flex:0 0 70px;background:#fff;display:flex;align-items:center;
+  justify-content:space-between;padding:0 25px;box-shadow:0 2px 10px rgba(0,0,0,.07);z-index:900
+}
+.top-left{display:flex;align-items:center;gap:14px}
+.topbar h2{margin:0;color:var(--navy);font-size:20px}
+.hamburger{font-size:21px;color:var(--navy);cursor:pointer}
+.mobile-menu{display:none}
+.user-info{display:flex;align-items:center;gap:12px}
+.user-avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.user-text{text-align:right}.user-text strong{display:block;font-size:13px;color:var(--navy)}.user-text span{font-size:11px;color:var(--muted)}
+.content{flex:1;overflow-y:auto;padding:22px 25px 35px}
+
+/* EXPENSE PAGE */
+.dashboard-head{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:18px}
+.dashboard-head h1{font-size:21px;color:var(--navy);margin:0 0 4px}
+.dashboard-head p{margin:0;color:var(--muted);font-size:12px}
+.btn-quick{background:var(--blue);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px}
+.btn-quick:hover{background:var(--navy2)}
+.btn{padding:6px 10px;border:none;border-radius:6px;cursor:pointer;font-size:12px}
+.btn-edit{background:var(--orange);color:white}
+.btn-danger{background:var(--red);color:white}
+
+.box{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.filters{display:flex;gap:12px;margin-bottom:15px}
+.filters input{border:1px solid var(--border);background:#fff;border-radius:8px;padding:9px 12px;color:#27364a;outline:none;flex:1}
+
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:#f5f7fa;color:#536174;text-align:left;padding:10px;font-size:10px;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--border)}
+td{padding:11px 10px;font-size:11px;border-bottom:1px solid #eef1f4}
+.badge{padding:4px 8px;border-radius:20px;font-size:9px;color:white;font-weight:700}
+.badge.posted{background:var(--green)}.badge.draft{background:var(--orange)}.badge.deleted{background:var(--red)}
+.amount{text-align:right;font-weight:700;color:var(--navy)}
+
+/* LOADER */
+#pageLoader{position:fixed;inset:0;background:rgba(244,247,251,.92);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:3000}
+#pageLoader i{font-size:42px;color:var(--navy);animation:spin 1s linear infinite}
+#pageLoader p{font-size:12px;color:var(--muted)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* OFFLINE NOTIFICATION */
+.connection-status{position:fixed;top:70px;left:270px;right:0;z-index:2001;padding:12px 20px;text-align:center;font-weight:700;font-size:12px;color:white;transform:translateY(-100%);transition:transform.3s ease}
+.connection-status.show{transform:translateY(0)}
+.connection-status.offline{background:var(--red)}
+.connection-status.online{background:var(--green)}
+
+/* MOBILE */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1050}
+.overlay.show{display:block}
+@media(max-width:1100px){.connection-status{left:0}}
+@media(max-width:992px){
+ .sidebar{left:-270px}.sidebar.open{left:0}
+ .main{margin-left:0;width:100%}
+ .mobile-menu{display:block}
+}
+</style>
+</head>
+<body>
+<div class="connection-status" id="connectionStatus"></div>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- EXACT SIDEBAR FROM YOUR DASHBOARD -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+    <h2>GREYSOL ACADEMY</h2>
+    <p id="portalRole">Accountant Portal</p>
+  </div>
+
+  <div class="menu">
+    <a href="accounting-dashboard.html">
+      <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+    </a>
+
+    <div class="section-label">Operations</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Sales & Receivables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="students.html"><i class="fa-solid fa-user-graduate"></i> Students / Customers</a>
+        <a href="quotations.html"><i class="fa-solid fa-file-signature"></i> Quotations</a>
+        <a href="invoice-list.html"><i class="fa-solid fa-file-invoice"></i> Invoices</a>
+        <a href="credit-notes.html"><i class="fa-solid fa-file-circle-minus"></i> Credit Notes</a>
+        <a href="receipts-list.html"><i class="fa-solid fa-money-bill-wave"></i> Customer Payments</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="accounts-receivable.html"><i class="fa-solid fa-hand-holding-dollar"></i> Accounts Receivable</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Receivables Aging</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-cart-shopping"></i><span>Purchases & Payables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="suppliers.html"><i class="fa-solid fa-truck-field"></i> Suppliers</a>
+        <a href="requisitions.html"><i class="fa-solid fa-file-circle-plus"></i> Purchase Requisitions</a>
+        <a href="requisition-create.html"><i class="fa-solid fa-plus"></i> Create Requisition</a>
+        <a href="purchase-orders.html"><i class="fa-solid fa-clipboard-list"></i> Purchase Orders</a>
+        <a href="goods-received.html"><i class="fa-solid fa-box-open"></i> Goods Received</a>
+        <a href="bills.html"><i class="fa-solid fa-file-invoice"></i> Bills</a>
+        <a href="supplier-payments.html"><i class="fa-solid fa-money-check-dollar"></i> Supplier Payments</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="accounts-payable.html"><i class="fa-solid fa-money-bill-transfer"></i> Accounts Payable</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Payables Aging</a>
+      </div>
+    </div>
+
+    <div class="section-label">Cash Management</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-building-columns"></i><span>Banking</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="bank-accounts.html"><i class="fa-solid fa-building-columns"></i> Bank Accounts</a>
+        <a href="cash-accounts.html"><i class="fa-solid fa-wallet"></i> Cash Accounts</a>
+        <a href="bank-transactions.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Bank Transactions</a>
+        <a href="bank-transfer.html"><i class="fa-solid fa-right-left"></i> Transfers</a>
+        <a href="bank-reconciliation.html"><i class="fa-solid fa-scale-balanced"></i> Bank Reconciliation</a>
+        <a href="reconciliation-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Reconciliation History</a>
+      </div>
+    </div>
+
+    <div class="section-label">General Accounting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-book"></i><span>Accounting</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="chart-of-accounts.html"><i class="fa-solid fa-list"></i> Chart of Accounts</a>
+        <a href="journal-entry.html"><i class="fa-solid fa-book-journal-whills"></i> Journal Entry</a>
+        <a href="journal-list.html"><i class="fa-solid fa-list-check"></i> Journal List</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="ledger.html"><i class="fa-solid fa-table-list"></i> Account Ledger</a>
+        <a href="#"><i class="fa-solid fa-repeat"></i> Recurring Journals</a>
+        <a href="#"><i class="fa-solid fa-lock"></i> Period Closing</a>
+        <a href="accounting-settings.html"><i class="fa-solid fa-gear"></i>Settings</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-receipt"></i><span>Expenses</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="expenses.html"><i class="fa-solid fa-file-circle-plus"></i> Expense Entry</a>
+        <a href="expense-list.html" class="active"><i class="fa-solid fa-list"></i> Expense List</a>
+        <a href="expense-categories.html"><i class="fa-solid fa-tags"></i> Expense Categories</a>
+        <a href="expense-claims.html"><i class="fa-solid fa-hand-holding-dollar"></i> Expense Claims</a>
+      </div>
+    </div>
+
+    <div class="section-label">People & Statutory</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-users-gear"></i><span>HR & Payroll</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="employees.html"><i class="fa-solid fa-users"></i> Employees</a>
+        <a href="#"><i class="fa-solid fa-user-tag"></i> Employee Categories</a>
+        <a href="attendance.html"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="payroll-settings.html"><i class="fa-solid fa-gears"></i> Payroll Settings</a>
+        <a href="payroll-run.html"><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</a>
+        <a href="payslips.html"><i class="fa-solid fa-file-invoice-dollar"></i> Payslips</a>
+        <a href="payroll-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Payroll History</a>
+        <a href="payroll-journal.html"><i class="fa-solid fa-book"></i> Payroll Journal</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-chart-column"></i> Payroll Reports</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-percent"></i><span>Taxes</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="vat.html"><i class="fa-solid fa-percent"></i> VAT</a>
+        <a href="vat-transactions.html"><i class="fa-solid fa-receipt"></i> VAT Transactions</a>
+        <a href="vat-return.html"><i class="fa-solid fa-file-circle-check"></i> VAT Return</a>
+        <a href="#"><i class="fa-solid fa-file-invoice"></i> Withholding Tax</a>
+        <a href="paye.html"><i class="fa-solid fa-user-shield"></i> PAYE</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-chart-column"></i> Tax Reports</a>
+      </div>
+    </div>
+
+    <div class="section-label">Reporting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-chart-pie"></i><span>Reports</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-user-clock"></i> AR Aging</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-file-circle-exclamation"></i> AP Aging</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="expense-report.html"><i class="fa-solid fa-receipt"></i> Expense Report</a>
+        <a href="revenue-report.html"><i class="fa-solid fa-arrow-trend-up"></i> Revenue Report</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-percent"></i> Tax Reports</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-users"></i> Payroll Reports</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+      </div>
+    </div>
+
+    <div class="section-label">Administration</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-user-shield"></i><span>Administration</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="userlist.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="#"><i class="fa-solid fa-key"></i> Roles & Permissions</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+        <a href="#"><i class="fa-solid fa-check-double"></i> Approval Workflows</a>
+        <a href="#"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="#"><i class="fa-solid fa-building"></i> Company Profile</a>
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> Financial Year</a>
+        <a href="#"><i class="fa-solid fa-calendar-check"></i> Accounting Periods</a>
+        <a href="#"><i class="fa-solid fa-percent"></i> Tax Settings</a>
+        <a href="#"><i class="fa-solid fa-hashtag"></i> Numbering</a>
+        <a href="#"><i class="fa-solid fa-sliders"></i> System Settings</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+  <!-- EXACT TOPBAR FROM YOUR DASHBOARD -->
+  <header class="topbar">
+    <div class="top-left">
+      <i class="fa-solid fa-bars hamburger mobile-menu" onclick="toggleSidebar()"></i>
+      <h2 id="pageTitle">Expense List</h2>
+    </div>
+    <div class="user-info">
+      <button class="btn-quick" id="toggleDeletedBtn" onclick="toggleDeleted()"><i class="fa-solid fa-trash"></i> Deleted Expenses</button>
+      <button class="btn-quick" onclick="window.location.href='expenses.html'"><i class="fa-solid fa-circle-plus"></i> Add Expense</button>
+      <div class="user-text"><strong id="staffName">Loading...</strong><span id="staffRole">Accountant</span></div>
+      <div class="user-avatar" id="avatar">A</div>
+    </div>
+  </header>
+
+  <section class="content">
+    <div id="pageLoader"><i class="fa-solid fa-circle-notch"></i><p>Loading Expenses...</p></div>
+
+    <div class="box">
+      <div class="filters">
+        <input type="text" id="searchInput" placeholder="Search by Ref, Supplier, Description" onkeyup="renderTable()">
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Ref</th>
+              <th>Date</th>
+              <th>Supplier</th>
+              <th>Description</th>
+              <th style="text-align:right">Amount</th>
+              <th>Status</th>
+              <th>Added By</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="expenseTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+// ROLE CHECK + USER INFO
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+if(!loggedUser || loggedUser.role !== "Accountant"){
+  alert("Access Denied. Accountants Only.");
+  window.location.href="staff-login.html";
+}
+document.getElementById("staffName").textContent = loggedUser?.username || "Accountant";
+document.getElementById("staffRole").textContent = loggedUser?.role || "Accountant";
+document.getElementById("portalRole").textContent = (loggedUser?.role || "Accountant") + " Portal";
+document.getElementById("avatar").textContent = (loggedUser?.username || "A").charAt(0).toUpperCase();
+
+// SIDEBAR JS - EXACT FROM DASHBOARD
+document.querySelectorAll(".menu-header").forEach(header=>{
+  header.addEventListener("click",()=>header.parentElement.classList.toggle("active"));
+});
+document.getElementById("logoutBtn").addEventListener("click",e=>{
+  e.preventDefault();localStorage.removeItem("loggedUser");window.location.href="staff-login.html";
+});
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+}
+
+let allExpenses = [];
+let allSuppliers = [];
+let showDeleted = false;
+
+const fmt = n => "MWK " + Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2})
+
+// OFFLINE CHECK
+const statusBar = document.getElementById("connectionStatus");
+function showStatus(type, msg){
+  statusBar.className = `connection-status ${type} show`;
+  statusBar.innerHTML = msg;
+  if(type === 'online'){ setTimeout(()=>{statusBar.classList.remove("show")}, 3000); }
+}
+function updateConnectionStatus(){
+  const online = navigator.onLine;
+  if(!online){ showStatus('offline', `<i class="fa-solid fa-triangle-exclamation"></i> No internet connection. Cannot save`); }
+}
+window.addEventListener('online', updateConnectionStatus);
+window.addEventListener('offline', updateConnectionStatus);
+setInterval(updateConnectionStatus, 5000);
+updateConnectionStatus();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, updateDoc, doc, addDoc, query, orderBy, limit, Timestamp, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",projectId:"greysol-academy"});
+const db = getFirestore(app);
+
+// LOAD DATA
+async function loadAll(){
+  if(!navigator.onLine){ alert("You are offline. Cannot load data."); document.getElementById("pageLoader").style.display="none"; return; }
+  const [expSnap, supSnap] = await Promise.all([
+    getDocs(query(collection(db,"expenses"), orderBy("date","desc"))),
+    getDocs(collection(db,"suppliers"))
+  ]);
+  allExpenses = expSnap.docs.map(d=>({id:d.id,...d.data()}));
+  allSuppliers = supSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+  renderTable();
+  document.getElementById("pageLoader").style.display="none";
+}
+loadAll();
+
+// SAFE GENERATE JOURNAL NO
+async function generateJournalNo(){
+  const q = query(collection(db,"journalEntries"), orderBy("createdAt","desc"), limit(50));
+  const snap = await getDocs(q);
+  let number = 1;
+  for(const d of snap.docs){
+    const data = d.data();
+    if(data.journalNo && typeof data.journalNo === 'string' && data.journalNo.startsWith("JV")){
+      const num = parseInt(data.journalNo.replace("JV","")) || 0;
+      number = num + 1;
+      break;
+    }
+  }
+  return "JV" + String(number).padStart(5,"0");
+}
+
+// TOGGLE DELETED
+window.toggleDeleted = function(){
+  showDeleted =!showDeleted;
+  document.getElementById("pageTitle").innerText = showDeleted? "Deleted Expenses" : "Expense List";
+  document.getElementById("toggleDeletedBtn").innerHTML = showDeleted? `<i class="fa-solid fa-list"></i> Active Expenses` : `<i class="fa-solid fa-trash"></i> Deleted Expenses`;
+  renderTable();
+}
+
+window.renderTable = function(){
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  let filtered = allExpenses.filter(e=>{
+    const matchStatus = showDeleted? e.status==="deleted" : e.status!=="deleted";
+    const sup = allSuppliers.find(s=>s.id===e.supplierId);
+    const matchSearch =!search ||
+      (e.reference||"").toLowerCase().includes(search) ||
+      (e.description||"").toLowerCase().includes(search) ||
+      (sup?.supplierCode||"").toLowerCase().includes(search);
+    return matchStatus && matchSearch;
+  });
+
+  document.getElementById("expenseTable").innerHTML = filtered.map(e=>{
+    const sup = allSuppliers.find(s=>s.id===e.supplierId);
+    return `
+    <tr>
+      <td><b>${e.reference}</b></td>
+      <td>${new Date(e.date).toLocaleDateString("en-GB")}</td>
+      <td>${sup? sup.supplierCode : '-'}</td>
+      <td>${e.description}</td>
+      <td class="amount">${fmt(e.total)}</td>
+      <td><span class="badge ${e.status}">${e.status.toUpperCase()}</span></td>
+      <td>${e.addedBy || '-'}</td>
+      <td>
+        ${e.status!=="deleted"? 
+        `<button class="btn btn-edit" onclick="window.location.href='expense-form.html?id=${e.id}'"><i class="fa-solid fa-pen"></i></button>
+        <button class="btn btn-danger" onclick="deleteExpense('${e.id}')"><i class="fa-solid fa-trash"></i></button>` :
+        `<span>Deleted by: ${e.deletedBy || '-'}</span>`}
+      </td>
+    </tr>
+  `}).join("") || `<tr><td colspan="8" style="text-align:center">No expenses found</td></tr>`;
+}
+
+// DELETE = REVERSAL
+window.deleteExpense = async function(id){
+  if(!navigator.onLine){ alert("You are offline. Cannot delete."); return; }
+  if(!confirm("Delete this expense? A reversal journal will be created.")) return;
+  
+  const e = allExpenses.find(x=>x.id===id);
+  try{
+    if(e.journalId){
+      const snap = await getDocs(collection(db,"journalEntries"));
+      const orig = snap.docs.find(d=>d.id===e.journalId)?.data();
+      if(orig){
+        const reversalLines = orig.lines.map(l=>({accountCode:l.accountCode, accountName:l.accountName, debit:l.credit, credit:l.debit}));
+        const journalNo = await generateJournalNo();
+        await addDoc(collection(db,"journalEntries"),{
+          journalNo: journalNo,
+          date: Timestamp.now(),
+          reference: `REV-${orig.reference}`,
+          description: `Reversal of ${orig.reference}`,
+          lines: reversalLines,
+          totalDebit: orig.totalCredit,
+          totalCredit: orig.totalDebit,
+          source: "Expense Reversal",
+          sourceId: id,
+          createdBy: loggedUser.username,
+          createdAt: Timestamp.now(),
+          postedBy: loggedUser.username,
+          postedAt: Timestamp.now()
+        });
+      }
+    }
+    await updateDoc(doc(db,"expenses",id),{status:"deleted", deletedBy: loggedUser.username, deletedAt: serverTimestamp()});
+    alert("Expense Deleted and Reversed");
+    loadAll();
+  }catch(err){
+    alert("Error: " + err.message);
+    console.error(err);
+  }
+}
+</script>
+</body>
+</html>

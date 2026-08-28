@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif}
+:root{
+  --navy:#001f3f;--navy2:#003366;--green:#1f9d55;
+  --red:#c0392b;--light:#f4f7fb;--border:#e5e9ef;--muted:#6b7280;--white:#fff;
+}
+html,body{margin:0;width:100%;height:100%;background:var(--light)}
+body{color:#1f2937}
+
+/* TOPBAR ONLY */
+.topbar{
+  height:70px;background:#fff;display:flex;align-items:center;
+  justify-content:space-between;padding:0 25px;box-shadow:0 2px 10px rgba(0,0,0,.07);z-index:900;position:sticky;top:0
+}
+.top-left{display:flex;align-items:center;gap:14px}
+.back-btn{background:var(--navy);color:#fff;border:0;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600}
+.back-btn:hover{background:var(--navy2)}
+.topbar h2{margin:0;color:var(--navy);font-size:20px}
+.user-info{display:flex;align-items:center;gap:12px}
+.user-avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.user-text{text-align:right}.user-text strong{display:block;font-size:13px;color:var(--navy)}.user-text span{font-size:11px;color:var(--muted)}
+.content{padding:22px 25px 35px;max-width:1100px;margin:0 auto}
+
+/* PROFILE CARD */
+.profile-grid{display:grid;grid-template-columns:300px 1fr;gap:20px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
+.card-header h3{margin:0;color:var(--navy);font-size:15px}
+.profile-avatar{width:120px;height:120px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:700;margin:0 auto 15px}
+.input-group{margin-bottom:15px}
+.input-group label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
+.input-group input{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:13px}
+.btn{background:var(--navy);color:#fff;border:0;padding:12px 20px;border-radius:8px;cursor:pointer;font-weight:700;width:100%}
+.btn:hover{background:var(--navy2)}
+.btn-green{background:var(--green)}
+.btn-red{background:var(--red)}
+.alert-success{padding:10px;border-radius:8px;background:#e8f7ef;color:#187844;margin-bottom:10px;display:none}
+.alert-error{padding:10px;border-radius:8px;background:#fbeceb;color:#c0392b;margin-bottom:10px;display:none}
+
+/* PASSWORD MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-box{background:#fff;border-radius:12px;padding:25px;width:400px;max-width:90%}
+.modal-box h3{margin:0 0 15px;color:var(--navy)}
+.input-wrap{position:relative}
+.input-wrap i{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted)}
+
+/* LOADER */
+#pageLoader{position:fixed;inset:0;background:rgba(244,247,251,.92);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:3000}
+#pageLoader i{font-size:42px;color:var(--navy);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* MOBILE */
+@media(max-width:992px){
+ .profile-grid{grid-template-columns:1fr}
+ .content{padding:15px}
+ .topbar{padding:0 15px}
+ .user-text{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="top-left">
+    <button class="back-btn" id="backBtn"><i class="fa-solid fa-arrow-left"></i> Back</button>
+    <h2>My Profile</h2>
+  </div>
+  <div class="user-info">
+    <div class="user-text"><strong id="staffName">Loading...</strong><span id="staffRole">Staff</span></div>
+    <div class="user-avatar" id="avatar">S</div>
+  </div>
+</header>
+
+<section class="content">
+  <div class="profile-grid">
+
+    <div class="card">
+      <div style="text-align:center">
+        <div class="profile-avatar" id="avatarBig">S</div>
+        <h3 id="profileFullName">Staff Name</h3>
+        <p style="color:var(--muted);margin:0 0 15px">ID: <b id="profileID"></b></p>
+      </div>
+      <button class="btn" onclick="openPassModal()"><i class="fa-solid fa-lock"></i> Change Password</button>
+      <button class="btn btn-red" style="margin-top:10px" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>Personal & Contact Information</h3></div>
+      <div class="alert-success" id="successMsg"><i class="fa-solid fa-circle-check"></i> <span id="successText"></span></div>
+      <div class="alert-error" id="errorMsg"><i class="fa-solid fa-circle-xmark"></i> <span id="errorText"></span></div>
+
+      <form id="profileForm">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+          <div class="input-group">
+            <label>First Name</label>
+            <input type="text" id="firstName" required>
+          </div>
+          <div class="input-group">
+            <label>Surname</label>
+            <input type="text" id="surname" required>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+          <div class="input-group">
+            <label>Staff ID</label>
+            <input type="text" id="staffID" readonly style="background:#f5f7fa">
+          </div>
+          <div class="input-group">
+            <label>Role</label>
+            <input type="text" id="role" readonly style="background:#f5f7fa">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" id="username" readonly style="background:#f5f7fa">
+        </div>
+        <div class="input-group">
+          <label>Phone Number</label>
+          <input type="tel" id="phone">
+        </div>
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" id="email">
+        </div>
+        <div class="input-group">
+          <label>Residential Address</label>
+          <input type="text" id="address">
+        </div>
+        <button type="submit" class="btn btn-green" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- PASSWORD MODAL -->
+<div class="modal" id="passModal">
+  <div class="modal-box">
+    <h3><i class="fa-solid fa-lock"></i> Change Password</h3>
+    <div class="alert-success" id="modalSuccessMsg" style="display:none"><i class="fa-solid fa-circle-check"></i> <span id="modalSuccessText"></span></div>
+    <div class="alert-error" id="modalErrorMsg" style="display:none"><i class="fa-solid fa-circle-xmark"></i> <span id="modalErrorText"></span></div>
+    <form id="passwordForm">
+      <div class="input-group">
+        <label>Current Password</label>
+        <div class="input-wrap">
+          <input type="password" id="currentPassword" required>
+          <i class="fa-solid fa-eye" onclick="togglePass('currentPassword',this)"></i>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>New Password</label>
+        <div class="input-wrap">
+          <input type="password" id="newPassword" required>
+          <i class="fa-solid fa-eye" onclick="togglePass('newPassword',this)"></i>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Confirm New Password</label>
+        <div class="input-wrap">
+          <input type="password" id="confirmPassword" required>
+          <i class="fa-solid fa-eye" onclick="togglePass('confirmPassword',this)"></i>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button type="button" class="btn" style="background:#999" onclick="closePassModal()">Cancel</button>
+        <button type="submit" class="btn btn-green" id="passBtn"><i class="fa-solid fa-lock"></i> Update Password</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="pageLoader">
+  <i class="fa-solid fa-circle-notch"></i>
+  <p>Loading profile...</p>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey: "AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",authDomain: "greysol-academy.firebaseapp.com",projectId: "greysol-academy"});
+const db = getFirestore(app);
+
+let loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+const LOGIN_PAGE = "staff-login.html";
+let userDocId = null;
+let currentPasswordFromDB = "";
+let staffData = {}; // this will hold full data from firestore
+
+if(!loggedUser){ window.location.href = LOGIN_PAGE; }
+
+const staffID = loggedUser.staffID;
+
+// BACK BUTTON
+document.getElementById("backBtn").onclick = () => {
+  if(document.referrer && document.referrer.includes(window.location.hostname)){
+    window.history.back();
+  }else{
+    if(loggedUser.role === "Administrator") window.location.href = "admin-dashboard.html";
+    else if(loggedUser.role === "Accountant" || loggedUser.role === "Bursar") window.location.href = "accounting-dashboard.html";
+    else if(loggedUser.role === "Teacher") window.location.href = "teacher-dashboard.html";
+    else window.location.href = "staff-dashboard.html";
+  }
+}
+
+async function logout(){
+  localStorage.removeItem("loggedUser");
+  window.location.href = LOGIN_PAGE;
+}
+document.getElementById("logoutBtn").onclick = logout;
+
+// LOAD DATA FROM FIRESTORE - THIS IS THE FIX
+async function loadStaffData(){
+  try{
+    document.getElementById("pageLoader").style.display = "flex";
+
+    // 1. GET FULL DATA FROM STAFF COLLECTION
+    const staffRef = doc(db, "staff", staffID);
+    const snap = await getDoc(staffRef);
+
+    if(!snap.exists()){
+      alert("Staff record not found");
+      return;
+    }
+    staffData = snap.data();
+
+    // 2. FILL ALL FIELDS FROM FIRESTORE
+    const fullName = `${staffData.firstName || ""} ${staffData.surname || ""}`.trim();
+    const firstLetter = (staffData.firstName || "S").charAt(0).toUpperCase();
+
+    document.getElementById("staffName").textContent = fullName;
+    document.getElementById("staffRole").textContent = staffData.role || "Staff";
+    document.getElementById("avatar").textContent = firstLetter;
+    document.getElementById("avatarBig").textContent = firstLetter;
+
+    document.getElementById("profileFullName").innerText = fullName;
+    document.getElementById("profileID").innerText = staffData.staffID || staffID;
+    document.getElementById("staffID").value = staffData.staffID || staffID;
+    document.getElementById("firstName").value = staffData.firstName || "";
+    document.getElementById("surname").value = staffData.surname || "";
+    document.getElementById("role").value = staffData.role || "";
+    document.getElementById("username").value = staffData.username || "";
+    document.getElementById("phone").value = staffData.phone || "";
+    document.getElementById("email").value = staffData.email || "";
+    document.getElementById("address").value = staffData.address || "";
+
+    // 3. GET PASSWORD FROM USERS COLLECTION
+    const q = query(collection(db,"users"), where("username","==",staffData.username));
+    const userSnap = await getDocs(q);
+    if(!userSnap.empty){
+      userDocId = userSnap.docs[0].id;
+      currentPasswordFromDB = userSnap.docs[0].data().password || "";
+    }
+
+  }catch(err){ console.error(err); alert(err.message); }
+  finally{ document.getElementById("pageLoader").style.display = "none"; }
+}
+loadStaffData();
+
+// UPDATE PROFILE
+document.getElementById("profileForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  document.getElementById("saveBtn").disabled = true;
+  document.getElementById("saveBtn").innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+  document.getElementById("successMsg").style.display = "none";
+  document.getElementById("errorMsg").style.display = "none";
+
+  try{
+    const updatedData = {
+      firstName: document.getElementById("firstName").value.trim(),
+      surname: document.getElementById("surname").value.trim(),
+      phone: document.getElementById("phone").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      address: document.getElementById("address").value.trim(),
+      updatedAt: serverTimestamp()
+    };
+    await updateDoc(doc(db, "staff", staffID), updatedData);
+
+    // update localStorage too
+    loggedUser = {...loggedUser,...updatedData};
+    localStorage.setItem("loggedUser", JSON.stringify(loggedUser));
+
+    const fullName = `${updatedData.firstName} ${updatedData.surname}`.trim();
+    document.getElementById("staffName").textContent = fullName;
+    document.getElementById("profileFullName").textContent = fullName;
+    document.getElementById("avatar").textContent = (updatedData.firstName || "S").charAt(0).toUpperCase();
+    document.getElementById("avatarBig").textContent = (updatedData.firstName || "S").charAt(0).toUpperCase();
+    showMsg("success", "Profile updated successfully!");
+  }catch(err){ showMsg("error", err.message); }
+  finally{ document.getElementById("saveBtn").disabled = false; document.getElementById("saveBtn").innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes'; }
+});
+
+// PASSWORD MODAL
+window.openPassModal = () => {
+  document.getElementById("passModal").classList.add("show");
+  document.getElementById("passwordForm").reset();
+  document.getElementById("modalErrorMsg").style.display = "none";
+  document.getElementById("modalSuccessMsg").style.display = "none";
+}
+window.closePassModal = () => {
+  document.getElementById("passModal").classList.remove("show");
+}
+window.onclick = (e) => { if(e.target.id === "passModal") closePassModal(); }
+window.togglePass = (id, icon) => {
+  const input = document.getElementById(id);
+  input.type = input.type === "password"? "text" : "password";
+  icon.classList.toggle("fa-eye-slash");
+}
+
+function showMsg(type, text){
+  document.getElementById(type+"Msg").style.display = "block";
+  document.getElementById(type+"Text").innerText = text;
+  setTimeout(()=>{ document.getElementById(type+"Msg").style.display = "none"; }, 4000);
+}
+function showModalMsg(type, text){
+  document.getElementById("modal"+type+"Msg").style.display = "block";
+  document.getElementById("modal"+type+"Text").innerText = text;
+}
+
+// CHANGE PASSWORD
+document.getElementById("passwordForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const currentPass = document.getElementById("currentPassword").value;
+  const newPass = document.getElementById("newPassword").value;
+  const confirmPass = document.getElementById("confirmPassword").value;
+
+  document.getElementById("modalErrorMsg").style.display = "none";
+  document.getElementById("modalSuccessMsg").style.display = "none";
+
+  if(!userDocId){ showModalMsg("Error", "User account not found. Contact admin."); return; }
+  if(currentPass!== currentPasswordFromDB){ showModalMsg("Error", "Current password is incorrect"); return; }
+  if(newPass!== confirmPass){ showModalMsg("Error", "New passwords do not match"); return; }
+  if(newPass.length < 4){ showModalMsg("Error", "Password is too short. Min 4 characters"); return; }
+
+  document.getElementById("passBtn").disabled = true;
+  document.getElementById("passBtn").innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+
+  try{
+    await updateDoc(doc(db,"users",userDocId),{
+      password: newPass,
+      updatedAt: serverTimestamp()
+    });
+    currentPasswordFromDB = newPass;
+    showModalMsg("Success", "Password updated successfully!");
+    document.getElementById("passwordForm").reset();
+    setTimeout(()=>{ closePassModal(); }, 2000);
+  }catch(err){ showModalMsg("Error", err.message); }
+  finally{
+    document.getElementById("passBtn").disabled = false;
+    document.getElementById("passBtn").innerHTML = '<i class="fa-solid fa-lock"></i> Update Password';
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Bill | Greysol Academy</title>
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif}
+:root{
+  --navy:#001f3f;--navy2:#003366;--blue:#1769aa;--green:#1f9d55;
+  --red:#c0392b;--orange:#f39c12;--purple:#6f42c1;--teal:#008c95;
+  --light:#f4f7fb;--border:#e5e9ef;--muted:#6b7280;--white:#fff;
+}
+html,body{margin:0;width:100%;height:100%;background:var(--light)}
+body{overflow:hidden;color:#1f2937}
+
+/* SIDEBAR - EXACT FROM DASHBOARD */
+.sidebar{
+  width:270px;height:100vh;position:fixed;left:0;top:0;z-index:1100;
+  background:var(--navy);color:#fff;overflow-y:auto;transition:width .25s ease,left .25s ease;
+}
+.logo{padding:18px 15px;text-align:center;border-bottom:1px solid rgba(255,255,255,.14)}
+.logo img{width:66px;height:66px;object-fit:contain}
+.logo h2{font-size:17px;margin:8px 0 3px}
+.logo p{margin:0;font-size:12px;opacity:.7}
+.menu{padding:8px 0 20px}
+.section-label{padding:15px 24px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.1px;opacity:.5}
+.menu a,.menu-header{
+  display:flex;align-items:center;gap:13px;padding:12px 22px;color:#fff;
+  text-decoration:none;cursor:pointer;font-size:13px;min-height:46px;
+}
+.menu a i,.menu-header>i:first-child{width:18px;text-align:center}
+.menu a:hover,.menu-header:hover{background:rgba(255,255,255,.08)}
+.menu a.active{background:rgba(255,255,255,.13);border-left:4px solid var(--green);padding-left:18px}
+.arrow{margin-left:auto!important;width:auto!important;font-size:11px!important;transition:transform .25s ease}
+.submenu{max-height:0;overflow:hidden;background:rgba(0,0,0,.17);transition:max-height .3s ease}
+.menu-group.active .submenu{max-height:600px}
+.menu-group.active .arrow{transform:rotate(180deg)}
+.submenu a{padding-left:54px;font-size:12px}
+
+/* MAIN */
+.main{margin-left:270px;width:calc(100% - 270px);height:100vh;display:flex;flex-direction:column;transition:margin-left .25s ease,width .25s ease}
+.topbar{
+  height:70px;flex:0 0 70px;background:#fff;display:flex;align-items:center;
+  justify-content:space-between;padding:0 25px;box-shadow:0 2px 10px rgba(0,0,0,.07);z-index:900
+}
+.top-left{display:flex;align-items:center;gap:14px}
+.topbar h2{margin:0;color:var(--navy);font-size:20px}
+.hamburger{font-size:21px;color:var(--navy);cursor:pointer}
+.mobile-menu{display:none}
+.user-info{display:flex;align-items:center;gap:12px}
+.user-avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.user-text{text-align:right}.user-text strong{display:block;font-size:13px;color:var(--navy)}.user-text span{font-size:11px;color:var(--muted)}
+.content{flex:1;overflow-y:auto;padding:22px 25px 35px}
+
+/* FORM */
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.04);margin-bottom:16px}
+.status-badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase}
+.status-draft{background:#fff4df;color:#a76600}
+.status-submitted{background:#e8f1fb;color:#14598e}
+.status-approved{background:#e8f7ef;color:#187844}
+.status-rejected{background:#fbeceb;color:#a83227}
+.form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:12px;outline:none}
+.section-title{font-weight:700;color:var(--navy);margin:15px 0 8px;font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.line-item{display:grid;grid-template-columns:3fr 1fr 1fr 40px;gap:10px;margin-bottom:10px}
+.totals{display:flex;justify-content:space-between;font-weight:750;font-size:13px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.error-text{color:var(--red);font-size:12px}
+.btn-add{background:var(--blue);color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700}
+.btn-primary{background:var(--green);color:#fff;padding:10px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px}
+.btn-draft{background:var(--orange);color:#fff;padding:10px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px}
+.btn-approve{background:var(--green);color:#fff;padding:10px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px}
+.btn-reject{background:var(--red);color:#fff;padding:10px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px}
+.btn-cancel{background:var(--muted);color:#fff;padding:10px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px}
+.btn-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* SEARCHABLE SELECT */
+.search-select{position:relative}
+.search-list{position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;max-height:200px;overflow-y:auto;z-index:10;display:none}
+.search-list div{padding:8px 10px;cursor:pointer;font-size:12px}
+.search-list div:hover{background:#f4f7fb}
+
+/* LOADER */
+#pageLoader{position:fixed;inset:0;background:rgba(244,247,251,.92);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:3000}
+#pageLoader i{font-size:42px;color:var(--navy);animation:spin 1s linear infinite}
+#pageLoader p{font-size:12px;color:var(--muted)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* OFFLINE */
+.connection-status{position:fixed;top:70px;left:270px;right:0;z-index:2001;padding:12px 20px;text-align:center;font-weight:700;font-size:12px;color:white;transform:translateY(-100%);transition:transform .3s ease}
+.connection-status.show{transform:translateY(0)}
+.connection-status.offline{background:var(--red)}
+
+/* MOBILE */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1050}
+.overlay.show{display:block}
+@media(max-width:1100px){.connection-status{left:0}}
+@media(max-width:992px){
+ .sidebar{left:-270px}.sidebar.open{left:0}
+ .main{margin-left:0;width:100%}
+ .mobile-menu{display:block}
+ .form-grid{grid-template-columns:1fr}
+ .line-item{grid-template-columns:1fr 1fr 40px}
+}
+</style>
+</head>
+<body>
+<div class="connection-status" id="connectionStatus"></div>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- FULL DASHBOARD SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png" alt="Greysol Academy">
+    <h2>GREYSOL ACADEMY</h2>
+    <p id="portalRole">Accountant Portal</p>
+  </div>
+
+  <div class="menu">
+    <a href="accounting-dashboard.html">
+      <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+    </a>
+
+    <div class="section-label">Operations</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span>Sales & Receivables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="students.html"><i class="fa-solid fa-user-graduate"></i> Students / Customers</a>
+        <a href="quotations.html"><i class="fa-solid fa-file-signature"></i> Quotations</a>
+        <a href="invoice-list.html"><i class="fa-solid fa-file-invoice"></i> Invoices</a>
+        <a href="credit-notes.html"><i class="fa-solid fa-file-circle-minus"></i> Credit Notes</a>
+        <a href="receipts-list.html"><i class="fa-solid fa-money-bill-wave"></i> Customer Payments</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="accounts-receivable.html"><i class="fa-solid fa-hand-holding-dollar"></i> Accounts Receivable</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Receivables Aging</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-cart-shopping"></i><span>Purchases & Payables</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="suppliers.html"><i class="fa-solid fa-truck-field"></i> Suppliers</a>
+        <a href="requisitions.html"><i class="fa-solid fa-file-circle-plus"></i> Purchase Requisitions</a>
+        <a href="requisition-create.html"><i class="fa-solid fa-plus"></i> Create Requisition</a>
+        <a href="purchase-orders.html"><i class="fa-solid fa-clipboard-list"></i> Purchase Orders</a>
+        <a href="goods-received.html"><i class="fa-solid fa-box-open"></i> Goods Received</a>
+        <a href="bills.html"><i class="fa-solid fa-file-invoice"></i> Bills</a>
+        <a href="supplier-payments.html"><i class="fa-solid fa-money-check-dollar"></i> Supplier Payments</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="accounts-payable.html"><i class="fa-solid fa-money-bill-transfer"></i> Accounts Payable</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-clock-rotate-left"></i> Payables Aging</a>
+      </div>
+    </div>
+
+    <div class="section-label">Cash Management</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-building-columns"></i><span>Banking</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="bank-accounts.html"><i class="fa-solid fa-building-columns"></i> Bank Accounts</a>
+        <a href="cash-accounts.html"><i class="fa-solid fa-wallet"></i> Cash Accounts</a>
+        <a href="bank-transactions.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Bank Transactions</a>
+        <a href="bank-transfer.html"><i class="fa-solid fa-right-left"></i> Transfers</a>
+        <a href="bank-reconciliation.html"><i class="fa-solid fa-scale-balanced"></i> Bank Reconciliation</a>
+        <a href="reconciliation-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Reconciliation History</a>
+      </div>
+    </div>
+
+    <div class="section-label">General Accounting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-book"></i><span>Accounting</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="chart-of-accounts.html"><i class="fa-solid fa-list"></i> Chart of Accounts</a>
+        <a href="journal-entry.html"><i class="fa-solid fa-book-journal-whills"></i> Journal Entry</a>
+        <a href="journal-list.html"><i class="fa-solid fa-list-check"></i> Journal List</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="ledger.html"><i class="fa-solid fa-table-list"></i> Account Ledger</a>
+        <a href="#"><i class="fa-solid fa-repeat"></i> Recurring Journals</a>
+        <a href="#"><i class="fa-solid fa-lock"></i> Period Closing</a>
+        <a href="accounting-settings.html"><i class="fa-solid fa-gear"></i>Settings</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-receipt"></i><span>Expenses</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="expenses.html"><i class="fa-solid fa-file-circle-plus"></i> Expense Entry</a>
+        <a href="expense-list.html"><i class="fa-solid fa-list"></i> Expense List</a>
+        <a href="expense-categories.html"><i class="fa-solid fa-tags"></i> Expense Categories</a>
+        <a href="expense-claims.html"><i class="fa-solid fa-hand-holding-dollar"></i> Expense Claims</a>
+      </div>
+    </div>
+
+    <div class="section-label">People & Statutory</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-users-gear"></i><span>HR & Payroll</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="employees.html"><i class="fa-solid fa-users"></i> Employees</a>
+        <a href="#"><i class="fa-solid fa-user-tag"></i> Employee Categories</a>
+        <a href="attendance.html"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+        <a href="payroll-settings.html"><i class="fa-solid fa-gears"></i> Payroll Settings</a>
+        <a href="payroll-run.html"><i class="fa-solid fa-money-check-dollar"></i> Run Payroll</a>
+        <a href="payslips.html"><i class="fa-solid fa-file-invoice-dollar"></i> Payslips</a>
+        <a href="payroll-history.html"><i class="fa-solid fa-clock-rotate-left"></i> Payroll History</a>
+        <a href="payroll-journal.html"><i class="fa-solid fa-book"></i> Payroll Journal</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-chart-column"></i> Payroll Reports</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-percent"></i><span>Taxes</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="vat.html"><i class="fa-solid fa-percent"></i> VAT</a>
+        <a href="vat-transactions.html"><i class="fa-solid fa-receipt"></i> VAT Transactions</a>
+        <a href="vat-return.html"><i class="fa-solid fa-file-circle-check"></i> VAT Return</a>
+        <a href="#"><i class="fa-solid fa-file-invoice"></i> Withholding Tax</a>
+        <a href="paye.html"><i class="fa-solid fa-user-shield"></i> PAYE</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-chart-column"></i> Tax Reports</a>
+      </div>
+    </div>
+
+    <div class="section-label">Reporting</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-chart-pie"></i><span>Reports</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="report-trial-balance.html"><i class="fa-solid fa-scale-balanced"></i> Trial Balance</a>
+        <a href="general-ledger.html"><i class="fa-solid fa-book-open"></i> General Ledger</a>
+        <a href="report-income-statement.html"><i class="fa-solid fa-chart-line"></i> Income Statement</a>
+        <a href="report-balance-sheet.html"><i class="fa-solid fa-building-columns"></i> Balance Sheet</a>
+        <a href="report-cash-flow.html"><i class="fa-solid fa-water"></i> Cash Flow Statement</a>
+        <a href="receivables-aging.html"><i class="fa-solid fa-user-clock"></i> AR Aging</a>
+        <a href="payables-aging.html"><i class="fa-solid fa-file-circle-exclamation"></i> AP Aging</a>
+        <a href="customer-statements.html"><i class="fa-solid fa-file-lines"></i> Customer Statements</a>
+        <a href="supplier-statements.html"><i class="fa-solid fa-file-lines"></i> Supplier Statements</a>
+        <a href="expense-report.html"><i class="fa-solid fa-receipt"></i> Expense Report</a>
+        <a href="revenue-report.html"><i class="fa-solid fa-arrow-trend-up"></i> Revenue Report</a>
+        <a href="tax-reports.html"><i class="fa-solid fa-percent"></i> Tax Reports</a>
+        <a href="payroll-reports.html"><i class="fa-solid fa-users"></i> Payroll Reports</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+      </div>
+    </div>
+
+    <div class="section-label">Administration</div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-user-shield"></i><span>Administration</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="userlist.html"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="#"><i class="fa-solid fa-key"></i> Roles & Permissions</a>
+        <a href="#"><i class="fa-solid fa-shield-halved"></i> Audit Trail</a>
+        <a href="#"><i class="fa-solid fa-check-double"></i> Approval Workflows</a>
+        <a href="#"><i class="fa-solid fa-terminal"></i> System Logs</a>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-header">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
+        <i class="fa-solid fa-chevron-down arrow"></i>
+      </div>
+      <div class="submenu">
+        <a href="#"><i class="fa-solid fa-building"></i> Company Profile</a>
+        <a href="#"><i class="fa-solid fa-calendar-days"></i> Financial Year</a>
+        <a href="#"><i class="fa-solid fa-calendar-check"></i> Accounting Periods</a>
+        <a href="#"><i class="fa-solid fa-percent"></i> Tax Settings</a>
+        <a href="#"><i class="fa-solid fa-hashtag"></i> Numbering</a>
+        <a href="#"><i class="fa-solid fa-sliders"></i> System Settings</a>
+      </div>
+    </div>
+
+    <a href="#" id="logoutBtn">
+      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+    </a>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div class="top-left">
+      <i class="fa-solid fa-bars hamburger mobile-menu" onclick="toggleSidebar()"></i>
+      <h2 id="pageTitle">Add Bill</h2>
+    </div>
+    <div class="user-info">
+      <div class="user-text"><strong id="staffName">Loading...</strong><span id="staffRole">Accountant</span></div>
+      <div class="user-avatar" id="avatar">A</div>
+    </div>
+  </header>
+
+  <section class="content">
+    <div id="pageLoader"><i class="fa-solid fa-circle-notch"></i><p>Loading...</p></div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+        <input type="hidden" id="bId">
+        <input type="hidden" id="bJournalId">
+        <span id="billStatus" class="status-badge status-draft">Draft</span>
+      </div>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Bill Date</label>
+          <input type="date" id="bDate">
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="bDueDate">
+        </div>
+        <div class="form-group">
+          <label>Supplier</label>
+          <div class="search-select">
+            <input type="text" id="bSupplierSearch" placeholder="Type code or name..." onkeyup="filterSupplier(this.value)" onclick="showSupplierList()">
+            <input type="hidden" id="bSupplier">
+            <div class="search-list" id="supplierList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Description / Reference</label>
+        <textarea id="bDesc" rows="2" placeholder="Bill reference or description"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Bill Items <button class="btn-add" onclick="addBillLine()"><i class="fa-solid fa-plus"></i> Add Item</button></div>
+      <div id="billLines"></div>
+      <div class="totals"><span>Total Bill Amount</span><span id="totalBill">MWK 0.00</span></div>
+      <div id="matchError" class="error-text"></div>
+    </div>
+
+    <div class="btn-actions" id="actionButtons">
+      <button class="btn-cancel" onclick="window.location.href='bills.html'"><i class="fa-solid fa-xmark"></i> Cancel</button>
+      <button class="btn-draft" id="saveDraftBtn" onclick="saveBill('draft')"><i class="fa-solid fa-floppy-disk"></i> Save to Draft</button>
+      <button class="btn-primary" id="submitBtn" onclick="saveBill('submitted')"><i class="fa-solid fa-paper-plane"></i> Submit for Approval</button>
+    </div>
+
+    <div class="btn-actions" id="adminButtons" style="display:none">
+      <button class="btn-reject" onclick="approveBill('rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
+      <button class="btn-approve" onclick="approveBill('approved')"><i class="fa-solid fa-check"></i> Approve & Post</button>
+    </div>
+  </section>
+</main>
+
+<script>
+let loggedUser;
+document.addEventListener("DOMContentLoaded", function() {
+  loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+  if(!loggedUser || !["Accountant","Admin"].includes(loggedUser.role)){
+    alert("Access Denied. Accountants/Admin Only.");
+    window.location.href="staff-login.html";
+    return;
+  }
+  document.getElementById("staffName").textContent = loggedUser?.username || "User";
+  document.getElementById("staffRole").textContent = loggedUser?.role || "User";
+  document.getElementById("portalRole").textContent = (loggedUser?.role || "User") + " Portal";
+  document.getElementById("avatar").textContent = (loggedUser?.username || "A").charAt(0).toUpperCase();
+
+  // SIDEBAR JS
+  document.querySelectorAll(".menu-header").forEach(header=>{
+    header.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      header.parentElement.classList.toggle("active");
+    });
+  });
+  document.getElementById("logoutBtn").addEventListener("click",e=>{
+    e.preventDefault();localStorage.removeItem("loggedUser");window.location.href="staff-login.html";
+  });
+  window.toggleSidebar = function(){
+    document.getElementById("sidebar").classList.toggle("open");
+    document.getElementById("overlay").classList.toggle("show");
+  }
+});
+
+const fmt = n => "MWK " + Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2})
+const params = new URLSearchParams(window.location.search);
+const editId = params.get("id");
+
+let allSuppliers = [];
+let allAccounts = [];
+let billLineId = 0;
+let currentBillStatus = "draft";
+
+// OFFLINE CHECK
+const statusBar = document.getElementById("connectionStatus");
+function showStatus(type, msg){
+  statusBar.className = `connection-status ${type} show`;
+  statusBar.innerHTML = msg;
+}
+function updateConnectionStatus(){
+  const online = navigator.onLine;
+  if(!online){ showStatus('offline', `<i class="fa-solid fa-triangle-exclamation"></i> No internet connection. Cannot save`); }
+}
+window.addEventListener('online', updateConnectionStatus);
+window.addEventListener('offline', updateConnectionStatus);
+setInterval(updateConnectionStatus, 5000);
+updateConnectionStatus();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, doc, serverTimestamp, query, orderBy, limit, Timestamp, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey:"AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",projectId:"greysol-academy"});
+const db = getFirestore(app);
+
+// AUTO GENERATE BILL NUMBER: BILL000001
+async function generateBillNo(){
+  const q = query(collection(db,"bills"), orderBy("createdAt","desc"), limit(1));
+  const snap = await getDocs(q);
+  let number = 1;
+  if(!snap.empty){
+    const lastRef = snap.docs[0].data().billNo || "BILL000";
+    const lastNum = parseInt(lastRef.replace("BILL","")) || 0;
+    number = lastNum + 1;
+  }
+  return "BILL" + String(number).padStart(6,"0");
+}
+
+// LOAD DATA
+async function loadAll(){
+  if(!navigator.onLine){ alert("You are offline. Cannot load data."); document.getElementById("pageLoader").style.display="none"; return; }
+  const [supSnap, accSnap] = await Promise.all([
+    getDocs(collection(db,"suppliers")),
+    getDocs(collection(db,"chartOfAccounts"))
+  ]);
+  allSuppliers = supSnap.docs.map(d=>({id:d.id,...d.data()}));
+  allAccounts = accSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+  buildSupplierList();
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("bDate").value = today;
+  document.getElementById("bDueDate").value = today;
+  
+  if(editId){
+    await loadBillForEdit(editId);
+    document.getElementById("pageTitle").innerText = "View Bill";
+  }else{
+    addBillLine(); 
+  }
+  document.getElementById("pageLoader").style.display="none";
+}
+loadAll();
+
+async function loadBillForEdit(id){
+  const snap = await getDoc(doc(db,"bills",id));
+  if(!snap.exists()){ alert("Bill not found"); return; }
+  const b = {id:snap.id,...snap.data()};
+  currentBillStatus = b.status;
+  
+  document.getElementById("bId").value = b.id;
+  document.getElementById("bJournalId").value = b.journalId || "";
+  document.getElementById("bDate").value = b.date;
+  document.getElementById("bDueDate").value = b.dueDate;
+  const sup = allSuppliers.find(s=>s.id===b.supplierId);
+  document.getElementById("bSupplier").value = b.supplierId;
+  document.getElementById("bSupplierSearch").value = sup? `${sup.supplierCode} - ${sup.type==="Company"?sup.companyName:sup.contactPerson}` : "";
+  document.getElementById("bDesc").value = b.description;
+  
+  document.getElementById("billStatus").innerText = b.status.toUpperCase();
+  document.getElementById("billStatus").className = `status-badge status-${b.status}`;
+  
+  document.getElementById("billLines").innerHTML = "";
+  billLineId = 0;
+  
+  b.lines.forEach(l=>addBillLine(l));
+  calcTotals();
+  setButtonVisibility(b.status);
+}
+
+function setButtonVisibility(status){
+  const isAdmin = loggedUser.role === "Admin";
+  document.getElementById("actionButtons").style.display = "flex";
+  document.getElementById("adminButtons").style.display = "none";
+  
+  if(status === "draft"){
+    document.getElementById("saveDraftBtn").style.display = "flex";
+    document.getElementById("submitBtn").style.display = "flex";
+  } else if(status === "submitted" && isAdmin){
+    document.getElementById("actionButtons").style.display = "none";
+    document.getElementById("adminButtons").style.display = "flex";
+  } else {
+    document.getElementById("actionButtons").style.display = "none"; // read only
+  }
+}
+
+// SEARCHABLE SUPPLIER
+function buildSupplierList(filter=""){
+  const list = document.getElementById("supplierList");
+  const filtered = allSuppliers.filter(s=>{
+    const txt = `${s.supplierCode} ${s.companyName} ${s.contactPerson}`.toLowerCase();
+    return txt.includes(filter.toLowerCase());
+  });
+  list.innerHTML = filtered.map(s=>`<div onclick="selectSupplier('${s.id}','${s.supplierCode} - ${s.type==="Company"?s.companyName:s.contactPerson}')">${s.supplierCode} - ${s.type==="Company"?s.companyName:s.contactPerson}</div>`).join("") || "<div>No supplier found</div>";
+}
+window.filterSupplier = buildSupplierList;
+window.showSupplierList = ()=>{document.getElementById("supplierList").style.display="block"}
+window.selectSupplier = (id,text)=>{document.getElementById("bSupplier").value=id;document.getElementById("bSupplierSearch").value=text;document.getElementById("supplierList").style.display="none"}
+document.addEventListener("click",e=>{if(!e.target.closest(".search-select"))document.getElementById("supplierList").style.display="none"})
+
+// ACCOUNT SEARCH
+function accountSearchHtml(id, val=""){
+  return `
+  <div class="search-select">
+    <input type="text" id="accSearch${id}" placeholder="Type code or name..." value="${val}" onkeyup="filterAccount(this,'${id}')" onclick="document.getElementById('accList${id}').style.display='block'">
+    <input type="hidden" id="accVal${id}" value="${val}">
+    <div class="search-list" id="accList${id}"></div>
+  </div>`;
+}
+
+window.filterAccount = function(input, id){
+  const list = document.getElementById(`accList${id}`);
+  const filtered = allAccounts.filter(a=>{
+    const txt = `${a.accountCode} ${a.accountName}`.toLowerCase();
+    return txt.includes(input.value.toLowerCase());
+  });
+  list.innerHTML = filtered.map(a=>`<div onclick="selectAccount('${id}','${a.accountCode}','${a.accountCode} - ${a.accountName}')">${a.accountCode} - ${a.accountName}</div>`).join("") || "<div>No account found</div>";
+  list.style.display="block";
+}
+window.selectAccount = function(id, code, text){
+  document.getElementById(`accVal${id}`).value = code;
+  document.getElementById(`accSearch${id}`).value = text;
+  document.getElementById(`accList${id}`).style.display="none";
+  calcTotals();
+}
+
+// ADD LINES
+window.addBillLine = function(data={accountCode:"",amount:"",description:""}){
+  const id = billLineId++;
+  const accText = data.accountCode? `${data.accountCode} - ${allAccounts.find(a=>a.accountCode===data.accountCode)?.accountName||""}` : "";
+  document.getElementById("billLines").insertAdjacentHTML("beforeend",`
+    <div class="line-item" id="billLine${id}">
+      ${accountSearchHtml(`bill${id}`, accText)}
+      <input type="text" placeholder="Item Description" value="${data.description||""}">
+      <input type="number" step="0.01" placeholder="Amount" value="${data.amount}" oninput="calcTotals()">
+      <button style="border:none;background:var(--red);color:white;border-radius:6px;cursor:pointer" onclick="document.getElementById('billLine${id}').remove();calcTotals()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  `);
+  if(data.accountCode) document.getElementById(`accValbill${id}`).value = data.accountCode;
+}
+
+window.calcTotals = function(){
+  let total = 0;
+  document.querySelectorAll("#billLines input[type=number]").forEach(i=>total+=Number(i.value)||0);
+  document.getElementById("totalBill").innerText = fmt(total);
+}
+
+// SAVE BILL - NO JOURNAL YET
+window.saveBill = async function(status){
+  if(!navigator.onLine){ alert("You are offline. Cannot save."); return; }
+  
+  document.getElementById("submitBtn").disabled = true;
+  document.getElementById("saveDraftBtn").disabled = true;
+
+  try{
+    const id = document.getElementById("bId").value;
+    const lines = [];
+    document.querySelectorAll("#billLines .line-item").forEach(row=>{
+      const accCode = row.querySelector("input[type=hidden]").value;
+      const desc = row.querySelector("input[type=text]").value;
+      const amt = Number(row.querySelector("input[type=number]").value)||0;
+      if(accCode && amt>0) lines.push({accountCode:accCode, description:desc, amount:amt});
+    });
+
+    const total = lines.reduce((a,b)=>a+b.amount,0);
+    if(total<=0) { alert("Add at least 1 bill item"); return; }
+    if(!document.getElementById("bSupplier").value){ alert("Select a supplier"); return; }
+
+    const billNo = id ? (await getDoc(doc(db,"bills",id))).data().billNo : await generateBillNo();
+
+    const data = {
+      billNo: billNo,
+      date: document.getElementById("bDate").value,
+      dueDate: document.getElementById("bDueDate").value,
+      supplierId: document.getElementById("bSupplier").value,
+      description: document.getElementById("bDesc").value,
+      lines: lines,
+      total: total,
+      balance: status==="approved"? 0 : total, // balance only 0 when approved
+      status: status,
+      updatedAt: serverTimestamp()
+    }
+
+    if(id){
+      await updateDoc(doc(db,"bills",id), data);
+      alert("Bill Updated: " + data.billNo);
+    }else{
+      data.addedBy = loggedUser.username;
+      data.createdAt = serverTimestamp();
+      await addDoc(collection(db,"bills"), data);
+      alert("Bill Saved: " + data.billNo);
+    }
+    window.location.href = "bills.html";
+  }catch(err){
+    alert("Error: " + err.message);
+    console.error(err);
+  }finally{
+    document.getElementById("submitBtn").disabled = false;
+    document.getElementById("saveDraftBtn").disabled = false;
+  }
+}
+
+// APPROVE BILL - ONLY ADMIN - THIS IS WHERE JOURNAL IS CREATED
+window.approveBill = async function(action){
+  if(loggedUser.role !== "Admin"){ alert("Only Admin can approve"); return; }
+  if(!confirm(`Are you sure you want to ${action} this bill?`)) return;
+
+  document.getElementById("adminButtons").querySelector("button").disabled = true;
+
+  try{
+    const id = document.getElementById("bId").value;
+    const billSnap = await getDoc(doc(db,"bills",id));
+    const bill = billSnap.data();
+
+    if(action === "approved"){
+      // CREATE JOURNAL NOW
+      const journalLines = [];
+      bill.lines.forEach(l=>{
+        const acc = allAccounts.find(a=>a.accountCode===l.accountCode);
+        journalLines.push({accountCode:l.accountCode, accountName: acc?.accountName || "", debit:l.amount, credit:0});
+      });
+      // Find Accounts Payable account. Default to 2001
+      const apAccount = allAccounts.find(a=>a.accountCode==="2001") || allAccounts.find(a=>a.accountName?.toLowerCase().includes("accounts payable"));
+      if(!apAccount) throw new Error("Accounts Payable account 2001 not found in Chart of Accounts");
+      
+      journalLines.push({accountCode:apAccount.accountCode, accountName: apAccount.accountName, debit:0, credit:bill.total});
+
+      const journalNo = await generateJournalNo();
+      const journalData = {
+        journalNo: journalNo,
+        date: Timestamp.fromDate(new Date(bill.date)),
+        reference: bill.billNo,
+        description: `Bill: ${bill.description}`,
+        lines: journalLines,
+        totalDebit: bill.total,
+        totalCredit: bill.total,
+        source: "Bill",
+        sourceId: id,
+        status: "posted",
+        createdBy: bill.addedBy,
+        createdAt: Timestamp.now(),
+        approvedBy: loggedUser.username,
+        approvedAt: Timestamp.now()
+      }
+      const jRef = await addDoc(collection(db,"journalEntries"), journalData);
+      
+      await updateDoc(doc(db,"bills",id), {
+        status: "approved",
+        journalId: jRef.id,
+        journalNo: journalNo,
+        approvedBy: loggedUser.username,
+        approvedAt: serverTimestamp()
+      });
+      alert("Bill Approved and Journal Posted: " + journalNo);
+    } else {
+      await updateDoc(doc(db,"bills",id), {
+        status: "rejected",
+        rejectedBy: loggedUser.username,
+        rejectedAt: serverTimestamp()
+      });
+      alert("Bill Rejected");
+    }
+    window.location.href = "bills.html";
+  }catch(err){
+    alert("Error: " + err.message);
+    console.error(err);
+  }
+}
+
+// SAFE GENERATE JOURNAL NO
+async function generateJournalNo(){
+  const q = query(collection(db,"journalEntries"), orderBy("createdAt","desc"), limit(50));
+  const snap = await getDocs(q);
+  let number = 1;
+  for(const d of snap.docs){
+    const data = d.data();
+    if(data.journalNo && typeof data.journalNo === 'string' && data.journalNo.startsWith("JV")){
+      const num = parseInt(data.journalNo.replace("JV","")) || 0;
+      number = num + 1;
+      break;
+    }
+  }
+  return "JV" + String(number).padStart(5,"0");
+}
+</script>
+</body>
+</html>
