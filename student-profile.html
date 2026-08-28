@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Profile | Greysol Academy</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="icon" href="../images/logo1 - Copy.png" type="image/png">
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--blue:#003366;--light:#f4f7fb;--green:#27ae60;--red:#c0392b;--orange:#f39c12}
+body{margin:0;background:var(--light)}
+#loader{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--navy);z-index:9999;display:flex;justify-content:center;align-items:center;flex-direction:column;color:white}
+.spinner{border:4px solid rgba(255,255,255,.3);border-top:4px solid white;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+header{background:var(--navy);color:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;margin-left:270px}
+.brand{display:flex;align-items:center;gap:15px}
+.header-right{display:flex;align-items:center;gap:20px}
+.user-info{text-align:right}
+.user-info small{opacity:0.8;font-size:12px}
+.user-info b{font-size:14px}
+.menu-toggle{display:none;font-size:24px;background:none;border:none;color:white;cursor:pointer}
+.logout{background:#c0392b;border:none;color:white;padding:10px 20px;border-radius:7px;cursor:pointer}
+.sidebar{position:fixed;top:0;left:0;width:270px;height:100%;background:var(--navy);z-index:200;overflow:auto;padding-top:20px;transition:0.3s}
+.sidebar .logo{text-align:center;padding:20px;color:white;border-bottom:1px solid rgba(255,255,255,.2)}
+.sidebar .logo img{width:80px;height:80px;object-fit:contain}
+.sidebar .logo h3{margin:10px 0 5px}
+.sidebar .logo small{opacity:0.8}
+.sidebar a{display:flex;align-items:center;gap:15px;padding:15px 25px;color:white;text-decoration:none;font-size:15px}
+.sidebar a:hover{background:rgba(255,255,255,.1)}
+.sidebar a.active{background:var(--blue)}
+.overlay{display:none}
+.wrapper{display:flex}
+.main-content{flex:1;margin-left:270px}
+.container{padding:30px;max-width:1100px;margin:0 auto}
+.card{background:white;padding:25px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.1);margin-bottom:25px}
+.card h3{color:var(--navy);border-bottom:2px solid #eee;padding-bottom:10px;margin-top:0;display:flex;align-items:center;gap:10px}
+.profile-header{display:flex;align-items:center;gap:25px;margin-bottom:20px}
+.avatar{width:100px;height:100px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:700}
+.profile-header h2{margin:0;color:var(--navy)}
+.profile-header p{margin:5px 0;color:#555}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.form-group label{display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:6px}
+.form-group input,.form-group textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px}
+.form-group input:disabled{background:#f5f5f5;color:#777}
+.password-group{position:relative}
+.toggle-pass{position:absolute;right:10px;top:35px;cursor:pointer;color:#777}
+.btn-save{background:var(--green);color:white;border:none;padding:12px 25px;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px}
+.btn-outline{background:white;color:var(--navy);border:2px solid var(--navy);padding:12px 25px;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px}
+.btn-cancel{background:var(--red);color:white;border:none;padding:12px 25px;border-radius:8px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px}
+.btn-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.alert-success{padding:12px;border-radius:8px;background:#d4edda;color:#155724;margin-bottom:15px;display:none}
+.alert-danger{padding:12px;border-radius:8px;background:#f8d7da;color:#721c24;margin-bottom:15px;display:none}
+.info{padding:12px;border-radius:8px;background:#d1ecf1;color:#0c5460;margin:10px 0;font-size:13px}
+
+/* MODAL */
+.modal{display:none;position:fixed;z-index:3000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center}
+.modal.show{display:flex}
+.modal-content{background:white;border-radius:15px;width:90%;max-width:500px;padding:25px;animation:slideDown 0.3s}
+@keyframes slideDown{from{transform:translateY(-30px);opacity:0} to{transform:translateY(0);opacity:1}}
+.modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;padding-bottom:15px;margin-bottom:15px}
+.modal-header h3{margin:0;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:#999}
+
+@media(max-width:900px){
+ .sidebar{left:-270px}
+ .sidebar.active{left:0}
+ .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;z-index:150}
+ .overlay.active{display:block}
+ .main-content{margin-left:0}
+ header{margin-left:0;padding:15px}
+ .menu-toggle{display:block}
+ .header-right{gap:10px}
+ .user-info{display:none}
+ .container{padding:15px}
+ .form-grid{grid-template-columns:1fr}
+ .profile-header{flex-direction:column;text-align:center}
+ .logout{padding:8px 15px;font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="spinner"></div><p style="margin-top:15px">Loading Profile...</p></div>
+
+<div class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png">
+    <h3>GREYSOL ACADEMY</h3>
+    <small>Student Portal</small>
+  </div>
+  <a href="student-dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+  <a href="student-profile.html" class="active"><i class="fa-solid fa-user"></i> My Profile</a>
+  <a href="student-results.html"><i class="fa-solid fa-graduation-cap"></i> Results</a>
+  <a href="student-statement-public.html"><i class="fa-solid fa-receipt"></i> Fee Statement</a>
+  <a href="student-timetable.html"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+  <a href="#" id="logoutSidebar"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+</div>
+<div class="overlay" id="overlay"></div>
+
+<header>
+  <div class="brand">
+    <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+    <h2>My Profile</h2>
+  </div>
+  <div class="header-right">
+    <div class="user-info">
+      <small>Welcome,</small><br>
+      <b id="headerStudentName">Student</b>
+    </div>
+    <button class="logout" id="logoutBtn">Logout</button>
+  </div>
+</header>
+
+<div class="wrapper">
+  <div class="main-content">
+    <div class="container">
+      
+      <div class="alert-success" id="successMsg"><i class="fa-solid fa-circle-check"></i> <span id="successText"></span></div>
+      <div class="alert-danger" id="errorMsg"><i class="fa-solid fa-circle-xmark"></i> <span id="errorText"></span></div>
+
+      <div class="card">
+        <div class="profile-header">
+          <div class="avatar" id="avatar">S</div>
+          <div>
+            <h2 id="studentFullName">Student Name</h2>
+            <p><i class="fa-solid fa-id-card"></i> Student ID: <b id="studentID">-</b></p>
+            <p><i class="fa-solid fa-school"></i> Class: <b id="studentClass">-</b></p>
+          </div>
+        </div>
+      </div>
+
+      <form id="profileForm">
+        <div class="card">
+          <h3><i class="fa-solid fa-user"></i> Personal Information</h3>
+          <div class="form-grid">
+            <div class="form-group"><label>First Name</label><input type="text" id="firstName" disabled></div>
+            <div class="form-group"><label>Surname</label><input type="text" id="surname" disabled></div>
+            <div class="form-group"><label>Date of Birth</label><input type="date" id="dob" disabled></div>
+            <div class="form-group"><label>Gender</label><input type="text" id="gender" disabled></div>
+          </div>
+          <div class="info"><i class="fa-solid fa-info-circle"></i> Contact admin to change personal details.</div>
+        </div>
+
+        <div class="card">
+          <h3><i class="fa-solid fa-phone"></i> Contact Information</h3>
+          <div class="form-grid">
+            <div class="form-group"><label>Guardian Name</label><input type="text" id="guardianName" required></div>
+            <div class="form-group"><label>Guardian Phone</label><input type="tel" id="guardianPhone" required></div>
+            <div class="form-group"><label>Guardian Email</label><input type="email" id="guardianEmail"></div>
+            <div class="form-group"><label>Home Address</label><textarea id="address" rows="3"></textarea></div>
+          </div>
+          <div class="btn-actions">
+            <button type="button" class="btn-outline" onclick="openPassModal()"><i class="fa-solid fa-key"></i> Change Password</button>
+            <button type="submit" class="btn-save" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save Contact Info</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal" id="passModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-key"></i> Change Password</h3>
+      <button class="modal-close" onclick="closePassModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="passwordForm">
+      <div class="alert-danger" id="modalErrorMsg" style="display:none"><i class="fa-solid fa-circle-xmark"></i> <span id="modalErrorText"></span></div>
+      <div class="alert-success" id="modalSuccessMsg" style="display:none"><i class="fa-solid fa-circle-check"></i> <span id="modalSuccessText"></span></div>
+      
+      <div class="info"><i class="fa-solid fa-shield-halved"></i> For security, enter your current password.</div>
+      
+      <div class="form-group password-group">
+        <label>Current Password</label>
+        <input type="password" id="currentPassword" required>
+        <i class="fa-solid fa-eye toggle-pass" onclick="togglePass('currentPassword', this)"></i>
+      </div>
+      <div class="form-group password-group">
+        <label>New Password</label>
+        <input type="password" id="newPassword" minlength="6" required>
+        <i class="fa-solid fa-eye toggle-pass" onclick="togglePass('newPassword', this)"></i>
+        <small style="color:#777">Min 6 characters</small>
+      </div>
+      <div class="form-group password-group">
+        <label>Confirm New Password</label>
+        <input type="password" id="confirmPassword" minlength="6" required>
+        <i class="fa-solid fa-eye toggle-pass" onclick="togglePass('confirmPassword', this)"></i>
+      </div>
+      
+      <div class="btn-actions">
+        <button type="button" class="btn-cancel" onclick="closePassModal()">Cancel</button>
+        <button type="submit" class="btn-save" id="passBtn"><i class="fa-solid fa-lock"></i> Update Password</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey: "AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",authDomain: "greysol-academy.firebaseapp.com",projectId: "greysol-academy"});
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let student = JSON.parse(localStorage.getItem("student"));
+const LOGIN_PAGE = "../admin/student-login.html";
+
+if(!student){ window.location.href = LOGIN_PAGE; }
+
+const studentID = student.studentID;
+const studentName = `${student.firstName || ""} ${student.surname || ""}`.trim();
+
+document.getElementById("headerStudentName").innerText = studentName;
+
+// SIDEBAR TOGGLE
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+document.getElementById("menuToggle").onclick = () => { sidebar.classList.add("active"); overlay.classList.add("active"); }
+overlay.onclick = () => { sidebar.classList.remove("active"); overlay.classList.remove("active"); }
+
+async function logout(){ 
+  await signOut(auth); // IMPORTANT: sign out of firebase auth too
+  localStorage.removeItem("student"); 
+  window.location.href = LOGIN_PAGE; 
+}
+document.getElementById("logoutSidebar").onclick = logout;
+document.getElementById("logoutBtn").onclick = logout;
+
+window.togglePass = (id, icon) => {
+  const input = document.getElementById(id);
+  input.type = input.type === "password" ? "text" : "password";
+  icon.classList.toggle("fa-eye-slash");
+}
+
+// MODAL FUNCTIONS
+window.openPassModal = () => {
+  document.getElementById("passModal").classList.add("show");
+  document.getElementById("passwordForm").reset();
+  document.getElementById("modalErrorMsg").style.display = "none";
+  document.getElementById("modalSuccessMsg").style.display = "none";
+}
+window.closePassModal = () => {
+  document.getElementById("passModal").classList.remove("show");
+}
+window.onclick = (e) => { if(e.target.id === "passModal") closePassModal(); }
+
+function showMsg(type, text){
+  document.getElementById(type+"Msg").style.display = "block";
+  document.getElementById(type+"Text").innerText = text;
+  setTimeout(()=>{ document.getElementById(type+"Msg").style.display = "none"; }, 4000);
+}
+function showModalMsg(type, text){
+  document.getElementById("modal"+type+"Msg").style.display = "block";
+  document.getElementById("modal"+type+"Text").innerText = text;
+}
+
+// LOAD DATA
+function loadStudentData(){
+  document.getElementById("loader").style.display = "flex";
+  document.getElementById("studentFullName").innerText = studentName;
+  document.getElementById("studentID").innerText = studentID;
+  document.getElementById("studentClass").innerText = student.classApplying || student.class || "-";
+  document.getElementById("avatar").innerText = (student.firstName || "S").charAt(0).toUpperCase();
+  document.getElementById("firstName").value = student.firstName || "";
+  document.getElementById("surname").value = student.surname || "";
+  document.getElementById("dob").value = student.dateOfBirth || "";
+  document.getElementById("gender").value = student.gender || "";
+  document.getElementById("guardianName").value = student.guardianName || "";
+  document.getElementById("guardianPhone").value = student.guardianPhone || "";
+  document.getElementById("guardianEmail").value = student.guardianEmail || "";
+  document.getElementById("address").value = student.address || "";
+  document.getElementById("loader").style.display = "none";
+}
+loadStudentData();
+
+// UPDATE CONTACT INFO
+document.getElementById("profileForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  document.getElementById("saveBtn").disabled = true;
+  document.getElementById("saveBtn").innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+  try{
+    const updatedData = {
+      guardianName: document.getElementById("guardianName").value.trim(),
+      guardianPhone: document.getElementById("guardianPhone").value.trim(),
+      guardianEmail: document.getElementById("guardianEmail").value.trim(),
+      address: document.getElementById("address").value.trim(),
+      updatedAt: serverTimestamp()
+    };
+    await updateDoc(doc(db, "students", studentID), updatedData);
+    student = {...student, ...updatedData};
+    localStorage.setItem("student", JSON.stringify(student));
+    showMsg("success", "Contact information updated successfully!");
+  }catch(err){ showMsg("error", err.message); }
+  finally{ document.getElementById("saveBtn").disabled = false; document.getElementById("saveBtn").innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Contact Info'; }
+});
+
+// ======= FIXED PASSWORD CHANGE =======
+document.getElementById("passwordForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const currentPass = document.getElementById("currentPassword").value;
+  const newPass = document.getElementById("newPassword").value;
+  const confirmPass = document.getElementById("confirmPassword").value;
+  const user = auth.currentUser; // USER IS ALREADY LOGGED IN FROM YOUR LOGIN PAGE
+
+  document.getElementById("modalErrorMsg").style.display = "none";
+  document.getElementById("modalSuccessMsg").style.display = "none";
+
+  if(!user){ showModalMsg("Error", "Session expired. Please login again."); return; }
+  if(newPass !== confirmPass){ showModalMsg("Error", "New passwords do not match"); return; }
+  if(newPass.length < 6){ showModalMsg("Error", "Password is not secure. Must be at least 6 characters"); return; }
+
+  document.getElementById("passBtn").disabled = true;
+  document.getElementById("passBtn").innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+
+  try{
+    // 1. RE-AUTHENTICATE with current password
+    const credential = EmailAuthProvider.credential(user.email, currentPass);
+    await reauthenticateWithCredential(user, credential);
+
+    // 2. UPDATE PASSWORD
+    await updatePassword(user, newPass);
+
+    showModalMsg("Success", "Password updated successfully!");
+    document.getElementById("passwordForm").reset();
+    setTimeout(()=>{ closePassModal(); }, 2000);
+
+  }catch(err){
+    console.error(err);
+    if(err.code === "auth/wrong-password" || err.code === "auth/invalid-credential"){ 
+      showModalMsg("Error", "Current password is incorrect"); 
+    }
+    else if(err.code === "auth/weak-password"){ 
+      showModalMsg("Error", "New password is not secure. Use at least 6 characters"); 
+    }
+    else if(err.code === "auth/requires-recent-login"){ 
+      showModalMsg("Error", "Please logout and login again to change password"); 
+    }
+    else{ 
+      showModalMsg("Error", err.message); 
+    }
+  }
+  finally{ 
+    document.getElementById("passBtn").disabled = false; 
+    document.getElementById("passBtn").innerHTML = '<i class="fa-solid fa-lock"></i> Update Password'; 
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../images/logo1 - Copy.png" type="image/png">
+<title>Greysol Academy Student Statement</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;}
+body{margin:0;background:#f4f7fb;color:#333;}
+/* LOADER */
+#loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#001f3f;z-index:9999;display:flex;justify-content:center;align-items:center;flex-direction:column;color:white}
+.spinner{border:4px solid rgba(255,255,255,.3);border-top:4px solid white;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+.container{width:95%;max-width:1100px;margin:30px auto;}
+.filter-box{background:white;padding:20px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.15);margin-bottom:25px;}
+.filter-actions{display:flex;gap:10px;flex-wrap:wrap}
+input,button{padding:12px;border-radius:8px;border:1px solid #ccc;}
+button{background:#001f3f;color:white;border:none;cursor:pointer;}
+button:hover{background:#003366;}
+.btn-back{background:#7f8c8d}
+.statement{background:white;padding:40px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.15);}
+.hidden{display:none}
+.school-header{display:flex;justify-content:center;align-items:center;gap:20px;border-bottom:3px solid #001f3f;padding-bottom:20px;}
+.school-header img{width:100px;height:100px;object-fit:contain;}
+.school-name{text-align:center;}
+.school-name h1{margin:0;font-size:32px;color:#001f3f;}
+.title{text-align:center;color:#001f3f;margin:25px;}
+.student-info{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;}
+.info-box{background:#f4f7fb;padding:15px;border-radius:10px;}
+.info-box b{color:#001f3f;}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:25px 0;}
+.summary-box{background:#001f3f;color:white;padding:20px;text-align:center;border-radius:10px;}
+.summary-box h2{margin:0;}
+table{width:100%;border-collapse:collapse;margin-top:20px;}
+th{background:#001f3f;color:white;padding:12px;text-align:left;}
+td{padding:12px;border-bottom:1px solid #ddd;}
+.right{text-align:right;}
+.footer{margin-top:40px;border-top:1px solid #ccc;padding-top:20px;display:flex;justify-content:space-between;}
+@media print{@page{size:A4;margin:15mm;} body{background:white} .filter-box,.print-btn{display:none!important;} .statement{box-shadow:none}}
+@media(max-width:700px){.student-info,.summary{grid-template-columns:1fr} .statement{padding:20px} table{font-size:12px}}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="spinner"></div>
+  <p style="margin-top:15px">Generating Statement...</p>
+  <p id="loaderError" style="color:#ffcc00;font-size:13px"></p>
+</div>
+
+<div class="container">
+
+<div class="filter-box">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+    <h2 style="margin:0">Student Statement</h2>
+    <button class="btn-back" onclick="history.back()">Back</button>
+  </div>
+  <p>Statement automatically loaded for logged-in student.</p>
+  <label>From: </label><input type="date" id="fromDate">
+  <label>To: </label><input type="date" id="toDate">
+  <div class="filter-actions">
+    <button id="filterBtn">Filter</button>
+    <button class="print-btn" onclick="window.print()">Print Statement</button>
+  </div>
+</div>
+
+<div id="statement" class="statement hidden">
+<div class="school-header">
+  <img src="images/logo.png">
+  <div class="school-name"><h1>GREYSOL ACADEMY</h1><p>P.O Box 1416, Lilongwe</p><p>Tel: 0880314701</p></div>
+</div>
+<h2 class="title">STUDENT FEE STATEMENT</h2>
+
+<div class="student-info">
+  <div class="info-box">Student Name:<br><b id="studentName">-</b></div>
+  <div class="info-box">Student ID:<br><b id="studentID">-</b></div>
+  <div class="info-box">Class:<br><b id="studentClass">-</b></div>
+</div>
+
+<div class="summary">
+  <div class="summary-box"><h2 id="totalInvoice">MWK 0</h2><p>Total Invoiced</p></div>
+  <div class="summary-box"><h2 id="totalPaid">MWK 0</h2><p>Total Paid</p></div>
+  <div class="summary-box"><h2 id="balance">MWK 0</h2><p>Outstanding Balance</p></div>
+</div>
+
+<table>
+<thead><tr><th>Date</th><th>Reference</th><th>Description</th><th>Debit</th><th>Credit</th><th>Balance</th></tr></thead>
+<tbody id="transactions"></tbody>
+</table>
+
+<div class="footer"><p>Prepared by: ______________________</p><p>Date: ______________________</p></div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey: "AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",authDomain: "greysol-academy.firebaseapp.com",projectId: "greysol-academy"});
+const db = getFirestore(app);
+
+let allTransactions=[];
+let student=JSON.parse(localStorage.getItem("student"));
+if(!student){ window.location.href="login.html"; } else { loadStatement(); }
+
+function hideLoader(){ document.getElementById("loader").style.display = "none"; }
+
+// ===============================
+// LOAD STATEMENT
+// ===============================
+async function loadStatement(){
+  document.getElementById("loader").style.display = "flex";
+  document.getElementById("statement").classList.remove("hidden");
+  
+  try{
+    document.getElementById("studentName").innerHTML = `${student.firstName || ""} ${student.middleName || ""} ${student.surname || ""}`;
+    document.getElementById("studentID").innerHTML = student.studentID || "-";
+    document.getElementById("studentClass").innerHTML = student.classApplying || "-";
+    allTransactions=[];
+
+    // 1. LOAD INVOICES = DEBIT
+    const invoiceQuery = query(collection(db,"invoices"), where("studentID","==",student.studentID));
+    const invoiceSnap = await getDocs(invoiceQuery);
+    invoiceSnap.forEach(doc=>{
+      let invoice = doc.data();
+      let description="School Fees";
+      if(invoice.items && invoice.items.length>0){
+        description = invoice.items.map(item => `${item.description} (MWK ${Number(item.amount).toLocaleString()})`).join("<br>");
+      }
+      allTransactions.push({
+        date: invoice.createdAt?.toDate ? invoice.createdAt.toDate() : new Date(),
+        reference: invoice.invoiceNumber || invoice.invoiceNo || doc.id,
+        description:description,
+        debit:Number(invoice.totalAmount || 0),
+        credit:0
+      });
+    });
+
+    // 2. LOAD RECEIPTS = CREDIT. FIX: Get all receipts then filter in JS
+    // Firestore can't query inside array of objects directly
+    const receiptSnap = await getDocs(collection(db,"receipts"));
+    receiptSnap.forEach(doc=>{
+      let r = doc.data();
+      if(r.allocations && r.allocations.length > 0){
+        r.allocations.forEach(a=>{
+          if(a.studentID === student.studentID){
+            allTransactions.push({
+              date: r.paymentDate?.toDate ? r.paymentDate.toDate() : new Date(r.paymentDate),
+              reference: r.receiptNo || doc.id,
+              description: `Payment Received - ${r.paymentMethod || "Cash"} for ${a.invoiceNo}`,
+              debit:0,
+              credit:Number(a.amount || 0)
+            });
+          }
+        });
+      }
+    });
+
+    // SORT BY DATE
+    allTransactions.sort((a,b)=> a.date - b.date);
+    displayTransactions(allTransactions);
+
+  }catch(err){
+    console.error(err);
+    document.getElementById("loaderError").innerText = "Error: " + err.message;
+  }
+  hideLoader();
+}
+
+// ===============================
+// DISPLAY TRANSACTIONS
+// ===============================
+function displayTransactions(rows){
+  let balance = 0; let totalInvoice = 0; let totalPaid = 0;
+  const table = document.getElementById("transactions"); table.innerHTML="";
+  
+  if(rows.length === 0){
+    table.innerHTML = `<tr><td colspan="6" style="text-align:center">No transactions found</td></tr>`;
+  }
+
+  rows.forEach(row=>{
+    balance += row.debit; balance -= row.credit;
+    totalInvoice += row.debit; totalPaid += row.credit;
+    table.innerHTML += `
+    <tr>
+      <td>${row.date.toLocaleDateString()}</td>
+      <td>${row.reference}</td>
+      <td>${row.description}</td>
+      <td class="right">${row.debit > 0 ? "MWK " + row.debit.toLocaleString() : "-"}</td>
+      <td class="right">${row.credit > 0 ? "MWK " + row.credit.toLocaleString() : "-"}</td>
+      <td class="right">MWK ${balance.toLocaleString()}</td>
+    </tr>`;
+  });
+
+  document.getElementById("totalInvoice").innerHTML = "MWK " + totalInvoice.toLocaleString();
+  document.getElementById("totalPaid").innerHTML = "MWK " + totalPaid.toLocaleString();
+  document.getElementById("balance").innerHTML = "MWK " + balance.toLocaleString();
+}
+
+// ===============================
+// DATE FILTER
+// ===============================
+document.getElementById("filterBtn").onclick=function(){
+  let fromValue = document.getElementById("fromDate").value;
+  let toValue = document.getElementById("toDate").value;
+  let from = fromValue ? new Date(fromValue) : new Date("2000-01-01");
+  let to = toValue ? new Date(toValue) : new Date(); to.setHours(23,59,59);
+
+  let openingBalance = 0; let filtered=[];
+  allTransactions.forEach(row=>{
+    if(row.date < from){ openingBalance += row.debit; openingBalance -= row.credit; }
+    else if(row.date >= from && row.date <= to){ filtered.push(row); }
+  });
+
+  if(openingBalance !== 0){
+    filtered.unshift({date:from,reference:"OPENING",description:"Balance Brought Forward",debit: openingBalance > 0 ? openingBalance : 0,credit: openingBalance < 0 ? Math.abs(openingBalance) : 0});
+  }
+  displayTransactions(filtered);
+};
+</script>
+</body>
+</html>

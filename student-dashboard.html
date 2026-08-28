@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="icon" href="../images/logo1 - Copy.png" type="image/png">
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--blue:#003366;--light:#f4f7fb;--green:#27ae60;--red:#c0392b}
+body{margin:0;background:var(--light)}
+/* LOADER */
+#loader{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--navy);z-index:9999;display:flex;justify-content:center;align-items:center;flex-direction:column;color:white}
+.spinner{border:4px solid rgba(255,255,255,.3);border-top:4px solid white;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+header{background:var(--navy);color:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;margin-left:270px}
+.brand{display:flex;align-items:center;gap:15px}
+.brand img{width:60px;height:60px;object-fit:contain}
+.header-right{display:flex;align-items:center;gap:20px}
+.user-info{text-align:right}
+.user-info small{opacity:0.8;font-size:12px}
+.user-info b{font-size:14px}
+.menu-toggle{display:none;font-size:24px;background:none;border:none;color:white;cursor:pointer}
+.logout{background:#c0392b;border:none;color:white;padding:10px 20px;border-radius:7px;cursor:pointer}
+
+/* SIDEBAR - ALWAYS OPEN ON DESKTOP */
+.sidebar{position:fixed;top:0;left:0;width:270px;height:100%;background:var(--navy);z-index:200;overflow:auto;padding-top:20px;transition:0.3s}
+.sidebar .logo{text-align:center;padding:20px;color:white;border-bottom:1px solid rgba(255,255,255,.2)}
+.sidebar .logo img{width:80px;height:80px;object-fit:contain}
+.sidebar .logo h3{margin:10px 0 5px}
+.sidebar .logo small{opacity:0.8}
+.sidebar a{display:flex;align-items:center;gap:15px;padding:15px 25px;color:white;text-decoration:none;font-size:15px}
+.sidebar a:hover{background:rgba(255,255,255,.1)}
+.sidebar a.active{background:var(--blue)}
+.overlay{display:none}
+
+.wrapper{display:flex}
+.main-content{flex:1;margin-left:270px}
+
+.container{padding:30px;display:grid;grid-template-columns:260px 1fr;gap:25px}
+.profile{background:white;padding:25px;border-radius:15px;text-align:center;box-shadow:0 5px 20px rgba(0,0,0,.1)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.card{background:white;padding:25px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.1)}
+.card h3{color:var(--navy);border-bottom:2px solid #eee;padding-bottom:10px}
+.subjects span{display:inline-block;background:var(--navy);color:white;padding:7px 12px;margin:5px;border-radius:20px}
+table{width:100%;border-collapse:collapse}
+td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left;font-size:14px}
+th{background:var(--navy);color:white;font-size:13px}
+.balance{font-size:22px;font-weight:bold;color:var(--red)}
+.statement-btn{margin-top:15px;padding:12px 20px;background:var(--navy);color:white;border:none;border-radius:8px;cursor:pointer;width:100%}
+.statement-btn:disabled{background:#999;cursor:not-allowed}
+.alert-warning{padding:12px;border-radius:8px;background:#fff3cd;color:#856404;margin:10px 0;font-size:13px}
+.info{padding:12px;border-radius:8px;background:#d1ecf1;color:#0c5460;margin:10px 0;font-size:13px}
+.blocked{opacity:0.5;pointer-events:none}
+
+/* MOBILE RESPONSIVE - SIDEBAR HIDES */
+@media(max-width:900px){
+ .sidebar{left:-270px}
+ .sidebar.active{left:0}
+ .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;z-index:150}
+ .overlay.active{display:block}
+ .main-content{margin-left:0}
+ header{margin-left:0;padding:15px}
+ .menu-toggle{display:block}
+ .header-right{gap:10px}
+ .user-info{display:none}
+ .container{display:block;padding:15px}
+ .profile{margin-bottom:20px}
+ .logout{padding:8px 15px;font-size:13px}
+@media(max-width:500px){
+ .cards{grid-template-columns:1fr}
+ .card{padding:15px}
+ table{font-size:12px}
+ td,th{padding:8px 5px}
+}}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="spinner"></div>
+  <p style="margin-top:15px">Loading Dashboard...</p>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="../images/logo1 - Copy.png">
+    <h3>GREYSOL ACADEMY</h3>
+    <small>Student Portal</small>
+  </div>
+  <a href="student-dashboard.html" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+  <a href="student-profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+  <a href="student-results.html"><i class="fa-solid fa-graduation-cap"></i> Results</a>
+  <a href="student-statement-public.html"><i class="fa-solid fa-receipt"></i> Fee Statement</a>
+  <a href="student-timetable.html"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+  <a href="#" id="logoutSidebar"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+</div>
+<div class="overlay" id="overlay"></div>
+
+<header>
+  <div class="brand">
+    <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+    <h2>Student Dashboard</h2>
+  </div>
+  <div class="header-right">
+    <div class="user-info">
+      <small>Welcome,</small><br>
+      <b id="headerStudentName">Student</b>
+    </div>
+    <button class="logout" id="logoutBtn">Logout</button>
+  </div>
+</header>
+
+<div class="wrapper">
+  <div class="main-content">
+    <div class="container">
+      <div class="profile">
+        <h2 id="studentName">Student Name</h2>
+        <p>ID: <b id="studentID"></b></p>
+        <p>Class: <b id="studentClass"></b></p>
+      </div>
+
+      <div>
+        <div class="cards">
+          <div class="card">
+            <h3>Personal Information</h3>
+            <table>
+              <tr><td>Date of Birth</td><td id="dob"></td></tr>
+              <tr><td>Gender</td><td id="gender"></td></tr>
+              <tr><td>Guardian Phone</td><td id="phone"></td></tr>
+              <tr><td>Guardian Email</td><td id="email"></td></tr>
+              <tr><td>Address</td><td id="address"></td></tr>
+            </table>
+          </div>
+
+          <div class="card"><h3>My Subjects</h3><div id="subjects" class="subjects"></div></div>
+          <div class="card"><h3>Parent / Guardian</h3><table><tr><td>Name</td><td id="parentName"></td></tr><tr><td>Phone</td><td id="parentPhone"></td></tr><tr><td>Address</td><td id="address2"></td></tr></table></div>
+          <div class="card" style="grid-column: 1 / -1"><h3><i class="fa-solid fa-calendar-days"></i> My Time Table</h3><div id="timetableContainer"><div class="info">Loading timetable...</div></div></div>
+          <div class="card"><h3><i class="fa-solid fa-chalkboard-user"></i> My Teachers</h3><div id="teachersContainer"><div class="info">Loading teachers...</div></div></div>
+          <div class="card" style="grid-column: 1 / -1" id="resultsCard"><h3><i class="fa-solid fa-graduation-cap"></i> Academic Results</h3><div id="resultsContainer">Loading results...</div></div>
+          <div class="card">
+            <h3>Fees Account</h3>
+            <table>
+              <tr><td>Total Fees</td><td id="totalFees">MWK 0</td></tr>
+              <tr><td>Total Paid</td><td id="feesPaid">MWK 0</td></tr>
+              <tr><td>Balance</td><td id="feesBalance" class="balance">MWK 0</td></tr>
+            </table>
+            <button class="statement-btn" id="statementBtn">View Student Statement</button>
+          </div>
+          <div class="card"><h3>Announcements</h3><p>No announcements available.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey: "AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",authDomain: "greysol-academy.firebaseapp.com",projectId: "greysol-academy"});
+const db = getFirestore(app);
+
+const LOGIN_PAGE = "../admin/student-login.html"; // LOGIN IS IN ADMIN FOLDER
+
+let student = JSON.parse(localStorage.getItem("student"));
+if(!student){ window.location.href = LOGIN_PAGE; } // FIXED REDIRECT
+
+const studentID = student.studentID;
+const studentName = `${student.firstName || ""} ${student.surname || ""}`.trim();
+const studentClass = (student.classApplying || student.class || "-").trim();
+const studentSubjects = (student.subjects || []).map(s => s.toLowerCase().trim());
+let hasBalance = false;
+let loadedCount = 0;
+
+// SHOW LOGGED IN USER IN HEADER
+document.getElementById("headerStudentName").innerText = studentName;
+
+// SIDEBAR TOGGLE FOR MOBILE ONLY
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+document.getElementById("menuToggle").onclick = () => { sidebar.classList.add("active"); overlay.classList.add("active"); }
+overlay.onclick = () => { sidebar.classList.remove("active"); overlay.classList.remove("active"); }
+
+// FIXED LOGOUT PATH
+function logout(){ 
+  localStorage.removeItem("student"); 
+  window.location.href = LOGIN_PAGE; // GO TO ADMIN FOLDER
+}
+document.getElementById("logoutSidebar").onclick = logout;
+document.getElementById("logoutBtn").onclick = logout;
+
+// PROFILE
+document.getElementById("studentName").innerHTML = studentName;
+document.getElementById("studentID").innerHTML = studentID;
+document.getElementById("studentClass").innerHTML = studentClass;
+document.getElementById("dob").innerHTML = student.dateOfBirth || "-";
+document.getElementById("gender").innerHTML = student.gender || "-";
+document.getElementById("phone").innerHTML = student.guardianPhone || "-";
+document.getElementById("email").innerHTML = student.guardianEmail || "-";
+document.getElementById("address").innerHTML = student.address || "-";
+document.getElementById("parentName").innerHTML = student.guardianName || "-";
+document.getElementById("parentPhone").innerHTML = student.guardianPhone || "-";
+document.getElementById("address2").innerHTML = student.address || "-";
+
+// SUBJECTS
+const subjectsBox = document.getElementById("subjects");
+if(student.subjects && student.subjects.length > 0){
+  student.subjects.forEach(subject=>{ let span=document.createElement("span"); span.innerHTML=subject; subjectsBox.appendChild(span); });
+} else { subjectsBox.innerHTML = "No subjects assigned yet."; }
+
+function checkLoader(){
+  loadedCount++;
+  if(loadedCount >= 4){ document.getElementById("loader").style.display = "none"; }
+}
+
+// LOAD FEES
+async function loadFees(){
+  try{
+    let totalFees = 0; let totalPaid = 0;
+    const invoiceSnapshot = await getDocs(query(collection(db,"invoices"), where("studentID","==",studentID)));
+    invoiceSnapshot.forEach(doc=> totalFees += Number(doc.data().totalAmount || 0));
+
+    const receiptSnapshot = await getDocs(collection(db,"receipts"));
+    receiptSnapshot.forEach(doc=> {
+      const r = doc.data();
+      if(r.allocations) r.allocations.forEach(a=>{ if(a.studentID === studentID) totalPaid += Number(a.amount || 0); });
+    });
+
+    let balance = totalFees - totalPaid; if(balance < 0) balance = 0;
+    document.getElementById("totalFees").innerHTML = "MWK " + totalFees.toLocaleString();
+    document.getElementById("feesPaid").innerHTML = "MWK " + totalPaid.toLocaleString();
+    document.getElementById("feesBalance").innerHTML = "MWK " + balance.toLocaleString();
+
+    if(balance > 0){
+      hasBalance = true;
+      document.getElementById("statementBtn").disabled = true;
+      document.getElementById("statementBtn").innerText = "Clear Balance to View Statement";
+      document.getElementById("resultsCard").classList.add("blocked");
+    } else {
+      hasBalance = false;
+      document.getElementById("statementBtn").disabled = false;
+      document.getElementById("statementBtn").innerText = "View Student Statement";
+    }
+  }catch(err){ console.error(err); }
+  checkLoader();
+  loadResults(); // Always call results after fees
+}
+
+// LOAD RESULTS
+async function loadResults(){
+  const container = document.getElementById("resultsContainer");
+  
+  if(hasBalance){
+    container.innerHTML = `<div class="alert-warning"><i class="fa-solid fa-lock"></i> <b>Results Blocked</b><br>You cannot view results until your fee balance of MWK ${document.getElementById("feesBalance").innerText.replace('MWK ','')} is cleared.</div>`;
+    checkLoader();
+    return;
+  }
+
+  try{
+    const q = query(collection(db,"results"), where("studentID","==",studentID), where("status","==","Approved"));
+    const snap = await getDocs(q);
+    if(snap.empty){ container.innerHTML = `<p>Results will appear here after exams and Head Teacher approval.</p>`; }
+    else{
+      let html = `<div style="overflow-x:auto"><table><thead><tr><th>Term</th><th>Subject</th><th>Total</th><th>Grade</th></tr></thead><tbody>`;
+      snap.forEach(doc=>{ let r = doc.data(); html += `<tr><td>${r.term} ${r.year}</td><td>${r.subjectName}</td><td><b>${r.total}</b></td><td>${r.grade}</td></tr>`; });
+      html += `</tbody></table></div>`; container.innerHTML = html;
+    }
+  }catch(err){ container.innerHTML = `<div class="alert-warning">Error loading results</div>`; }
+  checkLoader();
+}
+
+// LOAD TIMETABLE
+async function loadTimetable(){
+  const container = document.getElementById("timetableContainer");
+  try{
+    const q = query(collection(db,"timetable"), where("class","==",studentClass));
+    const snap = await getDocs(q);
+    if(snap.empty){ container.innerHTML = `<div class="info">No timetable found for class: "${studentClass}".</div>`; }
+    else{
+      let rows = []; snap.forEach(d=>{ let t = d.data(); if(studentSubjects.includes((t.subjectName || "").toLowerCase().trim())) rows.push(t); });
+      if(rows.length === 0) { container.innerHTML = `<div class="info">No timetable for your subjects.</div>`; }
+      else{
+        let html = `<div style="overflow-x:auto"><table><thead><tr><th>Day</th><th>Time</th><th>Subject</th><th>Teacher</th></tr></thead><tbody>`;
+        rows.forEach(r=>{ html += `<tr><td>${r.day}</td><td>${r.startTime}-${r.endTime}</td><td>${r.subjectName}</td><td>${r.teacherName}</td></tr>`; });
+        html += `</tbody></table></div>`; container.innerHTML = html;
+      }
+    }
+  }catch(err){ container.innerHTML = `<div class="info">Error loading timetable</div>`; }
+  checkLoader();
+}
+
+// LOAD TEACHERS
+async function loadTeachers(){
+  const container = document.getElementById("teachersContainer");
+  try{
+    const q = query(collection(db,"allocations"), where("class","==",studentClass));
+    const snap = await getDocs(q);
+    if(snap.empty){ container.innerHTML = `<div class="info">No teachers allocated.</div>`; }
+    else{
+      let html = ""; snap.forEach(d=>{ let t = d.data(); if(studentSubjects.includes((t.subjectName || "").toLowerCase().trim())) html += `<p><b>${t.subjectName}</b>: ${t.teacherName}</p>`; });
+      container.innerHTML = html || `<div class="info">No teachers for your subjects</div>`;
+    }
+  }catch(err){ container.innerHTML = `<div class="info">Error loading teachers</div>`; }
+  checkLoader();
+}
+
+// RUN ALL
+loadFees();
+loadTimetable();
+loadTeachers();
+
+// STATEMENT BTN
+document.getElementById("statementBtn").onclick=function(){
+  if(hasBalance){ alert("Clear balance first"); return; }
+  localStorage.setItem("statementStudent", JSON.stringify({studentID, studentName:studentName}));
+  window.location.href="student-statement-public.html";
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Results</title>
+<link rel="icon" href="../images/logo1 - Copy.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+:root{--navy:#001f3f;--blue:#003366;--light:#f4f7fb;--green:#27ae60;--red:#c0392b;--purple:#8e44ad}
+body{margin:0;background:var(--light)}
+#loader{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--navy);z-index:9999;display:flex;justify-content:center;align-items:center;flex-direction:column;color:white}
+.spinner{border:4px solid rgba(255,255,255,.3);border-top:4px solid white;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+header{background:var(--navy);color:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;margin-left:270px}
+.brand{display:flex;align-items:center;gap:15px}
+.header-right{display:flex;align-items:center;gap:20px}
+.user-info{text-align:right}
+.user-info small{opacity:0.8;font-size:12px}
+.user-info b{font-size:14px}
+.menu-toggle{display:none;font-size:24px;background:none;border:none;color:white;cursor:pointer}
+.logout{background:#c0392b;border:none;color:white;padding:10px 20px;border-radius:7px;cursor:pointer}
+
+/* SIDEBAR - EXACT FROM YOUR DASHBOARD */
+.sidebar{position:fixed;top:0;left:0;width:270px;height:100%;background:var(--navy);z-index:200;overflow:auto;padding-top:20px;transition:0.3s}
+.sidebar.logo{text-align:center;padding:20px;color:white;border-bottom:1px solid rgba(255,255,255,.2)}
+.sidebar.logo img{width:80px;height:80px;object-fit:contain}
+.sidebar.logo h3{margin:10px 0 5px}
+.sidebar.logo small{opacity:0.8}
+.sidebar a{display:flex;align-items:center;gap:15px;padding:15px 25px;color:white;text-decoration:none;font-size:15px}
+.sidebar a:hover{background:rgba(255,255,255,.1)}
+.sidebar a.active{background:var(--blue)}
+.overlay{display:none}
+
+.wrapper{display:flex}
+.main-content{flex:1;margin-left:270px}
+
+/* RESULTS PAGE CONTENT */
+.container{padding:30px}
+.filter-box{background:white;padding:25px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.08);margin-bottom:25px;display:flex;gap:15px;flex-wrap:wrap;align-items:end}
+.filter-box label{font-weight:bold;color:var(--navy);font-size:13px}
+.filter-box select,.filter-box input{padding:12px;border-radius:8px;border:1px solid #ccc;min-width:180px}
+.btn{background:var(--navy);color:white;border:none;padding:12px 20px;border-radius:8px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px}
+.btn-print{background:var(--green)}
+.btn-transcript{background:var(--purple)}
+
+.result-section{background:white;padding:30px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.08);margin-bottom:25px}
+.result-section h2{color:var(--navy);border-bottom:2px solid #eee;padding-bottom:15px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th{background:var(--navy);color:white;padding:14px 12px;text-align:left;font-size:13px}
+td{padding:12px;border-bottom:1px solid #eee}
+.right{text-align:right}
+.total-row{background:#f4f7fb;font-weight:bold}
+.info{padding:20px;background:#d1ecf1;color:#0c5460;border-radius:8px;text-align:center}
+
+.print-header{display:none;text-align:center;margin-bottom:30px;border-bottom:3px solid var(--navy);padding-bottom:20px}
+.print-header img{width:100px;height:100px;object-fit:contain}
+.print-header h1{margin:5px 0;font-size:28px;color:var(--navy)}
+.print-student-info{display:flex;justify-content:space-between;margin:20px 0;padding:12px;border-radius:8px;background:#f4f7fb}
+
+@media print{
+@page{size:A4;margin:15mm}
+.sidebar,header,.filter-box{display:none!important}
+.main-content{margin:0;padding:0}
+.print-header{display:block!important}
+}
+
+@media(max-width:900px){
+.sidebar{left:-270px}
+.sidebar.active{left:0}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;z-index:150}
+.overlay.active{display:block}
+.main-content,header{margin-left:0}
+.menu-toggle{display:block}
+.header-right{gap:10px}
+.user-info{display:none}
+.container{padding:15px}
+}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="spinner"></div><p>Loading Results...</p></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="images/logo1 - Copy.png">
+    <h3>GREYSOL ACADEMY</h3>
+    <small>Student Portal</small>
+  </div>
+  <a href="student-dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+  <a href="student-profile.html"><i class="fa-solid fa-user"></i> My Profile</a>
+  <a href="student-results.html" class="active"><i class="fa-solid fa-graduation-cap"></i> Results</a>
+  <a href="student-statement-public.html"><i class="fa-solid fa-receipt"></i> Fee Statement</a>
+  <a href="student-timetable.html"><i class="fa-solid fa-calendar-days"></i> Timetable</a>
+  <a href="#" id="logoutSidebar"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+</div>
+<div class="overlay" id="overlay"></div>
+
+<header>
+  <div class="brand">
+    <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+    <h2>Academic Results</h2>
+  </div>
+  <div class="header-right">
+    <div class="user-info">
+      <small>Welcome,</small><br>
+      <b id="headerStudentName">Student</b>
+    </div>
+    <button class="logout" id="logoutBtn">Logout</button>
+  </div>
+</header>
+
+<div class="wrapper">
+  <div class="main-content">
+    <div class="container">
+      <div class="print-header" id="printHeader">
+        <img src="images/logo1 - Copy.png">
+        <h1>GREYSOL ACADEMY</h1>
+        <p>P.O Box 1416, Lilongwe | Tel: 0880314701</p>
+        <h2 id="printTitle">STUDENT REPORT CARD</h2>
+        <div class="print-student-info">
+          <span><b>Student Name:</b> <span id="printStudentName"></span></span>
+          <span><b>Student ID:</b> <span id="printStudentID"></span></span>
+        </div>
+      </div>
+
+      <div class="filter-box">
+        <div><label>Year</label><br><input type="text" id="filterYear" list="yearList" placeholder="2025"><datalist id="yearList"></datalist></div>
+        <div><label>Term</label><br><select id="filterTerm"><option value="">All Terms</option><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
+        <button class="btn" id="filterBtn"><i class="fa-solid fa-filter"></i> Filter</button>
+        <button class="btn btn-print" id="printReportCard"><i class="fa-solid fa-print"></i> Print Report Card</button>
+        <button class="btn btn-transcript" id="printTranscript"><i class="fa-solid fa-file-pdf"></i> Print Transcript</button>
+      </div>
+
+      <div id="resultsContainer"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({apiKey: "AIzaSyAgoW4eu_hvrWHSxJciW0qUWeUXOr-msgw",authDomain: "greysol-academy.firebaseapp.com",projectId: "greysol-academy"});
+const db = getFirestore(app);
+
+let student = JSON.parse(localStorage.getItem("student"));
+if(!student){ window.location.href="login.html"; }
+
+let allResults = [];
+const studentID = student.studentID;
+const studentName = `${student.firstName || ""} ${student.surname || ""}`;
+
+// SHOW LOGGED IN USER IN HEADER
+document.getElementById("headerStudentName").innerText = studentName;
+
+// SET PRINT HEADER
+document.getElementById("printStudentName").innerText = studentName;
+document.getElementById("printStudentID").innerText = studentID;
+
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+document.getElementById("menuToggle").onclick = () => { sidebar.classList.add("active"); overlay.classList.add("active"); }
+overlay.onclick = () => { sidebar.classList.remove("active"); overlay.classList.remove("active"); }
+function logout(){ localStorage.removeItem("student"); window.location.href="admin/student-login.html"; }
+document.getElementById("logoutSidebar").onclick = logout;
+document.getElementById("logoutBtn").onclick = logout;
+
+async function loadResults(){
+  try{
+    const q = query(collection(db,"results"), where("studentID","==",studentID), where("status","==","Approved"));
+    const snap = await getDocs(q);
+    allResults = []; snap.forEach(doc=> allResults.push(doc.data()));
+    allResults.sort((a,b)=> b.year - a.year);
+    let years = [...new Set(allResults.map(r=>r.year))].sort((a,b)=>b-a);
+    years.forEach(y=>{ document.getElementById("yearList").innerHTML += `<option value="${y}">`; });
+    displayResults(allResults, false);
+  }catch(err){ document.getElementById("resultsContainer").innerHTML = `<div class="info">Error: ${err.message}</div>`; }
+  document.getElementById("loader").style.display = "none";
+}
+
+function displayResults(results, isTranscript){
+  const container = document.getElementById("resultsContainer");
+  if(results.length === 0){ container.innerHTML = `<div class="info">No results found.</div>`; return; }
+  let grouped = {}; results.forEach(r=>{ if(!grouped[r.year]) grouped[r.year] = {}; if(!grouped[r.year][r.term]) grouped[r.year][r.term] = []; grouped[r.year][r.term].push(r); });
+  let html = "";
+  for(let year in grouped){ for(let term in grouped[year]){
+    let subjects = grouped[year][term]; let total = subjects.reduce((sum, s)=> sum + Number(s.total || 0), 0); let avg = (total / subjects.length).toFixed(2);
+    html += `<div class="result-section"><h2>${isTranscript? `Academic Year: ${year} - ${term}` : `${term} - ${year}`}</h2><div style="overflow-x:auto"><table><thead><tr><th>Subject</th><th>Test 1</th><th>Test 2</th><th>Exam</th><th>Total</th><th>Grade</th><th>Remark</th></tr></thead><tbody>`;
+    subjects.forEach(s=>{ html += `<tr><td>${s.subjectName}</td><td class="right">${s.test1 || '-'}</td><td class="right">${s.test2 || '-'}</td><td class="right">${s.exam || '-'}</td><td class="right"><b>${s.total}</b></td><td>${s.grade}</td><td>${s.remark}</td></tr>`; });
+    html += `<tr class="total-row"><td colspan="4">Total / Average</td><td class="right">${total}</td><td colspan="2">Average: ${avg}%</td></tr></tbody></table></div></div>`;
+  }}
+  container.innerHTML = html;
+}
+
+document.getElementById("filterBtn").onclick = () => { let year = document.getElementById("filterYear").value.trim(); let term = document.getElementById("filterTerm").value; displayResults(allResults.filter(r=> (year === "" || r.year.toString() == year) && (term === "" || r.term == term)), false); }
+document.getElementById("printReportCard").onclick = () => { let year = document.getElementById("filterYear").value.trim(); let term = document.getElementById("filterTerm").value; if(term === "" || year === ""){ alert("Select Year and Term"); return; } document.getElementById("printTitle").innerText = "STUDENT REPORT CARD"; displayResults(allResults.filter(r=> r.year.toString() == year && r.term == term), false); setTimeout(()=> window.print(), 300); }
+document.getElementById("printTranscript").onclick = () => { document.getElementById("printTitle").innerText = "ACADEMIC TRANSCRIPT"; displayResults(allResults, true); setTimeout(()=> window.print(), 300); }
+loadResults();
+</script>
+</body>
+</html>
