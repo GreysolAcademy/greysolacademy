@@ -9,22 +9,42 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
 :root{--primary:#0B1F3A;--secondary:#2563EB;--success:#16A34A;--warning:#F59E0B;--danger:#DC2626;--light:#F8FAFC;--border:#E2E8F0;--text:#334155;}
 body{background:#F1F5F9;color:var(--text);height:100vh;overflow:hidden;}
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
 .sidebar{
     width:270px;
-    height:100vh;
+    height:100dvh;
     position:fixed;
     left:0;
     top:0;
     z-index:1100;
-    background:#001f3f;
+
+    background:var(--navy);
     color:#fff;
-    overflow-y:auto;
-    transition:width .25s ease,left .25s ease;
+
+    display:flex;
+    flex-direction:column;
+
+    /* Important: sidebar itself does NOT scroll */
+    overflow:hidden;
+
+    transition:width .25s ease,
+               left .25s ease;
 }
 
+
+/* =========================================================
+   SIDEBAR LOGO
+========================================================= */
+
 .logo{
+    flex:0 0 auto;
+
     padding:18px 15px;
     text-align:center;
+
     border-bottom:1px solid rgba(255,255,255,.14);
 }
 
@@ -45,100 +65,276 @@ body{background:#F1F5F9;color:var(--text);height:100vh;overflow:hidden;}
     opacity:.7;
 }
 
+
+/* =========================================================
+   SCROLLABLE MENU AREA
+========================================================= */
+
 .menu{
-    padding:8px 0 20px;
+    flex:1 1 auto;
+
+    /*
+       Very important for mobile:
+       allows the menu to shrink inside the fixed sidebar
+    */
+    min-height:0;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    padding:8px 0 35px;
+
+    /*
+       Makes scrolling smoother on phones
+    */
+    -webkit-overflow-scrolling:touch;
+
+    /*
+       Prevents scroll chaining to the page
+    */
+    overscroll-behavior:contain;
+
+    /*
+       Firefox scrollbar
+    */
+    scrollbar-width:thin;
+    scrollbar-color:rgba(255,255,255,.25) transparent;
 }
+
+
+/* =========================================================
+   SIDEBAR SCROLLBAR - CHROME / EDGE / SAFARI
+========================================================= */
+
+.menu::-webkit-scrollbar{
+    width:5px;
+}
+
+.menu::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.menu::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.25);
+    border-radius:10px;
+}
+
+.menu::-webkit-scrollbar-thumb:hover{
+    background:rgba(255,255,255,.4);
+}
+
+
+/* =========================================================
+   SECTION LABELS
+========================================================= */
 
 .section-label{
     padding:15px 24px 6px;
+
     font-size:10px;
     text-transform:uppercase;
     letter-spacing:1.1px;
+
     opacity:.5;
 }
+
+
+/* =========================================================
+   MAIN MENU LINKS
+========================================================= */
 
 .menu a,
 .menu-header{
     display:flex;
     align-items:center;
+
     gap:13px;
+
     padding:12px 22px;
+
     color:#fff;
     text-decoration:none;
+
     cursor:pointer;
+
     font-size:13px;
+
     min-height:46px;
+
+    /*
+       Prevent text from causing horizontal overflow
+    */
+    min-width:0;
 }
 
+
+/* =========================================================
+   MENU ICONS
+========================================================= */
+
 .menu a i,
-.menu-header>i:first-child{
+.menu-header > i:first-child{
     width:18px;
+
+    min-width:18px;
+
     text-align:center;
 }
+
+
+/* =========================================================
+   HOVER
+========================================================= */
 
 .menu a:hover,
 .menu-header:hover{
     background:rgba(255,255,255,.08);
 }
 
+
+/* =========================================================
+   ACTIVE LINK
+========================================================= */
+
 .menu a.active{
     background:rgba(255,255,255,.13);
-    border-left:4px solid #1f9d55;
+
+    border-left:4px solid var(--green);
+
     padding-left:18px;
 }
 
+
+/* =========================================================
+   DROPDOWN ARROW
+========================================================= */
+
 .arrow{
-    margin-left:auto!important;
-    width:auto!important;
-    font-size:11px!important;
+    margin-left:auto !important;
+
+    width:auto !important;
+    min-width:auto !important;
+
+    font-size:11px !important;
+
     transition:transform .25s ease;
 }
 
+
+/* =========================================================
+   SUBMENU
+========================================================= */
+
 .submenu{
     max-height:0;
+
     overflow:hidden;
+
     background:rgba(0,0,0,.17);
+
     transition:max-height .3s ease;
 }
+
+
+/* =========================================================
+   OPEN SUBMENU
+========================================================= */
 
 .menu-group.active .submenu{
     max-height:600px;
 }
 
+
+/* =========================================================
+   ROTATE ARROW WHEN OPEN
+========================================================= */
+
 .menu-group.active .arrow{
     transform:rotate(180deg);
 }
 
+
+/* =========================================================
+   SUBMENU LINKS
+========================================================= */
+
 .submenu a{
     padding-left:54px;
+
     font-size:12px;
 }
+
+
+/* =========================================================
+   ACTIVE SUBMENU LINK
+========================================================= */
 
 .submenu a.active{
     padding-left:50px;
 }
 
-.sidebar::-webkit-scrollbar{
-    width:5px;
+
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
+
+@media(max-width:992px){
+
+    .sidebar{
+        width:270px;
+
+        /*
+           Use dynamic viewport height on phones
+        */
+        height:100dvh;
+
+        left:-270px;
+
+        /*
+           Keep the sidebar above the overlay
+        */
+        z-index:1100;
+    }
+
+    .sidebar.open{
+        left:0;
+    }
 }
 
-.sidebar::-webkit-scrollbar-thumb{
-    background:rgba(255,255,255,.2);
-    border-radius:10px;
-}
 
-.menu-group{
-    position:relative;
-}
+/* =========================================================
+   SMALL PHONES
+========================================================= */
 
-.menu-header span{
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
+@media(max-width:480px){
 
-.menu a span{
-    white-space:nowrap;
+    .sidebar{
+        width:270px;
+    }
+
+    .logo{
+        padding:15px 12px;
+    }
+
+    .logo img{
+        width:60px;
+        height:60px;
+    }
+
+    .logo h2{
+        font-size:16px;
+    }
+
+    .menu{
+        padding-bottom:40px;
+    }
+
+    .menu a,
+    .menu-header{
+        min-height:46px;
+        padding-top:12px;
+        padding-bottom:12px;
+    }
 }
 .main{
     margin-left:270px;
@@ -790,6 +986,52 @@ document.getElementById("postSuspenseBtn").onclick=async()=>{const adj=Number(do
 
 document.getElementById("saveDraftBtn").onclick=async()=>{await addDoc(collection(db,"bankReconciliations"),{bankAccount:SELECTED_BANK,statementDate:Timestamp.fromDate(new Date(document.getElementById("statementDate").value)),openingBalance:Number(document.getElementById("openingBalance").value),closingBalance:Number(document.getElementById("closingBalance").value),systemTransactions:SYSTEM_TRANSACTIONS,bankTransactions:BANK_TRANSACTIONS,status:"Draft",createdBy:loggedUser.username,createdAt:Timestamp.now()});showNotification("Draft saved")}
 document.getElementById("completeBtn").onclick=async()=>{const adj=Number(document.getElementById("adjustedDifference").innerText.replace(/[^0-9-]/g,'')); if(Math.abs(adj)>0.01)return alert("Adjusted Difference must be 0"); if(!confirm("Complete reconciliation?"))return; await addDoc(collection(db,"bankReconciliations"),{bankAccount:SELECTED_BANK,statementDate:Timestamp.fromDate(new Date(document.getElementById("statementDate").value)),openingBalance:Number(document.getElementById("openingBalance").value),closingBalance:Number(document.getElementById("closingBalance").value),systemTransactions:SYSTEM_TRANSACTIONS,bankTransactions:BANK_TRANSACTIONS,status:"Completed",createdBy:loggedUser.username,createdAt:Timestamp.now()});showNotification("Reconciliation Completed");location.reload();}
+/* =========================================================
+   AUTO LOGOUT AFTER 30 MINUTES OF INACTIVITY
+========================================================= */
+
+const IDLE_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+let idleTimer;
+
+function resetIdleTimer() {
+    clearTimeout(idleTimer);
+
+    idleTimer = setTimeout(async () => {
+        try {
+            if (typeof auth !== "undefined" && auth.currentUser) {
+                await signOut(auth);
+            }
+
+            // Redirect to login page
+            window.location.href = "loginform.html";
+
+        } catch (error) {
+            console.error("Automatic logout failed:", error);
+
+            // Still redirect to login
+            window.location.href = "loginform.html";
+        }
+    }, IDLE_TIMEOUT);
+}
+
+
+/* User activity that resets the timer */
+[
+    "mousemove",
+    "mousedown",
+    "keydown",
+    "scroll",
+    "touchstart",
+    "click"
+].forEach(event => {
+    document.addEventListener(event, resetIdleTimer, {
+        passive: true
+    });
+});
+
+
+/* Start the timer when the page loads */
+resetIdleTimer();
 </script>
 </body>
 </html>
