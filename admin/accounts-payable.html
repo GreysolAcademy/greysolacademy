@@ -1710,6 +1710,52 @@ window.payBill=id=>{
 
 loadData();
 
+    /* =========================================================
+   AUTO LOGOUT AFTER 30 MINUTES OF INACTIVITY
+========================================================= */
+
+const IDLE_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+let idleTimer;
+
+function resetIdleTimer() {
+    clearTimeout(idleTimer);
+
+    idleTimer = setTimeout(async () => {
+        try {
+            if (typeof auth !== "undefined" && auth.currentUser) {
+                await signOut(auth);
+            }
+
+            // Redirect to login page
+            window.location.href = "loginform.html";
+
+        } catch (error) {
+            console.error("Automatic logout failed:", error);
+
+            // Still redirect to login
+            window.location.href = "loginform.html";
+        }
+    }, IDLE_TIMEOUT);
+}
+
+
+/* User activity that resets the timer */
+[
+    "mousemove",
+    "mousedown",
+    "keydown",
+    "scroll",
+    "touchstart",
+    "click"
+].forEach(event => {
+    document.addEventListener(event, resetIdleTimer, {
+        passive: true
+    });
+});
+
+
+/* Start the timer when the page loads */
+resetIdleTimer();
 </script>
 
 </body>
