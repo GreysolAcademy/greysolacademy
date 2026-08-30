@@ -32,7 +32,7 @@ body{background:var(--light);display:flex;height:100vh;overflow:hidden}
 .logo img{width:80px;margin-bottom:10px}
 .logo h2{font-size:22px;margin-bottom:5px}
 .logo p{font-size:13px;opacity:.8}
-.menu{padding:15px 0}
+.menu{padding:15px 0 100px 0} /* ADDED: bottom padding so logout is reachable on phone */
 .menu a{display:flex;align-items:center;gap:15px;padding:14px 25px;color:white;text-decoration:none;transition:.25s}
 .menu a:hover{background:rgba(255,255,255,.12);padding-left:35px}
 .menu a.active{background:rgba(255,255,255,.18);padding-left:35px}
@@ -328,6 +328,22 @@ const db = getFirestore(app);
 const loader = document.getElementById("mainLoader");
 let staff=[];
 
+// ADDED: AUTO LOGOUT TIMER 30 MINUTES
+let logoutTimer;
+const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30 minutes
+function resetLogoutTimer() {
+  clearTimeout(logoutTimer);
+  logoutTimer = setTimeout(() => {
+    alert("You have been logged out due to inactivity.");
+    localStorage.removeItem("loggedUser");
+    window.location.href = "staff-login.html";
+  }, INACTIVITY_LIMIT);
+}
+['click','mousemove','keypress','scroll','touchstart'].forEach(evt => {
+  document.addEventListener(evt, resetLogoutTimer);
+});
+resetLogoutTimer();
+
 // 1. ADMIN ONLY CHECK
 const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
 const userRole = (loggedUser?.role || "").toString().trim().toLowerCase();
@@ -343,6 +359,7 @@ document.getElementById("adminRole").innerText = loggedUser.role.toUpperCase();
 // 3. LOGOUT
 document.getElementById("logoutBtn").onclick = (e) => {
   e.preventDefault();
+  clearTimeout(logoutTimer); // ADDED
   localStorage.removeItem("loggedUser");
   window.location.href = "staff-login.html";
 }
