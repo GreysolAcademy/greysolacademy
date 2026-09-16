@@ -1,6 +1,6 @@
 (() => {
 
-    const LIMIT = 30 * 1000; // 30 seconds for testing
+    const LIMIT = 30 * 60 * 1000; // 30 seconds for testing
 
     const ACTIVITY_KEY = "greysolLastActivity";
     const RETURN_PAGE_KEY = "greysolReturnPage";
