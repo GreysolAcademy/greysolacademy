@@ -1,88 +1,57 @@
-// functions/timer.js - LINK THIS TO ALL PAGES
+<script>
+/* GREYSOL IDLE LOGOUT - CROSS TAB FIX - 30 SEC TRIAL */
+(function(){
+  const LIMIT = 30 * 1000;
+  const KEY = "greysolLastActivity";
 
-const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes - change as you want
-const WARNING_BEFORE = 0; // show message immediately when expired
-let timeoutId;
-let countdownId;
-
-function getLoader(){
-  return document.getElementById("pageLoader");
-}
-
-function showExpiredMessage(reason = "Your session expired"){
-  const loader = getLoader();
-  if(!loader) return;
-  loader.style.display = "flex";
-  loader.innerHTML = `
-    <div style="text-align:center;padding:20px">
-      <i class="fa-solid fa-circle-exclamation" style="font-size:64px;color:var(--navy,#001f3f)"></i>
-      <h3 style="margin:15px 0 5px;color:var(--navy,#001f3f);font-family:'Segoe UI',Arial">${reason}</h3>
-      <p style="color:#666;font-family:'Segoe UI',Arial">Redirecting to login in <span id="expireCountdown">3</span>s...</p>
-    </div>
-  `;
-  
-  let sec = 3;
-  countdownId = setInterval(()=>{
-    sec--;
-    const el = document.getElementById("expireCountdown");
-    if(el) el.innerText = sec;
-    if(sec <= 0){
-      clearInterval(countdownId);
-      localStorage.removeItem("loggedUser");
-      window.location.href = "staff-login.html";
-    }
-  }, 1000);
-}
-
-function resetTimer(){
-  clearTimeout(timeoutId);
-  timeoutId = setTimeout(()=>{
-    showExpiredMessage("Your session expired");
-  }, SESSION_TIMEOUT);
-}
-
-function checkAlreadyExpired(){
-  const loggedUser = localStorage.getItem("loggedUser");
-  if(!loggedUser){
-    showExpiredMessage("Your session expired");
-    return true;
+  function getUser(){
+    try{ return JSON.parse(localStorage.getItem("loggedUser") || sessionStorage.getItem("loggedUser") || "null"); }catch{ return null; }
   }
-  return false;
-}
 
-// For Firebase rate limit - call this from anywhere: window.showRateLimit(60)
-window.showRateLimit = function(seconds = 60, reason = "Your session expired"){
-  const loader = getLoader();
-  if(!loader) return;
-  loader.style.display = "flex";
-  
-  let sec = seconds;
-  loader.innerHTML = `
-    <div style="text-align:center;padding:20px">
-      <i class="fa-solid fa-clock" style="font-size:64px;color:#f39c12"></i>
-      <h3 style="margin:15px 0 5px;color:var(--navy)">${reason}</h3>
-      <p style="color:#666">Too many requests. Retrying in <span id="expireCountdown">${sec}</span>s...</p>
-    </div>
-  `;
-  
-  countdownId = setInterval(()=>{
-    sec--;
-    const el = document.getElementById("expireCountdown");
-    if(el) el.innerText = sec;
-    if(sec <= 0){
-      clearInterval(countdownId);
-      location.reload(); // auto refresh, no OK needed
-    }
-  }, 1000);
-}
+  function logout(){
+    localStorage.setItem("greysolReturnPage", location.href);
+    localStorage.removeItem("loggedUser");
+    sessionStorage.removeItem("loggedUser");
+    localStorage.removeItem(KEY);
+    location.replace("../staff-login.html?session=expired");
+  }
 
-// Auto start on every page
-if(!checkAlreadyExpired()){
-  resetTimer();
-  // Reset on any user activity
-  ['click','mousemove','keydown','scroll','touchstart'].forEach(evt=>{
-    document.addEventListener(evt, resetTimer, {passive:true});
+  if(!getUser()) return;
+
+  // ALWAYS write to localStorage so other tabs see it
+  function touch(){
+    const now = Date.now().toString();
+    localStorage.setItem(KEY, now);
+  }
+
+  // activity in THIS tab
+  ["click","keydown","mousemove","touchstart","scroll"].forEach(e=>{
+    window.addEventListener(e, touch, {passive:true});
   });
-}
 
-console.log("Session timer active: 30min");
+  // activity in OTHER tab - listen to storage event
+  window.addEventListener("storage", (e)=>{
+    if(e.key === KEY && e.newValue){
+      console.log("Other tab active, resetting timer");
+    }
+    if(e.key === "loggedUser" && !e.newValue){
+      location.replace("../staff-login.html");
+    }
+  });
+
+  touch(); // init
+
+  setInterval(()=>{
+    if(!getUser()) return;
+    const stored = Number(localStorage.getItem(KEY) || 0);
+    const idle = Date.now() - stored;
+    console.log("Idle:", Math.floor(idle/1000)+"s - checking localStorage from all tabs");
+    if(stored && idle >= LIMIT){
+      alert("Session expired - idle 30s (all tabs)");
+      logout();
+    }
+  }, 3000);
+
+  console.log("✓ Cross-tab idle logout ACTIVE");
+})();
+</script>
