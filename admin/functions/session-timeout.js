@@ -1,80 +1,90 @@
 /* =========================================================
-   GREYSOL ACADEMY - AUTO LOGOUT ON IDLE
+   GREYSOL ACADEMY - IDLE LOGOUT - FINAL FIX
 ========================================================= */
 (function(){
+console.log("[Session Timeout] Loaded");
 
-const INACTIVITY_LIMIT = 1 * 60 * 1000; // 1 minute - change to 30*60*1000 for 30min
+const INACTIVITY_LIMIT = 10 * 1000; // 10 sec for test. Change to 15*60*1000 for 15min later
 const LAST_ACTIVITY_KEY = "greysolLastActivity";
 const RETURN_PAGE_KEY = "greysolReturnPage";
 
 function getLoggedUser(){
-  try{ return JSON.parse(localStorage.getItem("loggedUser")); } catch { return null; }
+  try{
+    // check BOTH storages
+    const a = localStorage.getItem("loggedUser");
+    const b = sessionStorage.getItem("loggedUser");
+    return JSON.parse(a || b || "null");
+  }catch(e){ return null; }
 }
 
-function saveCurrentPage(){
-  const page = window.location.pathname.split("/").pop();
-  if(page && page !== "staff-login.html"){
-    localStorage.setItem(RETURN_PAGE_KEY, window.location.href);
+function savePage(){
+  const page = window.location.href;
+  if(!page.includes("staff-login.html")){
+    localStorage.setItem(RETURN_PAGE_KEY, page);
   }
 }
 
-function doLogout(){
-  saveCurrentPage();
+function forceLogout(reason){
+  console.log("[Session Timeout] Logging out:", reason);
+  savePage();
   localStorage.removeItem("loggedUser");
+  sessionStorage.removeItem("loggedUser");
   localStorage.removeItem(LAST_ACTIVITY_KEY);
+  sessionStorage.removeItem(LAST_ACTIVITY_KEY);
+  alert("Session expired due to inactivity");
   window.location.replace("staff-login.html?session=expired");
 }
 
+let lastSave = 0;
 function recordActivity(){
-  if(!getLoggedUser()) return;
-  // throttle - only save once per 2 seconds to avoid spam
-  const last = Number(localStorage.getItem(LAST_ACTIVITY_KEY) || 0);
-  if(Date.now() - last > 2000){
-    localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
+  const user = getLoggedUser();
+  if(!user) return;
+  const now = Date.now();
+  if(now - lastSave > 1000){ // throttle 1 sec
+    localStorage.setItem(LAST_ACTIVITY_KEY, now.toString());
+    sessionStorage.setItem(LAST_ACTIVITY_KEY, now.toString());
+    lastSave = now;
+    console.log("[Session Timeout] Activity recorded");
   }
 }
 
 function checkTimeout(){
   const user = getLoggedUser();
-  if(!user) return;
-  const last = Number(localStorage.getItem(LAST_ACTIVITY_KEY) || Date.now());
-  if(Date.now() - last >= INACTIVITY_LIMIT){
-    alert("Session expired due to inactivity.");
-    doLogout();
+  if(!user){
+    console.log("[Session Timeout] No user, skipping");
+    return;
+  }
+  const last = Number(localStorage.getItem(LAST_ACTIVITY_KEY) || sessionStorage.getItem(LAST_ACTIVITY_KEY) || Date.now());
+  const diff = Date.now() - last;
+  console.log(`[Session Timeout] Idle for ${diff/1000}s / limit ${INACTIVITY_LIMIT/1000}s`);
+  if(diff >= INACTIVITY_LIMIT){
+    forceLogout("idle " + diff + "ms");
   }
 }
 
-// --- START ---
+// INIT
 const user = getLoggedUser();
+console.log("[Session Timeout] User:", user);
 if(!user){
-  // not logged in, do nothing
+  console.log("[Session Timeout] Not logged in, timeout disabled");
   return;
 }
 
-// if no timestamp, create one
-if(!localStorage.getItem(LAST_ACTIVITY_KEY)){
-  localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
+const existing = localStorage.getItem(LAST_ACTIVITY_KEY) || sessionStorage.getItem(LAST_ACTIVITY_KEY);
+if(!existing){
+  const now = Date.now().toString();
+  localStorage.setItem(LAST_ACTIVITY_KEY, now);
+  sessionStorage.setItem(LAST_ACTIVITY_KEY, now);
 }
-saveCurrentPage();
+savePage();
 
-// activity listeners - use throttled version
-["click","mousedown","keydown","scroll","touchstart"].forEach(evt=>{
-  document.addEventListener(evt, recordActivity, {passive:true});
+["click","keydown","mousemove","touchstart","scroll"].forEach(ev=>{
+  window.addEventListener(ev, recordActivity, {passive:true});
 });
 
-// check every 5 seconds
-setInterval(checkTimeout, 5000);
+setInterval(checkTimeout, 3000);
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible") checkTimeout(); });
 
-// also check on visibility change (when user comes back to tab)
-document.addEventListener("visibilitychange", ()=>{
-  if(document.visibilityState === "visible") checkTimeout();
-});
-
-// sync across tabs
-window.addEventListener("storage", (e)=>{
-  if(e.key === "loggedUser" && !e.newValue){
-    window.location.replace("staff-login.html");
-  }
-});
+console.log("[Session Timeout] Active - Will logout after", INACTIVITY_LIMIT/1000, "seconds idle");
 
 })();
