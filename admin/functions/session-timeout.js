@@ -1,31 +1,13 @@
 /* =========================================================
    GREYSOL ACADEMY
-   GLOBAL SESSION / IDLE TIMEOUT
+   SESSION IDLE TIMEOUT
+   TRIAL VERSION: 1 MINUTE
 ========================================================= */
-
-/*
-   TRIAL:
-   1 minute = 60 * 1000
-
-   PRODUCTION:
-   30 minutes = 30 * 60 * 1000
-
-   When ready, simply change:
-   const INACTIVITY_LIMIT = 60 * 1000;
-
-   to:
-   const INACTIVITY_LIMIT = 30 * 60 * 1000;
-*/
 
 const INACTIVITY_LIMIT = 60 * 1000;
 
-
-/* =========================================================
-   STORAGE KEYS
-========================================================= */
-
-const SESSION_ACTIVITY_KEY = "greysolLastActivity";
-const SESSION_RETURN_PAGE_KEY = "greysolReturnPage";
+const LAST_ACTIVITY_KEY = "greysolLastActivity";
+const RETURN_PAGE_KEY = "greysolReturnPage";
 const SESSION_EXPIRED_KEY = "greysolSessionExpired";
 
 
@@ -44,12 +26,14 @@ function getLoggedUser() {
     } catch (error) {
 
         return null;
+
     }
+
 }
 
 
 /* =========================================================
-   RECORD USER ACTIVITY
+   RECORD ACTIVITY
 ========================================================= */
 
 function recordActivity() {
@@ -61,9 +45,10 @@ function recordActivity() {
     }
 
     localStorage.setItem(
-        SESSION_ACTIVITY_KEY,
+        LAST_ACTIVITY_KEY,
         Date.now().toString()
     );
+
 }
 
 
@@ -74,7 +59,9 @@ function recordActivity() {
 function saveCurrentPage() {
 
     const currentPage =
-        window.location.pathname.split("/").pop();
+        window.location.pathname
+            .split("/")
+            .pop();
 
     if (
         currentPage &&
@@ -82,33 +69,39 @@ function saveCurrentPage() {
     ) {
 
         localStorage.setItem(
-            SESSION_RETURN_PAGE_KEY,
+            RETURN_PAGE_KEY,
             currentPage
         );
+
     }
+
 }
 
 
 /* =========================================================
-   LOGOUT DUE TO INACTIVITY
+   LOGOUT
 ========================================================= */
 
 function logoutDueToInactivity() {
 
     /*
-       Prevent multiple tabs from repeatedly
-       running the logout process.
+       Prevent repeated logout processing.
     */
 
-    const alreadyExpired =
-        localStorage.getItem(SESSION_EXPIRED_KEY);
+    if (
+        localStorage.getItem(
+            SESSION_EXPIRED_KEY
+        ) === "true"
+    ) {
 
-    if (alreadyExpired === "true") {
         return;
+
     }
 
 
-    /* Mark session as expired */
+    /*
+       Mark session as expired.
+    */
 
     localStorage.setItem(
         SESSION_EXPIRED_KEY,
@@ -116,39 +109,44 @@ function logoutDueToInactivity() {
     );
 
 
-    /* Remember the page */
+    /*
+       Remember the page the user was using.
+    */
 
     saveCurrentPage();
 
 
-    /* Remove logged-in account */
-
-    localStorage.removeItem("loggedUser");
-
-
-    /* Remove activity timestamp */
+    /*
+       Remove login session.
+    */
 
     localStorage.removeItem(
-        SESSION_ACTIVITY_KEY
+        "loggedUser"
     );
 
 
     /*
-       Redirect to login.
+       Remove activity timestamp.
+    */
 
-       location.replace prevents the user from
-       simply pressing Back to return to the
-       protected page.
+    localStorage.removeItem(
+        LAST_ACTIVITY_KEY
+    );
+
+
+    /*
+       Send user to login page.
     */
 
     window.location.replace(
         "staff-login.html?session=expired"
     );
+
 }
 
 
 /* =========================================================
-   CHECK SESSION
+   CHECK FOR INACTIVITY
 ========================================================= */
 
 function checkSessionTimeout() {
@@ -156,8 +154,7 @@ function checkSessionTimeout() {
     const loggedUser = getLoggedUser();
 
     /*
-       If nobody is logged in, there is no session
-       to monitor.
+       Nothing to check if nobody is logged in.
     */
 
     if (!loggedUser) {
@@ -165,17 +162,16 @@ function checkSessionTimeout() {
     }
 
 
-    const lastActivity =
-        Number(
-            localStorage.getItem(
-                SESSION_ACTIVITY_KEY
-            )
-        );
+    const lastActivity = Number(
+        localStorage.getItem(
+            LAST_ACTIVITY_KEY
+        )
+    );
 
 
     /*
-       If no activity timestamp exists,
-       create one.
+       If this is a new session,
+       create the timestamp.
     */
 
     if (!lastActivity) {
@@ -183,6 +179,7 @@ function checkSessionTimeout() {
         recordActivity();
 
         return;
+
     }
 
 
@@ -191,10 +188,14 @@ function checkSessionTimeout() {
 
 
     /*
-       Session has expired.
+       Has the user been inactive
+       for at least 1 minute?
     */
 
-    if (inactiveTime >= INACTIVITY_LIMIT) {
+    if (
+        inactiveTime >=
+        INACTIVITY_LIMIT
+    ) {
 
         logoutDueToInactivity();
 
@@ -204,7 +205,7 @@ function checkSessionTimeout() {
 
 
 /* =========================================================
-   USER ACTIVITY EVENTS
+   USER ACTIVITY
 ========================================================= */
 
 const activityEvents = [
@@ -226,14 +227,16 @@ activityEvents.forEach(function(eventName) {
     document.addEventListener(
         eventName,
         recordActivity,
-        { passive: true }
+        {
+            passive: true
+        }
     );
 
 });
 
 
 /* =========================================================
-   INITIALIZE SESSION
+   INITIALIZE
 ========================================================= */
 
 function initializeSessionTimeout() {
@@ -246,13 +249,12 @@ function initializeSessionTimeout() {
 
 
     /*
-       If the user has just logged in,
-       create an activity timestamp.
+       Start activity tracking.
     */
 
     if (
         !localStorage.getItem(
-            SESSION_ACTIVITY_KEY
+            LAST_ACTIVITY_KEY
         )
     ) {
 
@@ -262,7 +264,7 @@ function initializeSessionTimeout() {
 
 
     /*
-       Save the current page.
+       Remember current page.
     */
 
     saveCurrentPage();
@@ -276,10 +278,7 @@ function initializeSessionTimeout() {
 
 
     /*
-       Check every 5 seconds.
-
-       This means the logout does not depend
-       on the page being refreshed.
+       Continue checking every 5 seconds.
     */
 
     setInterval(
@@ -291,7 +290,7 @@ function initializeSessionTimeout() {
 
 
 /* =========================================================
-   CROSS-TAB SESSION SYNCHRONIZATION
+   CROSS-TAB SYNCHRONIZATION
 ========================================================= */
 
 window.addEventListener(
@@ -299,34 +298,29 @@ window.addEventListener(
     function(event) {
 
         /*
-           Another tab changed loggedUser.
+           If another tab logs out,
+           log this page out too.
         */
 
-        if (event.key === "loggedUser") {
+        if (
+            event.key === "loggedUser" &&
+            !event.newValue
+        ) {
 
-            if (!event.newValue) {
-
-                /*
-                   Another tab logged out.
-                   Log this page out too.
-                */
-
-                window.location.replace(
-                    "staff-login.html"
-                );
-
-            }
+            window.location.replace(
+                "staff-login.html"
+            );
 
         }
 
 
         /*
-           Another tab updated activity.
+           If another tab records activity,
+           check the shared session.
         */
 
         if (
-            event.key ===
-            SESSION_ACTIVITY_KEY
+            event.key === LAST_ACTIVITY_KEY
         ) {
 
             checkSessionTimeout();
