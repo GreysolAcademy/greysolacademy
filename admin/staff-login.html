@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -389,35 +388,24 @@ input:focus {
 
 
 /* =========================================================
-   SUCCESS MESSAGE
+   FORGOT PASSWORD
 ========================================================= */
 
-.success {
-
-    min-height: 20px;
-
-    margin-top: 14px;
-
-    color: #16803c;
-
-    font-size: 13px;
-
-    line-height: 1.4;
-}
-
-
-/* =========================================================
-   FORGOT PASSWORD LINK
-========================================================= */
-
-.reset-link-container {
+.forgot-container {
 
     display: none;
 
-    margin-top: 10px;
+    margin-top: 12px;
+
+    text-align: center;
 }
 
-.reset-link {
+.forgot-container.show {
+
+    display: block;
+}
+
+.forgot-btn {
 
     border: none;
 
@@ -431,12 +419,10 @@ input:focus {
 
     cursor: pointer;
 
-    text-decoration: none;
-
     padding: 5px;
 }
 
-.reset-link:hover {
+.forgot-btn:hover {
 
     color: #0074b7;
 
@@ -540,21 +526,21 @@ input:focus {
 
 .modal {
 
-    display: none;
-
     position: fixed;
-
-    z-index: 1000;
 
     inset: 0;
 
-    background: rgba(0, 20, 40, 0.70);
+    background: rgba(0, 15, 30, 0.65);
 
-    padding: 20px;
+    display: none;
 
     justify-content: center;
 
     align-items: center;
+
+    padding: 20px;
+
+    z-index: 9999;
 }
 
 .modal.show {
@@ -562,21 +548,17 @@ input:focus {
     display: flex;
 }
 
-.modal-box {
+.reset-box {
 
     width: 100%;
 
     max-width: 430px;
 
-    max-height: 90vh;
-
-    overflow-y: auto;
-
-    background: #fff;
+    background: white;
 
     border-radius: 18px;
 
-    padding: 30px;
+    padding: 32px;
 
     box-shadow:
         0 25px 70px rgba(0, 0, 0, 0.35);
@@ -587,148 +569,142 @@ input:focus {
 @keyframes modalIn {
 
     from {
+
         opacity: 0;
-        transform: scale(0.96) translateY(10px);
+
+        transform: translateY(15px) scale(.98);
     }
 
     to {
+
         opacity: 1;
-        transform: scale(1) translateY(0);
+
+        transform: translateY(0) scale(1);
     }
 }
 
-.modal-header {
+.reset-header {
 
     text-align: center;
 
-    margin-bottom: 22px;
+    margin-bottom: 25px;
 }
 
-.modal-header h2 {
+.reset-icon {
+
+    width: 60px;
+    height: 60px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    background: #eef3f8;
+
+    color: #001f3f;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 25px;
+
+    font-weight: bold;
+}
+
+.reset-header h2 {
 
     color: #001f3f;
 
     font-size: 21px;
 
-    margin-bottom: 8px;
+    margin-bottom: 7px;
 }
 
-.modal-header p {
+.reset-header p {
 
-    color: #707982;
+    color: #777;
 
     font-size: 13px;
 
     line-height: 1.5;
 }
 
-.reset-step {
+.reset-form-group {
 
-    display: none;
+    margin-bottom: 16px;
+
+    text-align: left;
 }
 
-.reset-step.active {
+.reset-form-group label {
 
     display: block;
+
+    color: #34495e;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
 }
 
+.reset-form-group input {
 
-/* =========================================================
-   RESET BUTTONS
-========================================================= */
+    height: 46px;
+}
 
-.reset-primary-btn {
+.reset-actions {
 
-    width: 100%;
+    display: flex;
 
-    height: 48px;
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+.reset-actions button {
+
+    flex: 1;
+
+    height: 46px;
 
     border: none;
 
-    border-radius: 9px;
+    border-radius: 8px;
 
-    background: linear-gradient(
-        135deg,
-        #001f3f,
-        #003b66
-    );
-
-    color: white;
+    cursor: pointer;
 
     font-size: 14px;
 
     font-weight: 600;
-
-    cursor: pointer;
-
-    margin-top: 5px;
-}
-
-.reset-primary-btn:hover {
-
-    box-shadow:
-        0 7px 18px rgba(0, 31, 63, 0.22);
-}
-
-.reset-primary-btn:disabled {
-
-    opacity: 0.6;
-
-    cursor: not-allowed;
 }
 
 .cancel-btn {
 
-    width: 100%;
-
-    height: 45px;
-
-    margin-top: 10px;
-
-    border: 1px solid #d5dbe2;
-
-    border-radius: 9px;
-
-    background: #fff;
+    background: #edf0f3;
 
     color: #34495e;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    cursor: pointer;
 }
 
 .cancel-btn:hover {
 
-    background: #f5f7f9;
+    background: #dfe4e9;
 }
 
+.verify-btn {
 
-/* =========================================================
-   RESET INFO
-========================================================= */
+    background: #001f3f;
 
-.reset-info {
+    color: white;
+}
 
-    background: #f4f7fb;
+.verify-btn:hover {
 
-    border-left: 4px solid #003366;
-
-    padding: 11px 12px;
-
-    margin-bottom: 18px;
-
-    border-radius: 5px;
-
-    color: #4d5965;
-
-    font-size: 12px;
-
-    line-height: 1.5;
-
-    text-align: left;
+    background: #003366;
 }
 
 .reset-error {
@@ -746,32 +722,97 @@ input:focus {
     text-align: center;
 }
 
-.reset-success {
 
-    color: #16803c;
+/* =========================================================
+   NEW PASSWORD STEP
+========================================================= */
 
-    font-size: 14px;
+.password-reset-step {
 
-    line-height: 1.6;
+    display: none;
+}
 
-    text-align: center;
+.password-reset-step.active {
 
-    margin: 15px 0;
+    display: block;
 }
 
 
 /* =========================================================
-   RESET PASSWORD EYE
+   SUCCESS
 ========================================================= */
 
-.reset-password-wrapper {
+.success-message {
 
-    position: relative;
+    text-align: center;
+
+    display: none;
 }
 
-.reset-password-wrapper input {
+.success-message.show {
 
-    padding-right: 48px;
+    display: block;
+}
+
+.success-icon {
+
+    width: 65px;
+    height: 65px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    background: #e8f7f2;
+
+    color: #16a085;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 30px;
+
+    font-weight: bold;
+}
+
+.success-message h2 {
+
+    color: #001f3f;
+
+    margin-bottom: 8px;
+}
+
+.success-message p {
+
+    color: #666;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    margin-bottom: 20px;
+}
+
+.success-message button {
+
+    width: 100%;
+
+    height: 46px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #001f3f;
+
+    color: white;
+
+    font-weight: 600;
+
+    cursor: pointer;
 }
 
 
@@ -815,16 +856,16 @@ input:focus {
         margin-bottom: 24px;
     }
 
-    .modal-box {
+    .reset-box {
 
-        padding: 25px 20px;
+        padding: 25px 22px;
     }
-
 }
 
 </style>
 
 </head>
+
 
 <body>
 
@@ -894,7 +935,6 @@ input:focus {
                 autocomplete="current-password"
             >
 
-
             <button
                 type="button"
                 id="togglePassword"
@@ -955,14 +995,14 @@ input:focus {
     <!-- FORGOT PASSWORD -->
 
     <div
-        id="resetLinkContainer"
-        class="reset-link-container"
+        class="forgot-container"
+        id="forgotContainer"
     >
 
         <button
             type="button"
-            id="resetLink"
-            class="reset-link"
+            class="forgot-btn"
+            id="forgotPasswordBtn"
         >
 
             Forgot Password? / Change Password
@@ -975,7 +1015,9 @@ input:focus {
     <!-- DIVIDER -->
 
     <div class="divider">
+
         <span>OR</span>
+
     </div>
 
 
@@ -1013,48 +1055,42 @@ input:focus {
 ========================================================= -->
 
 <div
-    id="resetModal"
     class="modal"
+    id="resetModal"
 >
 
 
-    <div class="modal-box">
+    <div class="reset-box">
 
 
         <!-- =================================================
-             STEP 1
+             STEP 1 - VERIFY INFORMATION
         ================================================== -->
 
         <div
-            id="resetStep1"
-            class="reset-step active"
+            class="password-reset-step active"
+            id="verificationStep"
         >
 
-            <div class="modal-header">
+            <div class="reset-header">
 
-                <h2>Change Password</h2>
+                <div class="reset-icon">
+                    🔐
+                </div>
+
+                <h2>Verify Your Account</h2>
 
                 <p>
-                    Verify your registered account details
-                    before choosing a new password.
+                    Enter your registered username, email
+                    address and phone number to continue.
                 </p>
 
             </div>
 
 
-            <div class="reset-info">
+            <!-- USERNAME -->
 
-                Enter the <strong>username</strong>,
-                <strong>email address</strong> and
-                <strong>phone number</strong> registered
-                with your Greysol Academy staff account.
-
-            </div>
-
-
-            <!-- Username -->
-
-            <div class="form-group">
+            <div class="reset-form-group">
 
                 <label for="resetUsername">
                     Username
@@ -1071,9 +1107,9 @@ input:focus {
             </div>
 
 
-            <!-- Email -->
+            <!-- EMAIL -->
 
-            <div class="form-group">
+            <div class="reset-form-group">
 
                 <label for="resetEmail">
                     Registered Email
@@ -1089,9 +1125,9 @@ input:focus {
             </div>
 
 
-            <!-- Phone -->
+            <!-- PHONE -->
 
-            <div class="form-group">
+            <div class="reset-form-group">
 
                 <label for="resetPhone">
                     Registered Phone Number
@@ -1107,236 +1143,158 @@ input:focus {
             </div>
 
 
-            <button
-                type="button"
-                id="verifyDetailsBtn"
-                class="reset-primary-btn"
-            >
-
-                Verify Details
-
-            </button>
-
-
-            <button
-                type="button"
-                id="cancelResetBtn1"
-                class="cancel-btn"
-            >
-
-                Cancel
-
-            </button>
-
-
             <p
-                id="resetError1"
+                id="resetError"
                 class="reset-error"
-                role="alert"
             ></p>
+
+
+            <div class="reset-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    id="cancelResetBtn"
+                >
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="button"
+                    class="verify-btn"
+                    id="verifyDetailsBtn"
+                >
+
+                    Verify
+
+                </button>
+
+            </div>
 
         </div>
 
 
 
         <!-- =================================================
-             STEP 2
+             STEP 2 - NEW PASSWORD
         ================================================== -->
 
         <div
-            id="resetStep2"
-            class="reset-step"
+            class="password-reset-step"
+            id="passwordStep"
         >
 
-            <div class="modal-header">
+            <div class="reset-header">
+
+                <div class="reset-icon">
+                    🔑
+                </div>
 
                 <h2>Create New Password</h2>
 
                 <p>
-                    Your account details have been verified.
+                    Your information has been verified.
                     Enter your new password below.
                 </p>
 
             </div>
 
 
-            <!-- New Password -->
+            <!-- NEW PASSWORD -->
 
-            <div class="form-group">
+            <div class="reset-form-group">
 
                 <label for="newPassword">
                     New Password
                 </label>
 
-                <div class="reset-password-wrapper">
-
-                    <input
-                        id="newPassword"
-                        type="password"
-                        placeholder="Enter new password"
-                        autocomplete="new-password"
-                    >
-
-                    <button
-                        type="button"
-                        id="toggleNewPassword"
-                        class="toggle-password"
-                        aria-label="Show password"
-                        title="Show password"
-                    >
-
-                        <svg
-                            id="newEyeIcon"
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                        >
-
-                            <path
-                                d="M2 12s3.5-7 10-7
-                                   10 7 10 7-3.5 7-10 7
-                                   S2 12 2 12z"
-                            ></path>
-
-                            <circle
-                                cx="12"
-                                cy="12"
-                                r="3"
-                            ></circle>
-
-                        </svg>
-
-                    </button>
-
-                </div>
+                <input
+                    id="newPassword"
+                    type="password"
+                    placeholder="Enter new password"
+                    autocomplete="new-password"
+                >
 
             </div>
 
 
-            <!-- Confirm Password -->
+            <!-- CONFIRM PASSWORD -->
 
-            <div class="form-group">
+            <div class="reset-form-group">
 
                 <label for="confirmPassword">
                     Confirm New Password
                 </label>
 
-                <div class="reset-password-wrapper">
-
-                    <input
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="Confirm new password"
-                        autocomplete="new-password"
-                    >
-
-                    <button
-                        type="button"
-                        id="toggleConfirmPassword"
-                        class="toggle-password"
-                        aria-label="Show password"
-                        title="Show password"
-                    >
-
-                        <svg
-                            id="confirmEyeIcon"
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                        >
-
-                            <path
-                                d="M2 12s3.5-7 10-7
-                                   10 7 10 7-3.5 7-10 7
-                                   S2 12 2 12z"
-                            ></path>
-
-                            <circle
-                                cx="12"
-                                cy="12"
-                                r="3"
-                            ></circle>
-
-                        </svg>
-
-                    </button>
-
-                </div>
+                <input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm new password"
+                    autocomplete="new-password"
+                >
 
             </div>
-
-
-            <div class="reset-info">
-
-                Password must contain at least
-                <strong>6 characters</strong>.
-
-            </div>
-
-
-            <button
-                type="button"
-                id="changePasswordBtn"
-                class="reset-primary-btn"
-            >
-
-                Change Password
-
-            </button>
-
-
-            <button
-                type="button"
-                id="cancelResetBtn2"
-                class="cancel-btn"
-            >
-
-                Cancel
-
-            </button>
 
 
             <p
-                id="resetError2"
+                id="passwordError"
                 class="reset-error"
-                role="alert"
             ></p>
+
+
+            <div class="reset-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    id="cancelPasswordBtn"
+                >
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="button"
+                    class="verify-btn"
+                    id="changePasswordBtn"
+                >
+
+                    Change Password
+
+                </button>
+
+            </div>
 
         </div>
 
 
 
         <!-- =================================================
-             STEP 3
+             STEP 3 - SUCCESS
         ================================================== -->
 
         <div
-            id="resetStep3"
-            class="reset-step"
+            class="success-message"
+            id="successStep"
         >
 
-            <div class="modal-header">
-
-                <h2>Password Changed</h2>
-
-                <p>
-                    Your staff account password has been
-                    changed successfully.
-                </p>
-
+            <div class="success-icon">
+                ✓
             </div>
 
+            <h2>Password Changed</h2>
 
-            <p class="reset-success">
-
-                You can now close this message and log in
-                using your new password.
-
+            <p>
+                Your password has been changed successfully.
+                You can now log in using your new password.
             </p>
-
 
             <button
                 type="button"
                 id="returnLoginBtn"
-                class="reset-primary-btn"
             >
 
                 Return to Login
@@ -1359,26 +1317,33 @@ input:focus {
    FIREBASE
 ========================================================= */
 
-import { initializeApp }
-
+import {
+    initializeApp
+}
 from
-
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 
 import {
 
     getFirestore,
+
     collection,
+
     query,
+
     where,
+
     getDocs,
+
+    getDoc,
+
+    doc,
+
     updateDoc
 
 }
-
 from
-
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
@@ -1389,31 +1354,41 @@ from
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyAgoW4EU_hvrWHSxJciW0qUWeUXOr-msgw",
+    apiKey:
+        "AIzaSyAgoW4EU_hvrWHSxJciW0qUWeUXOr-msgw",
 
-    authDomain: "greysol-academy.firebaseapp.com",
+    authDomain:
+        "greysol-academy.firebaseapp.com",
 
-    projectId: "greysol-academy",
+    projectId:
+        "greysol-academy",
 
-    storageBucket: "greysol-academy.firebasestorage.app",
+    storageBucket:
+        "greysol-academy.firebasestorage.app",
 
-    messagingSenderId: "700477093508",
+    messagingSenderId:
+        "700477093508",
 
-    appId: "1:700477093508:web:d1f95a63483b8e9ab934d1",
+    appId:
+        "1:700477093508:web:d1f95a63483b8e9ab934d1",
 
-    measurementId: "G-XY8XSZJ9HE"
+    measurementId:
+        "G-XY8XSZJ9HE"
 
 };
 
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
+
+const db =
+    getFirestore(app);
 
 
 
 /* =========================================================
-   LOGIN ELEMENTS
+   ELEMENTS
 ========================================================= */
 
 const usernameInput =
@@ -1434,30 +1409,14 @@ const togglePassword =
 const eyeIcon =
     document.getElementById("eyeIcon");
 
-const resetLinkContainer =
-    document.getElementById("resetLinkContainer");
+const forgotContainer =
+    document.getElementById("forgotContainer");
 
-const resetLink =
-    document.getElementById("resetLink");
-
-
-
-/* =========================================================
-   RESET ELEMENTS
-========================================================= */
+const forgotPasswordBtn =
+    document.getElementById("forgotPasswordBtn");
 
 const resetModal =
     document.getElementById("resetModal");
-
-const resetStep1 =
-    document.getElementById("resetStep1");
-
-const resetStep2 =
-    document.getElementById("resetStep2");
-
-const resetStep3 =
-    document.getElementById("resetStep3");
-
 
 const resetUsername =
     document.getElementById("resetUsername");
@@ -1468,22 +1427,17 @@ const resetEmail =
 const resetPhone =
     document.getElementById("resetPhone");
 
+const resetError =
+    document.getElementById("resetError");
 
-const verifyDetailsBtn =
-    document.getElementById("verifyDetailsBtn");
+const verificationStep =
+    document.getElementById("verificationStep");
 
-const changePasswordBtn =
-    document.getElementById("changePasswordBtn");
+const passwordStep =
+    document.getElementById("passwordStep");
 
-const cancelResetBtn1 =
-    document.getElementById("cancelResetBtn1");
-
-const cancelResetBtn2 =
-    document.getElementById("cancelResetBtn2");
-
-const returnLoginBtn =
-    document.getElementById("returnLoginBtn");
-
+const successStep =
+    document.getElementById("successStep");
 
 const newPassword =
     document.getElementById("newPassword");
@@ -1491,12 +1445,8 @@ const newPassword =
 const confirmPassword =
     document.getElementById("confirmPassword");
 
-
-const resetError1 =
-    document.getElementById("resetError1");
-
-const resetError2 =
-    document.getElementById("resetError2");
+const passwordError =
+    document.getElementById("passwordError");
 
 
 
@@ -1504,140 +1454,101 @@ const resetError2 =
    FAILED LOGIN ATTEMPTS
 ========================================================= */
 
-let failedAttempts =
-    Number(sessionStorage.getItem("staffLoginFailedAttempts") || 0);
-
-
-/*
-   Account information found during verification.
-
-   This is kept only in memory and disappears when
-   the page is refreshed.
-*/
-
-let verifiedUserDoc = null;
-
+let failedAttempts = 0;
 
 
 /* =========================================================
-   PASSWORD EYE FUNCTION
+   VERIFIED USER FOR PASSWORD RESET
 ========================================================= */
 
-function setupPasswordToggle(
-    button,
-    input,
-    icon
-) {
-
-    button.addEventListener(
-        "click",
-        function () {
-
-            const isPassword =
-                input.type === "password";
+let verifiedUserId = null;
 
 
-            if (isPassword) {
+/* =========================================================
+   SHOW / HIDE PASSWORD
+========================================================= */
 
-                input.type = "text";
+togglePassword.addEventListener(
+    "click",
+    function () {
 
-                button.setAttribute(
-                    "aria-label",
-                    "Hide password"
-                );
-
-                button.setAttribute(
-                    "title",
-                    "Hide password"
-                );
+        const isPassword =
+            passwordInput.type === "password";
 
 
-                icon.innerHTML = `
+        if (isPassword) {
 
-                    <path
-                        d="M3 3l18 18"
-                    ></path>
+            passwordInput.type = "text";
 
-                    <path
-                        d="M10.6 5.1
-                           A10.8 10.8 0 0 1 12 5
-                           c6.5 0 10 7 10 7
-                           a18.3 18.3 0 0 1-3.1 4.2"
-                    ></path>
+            togglePassword.setAttribute(
+                "aria-label",
+                "Hide password"
+            );
 
-                    <path
-                        d="M6.2 6.2
-                           C3.5 8.1 2 12 2 12
-                           s3.5 7 10 7
-                           c1.8 0 3.4-.5 4.8-1.2"
-                    ></path>
-
-                `;
-
-            }
-
-            else {
-
-                input.type = "password";
-
-                button.setAttribute(
-                    "aria-label",
-                    "Show password"
-                );
-
-                button.setAttribute(
-                    "title",
-                    "Show password"
-                );
+            togglePassword.setAttribute(
+                "title",
+                "Hide password"
+            );
 
 
-                icon.innerHTML = `
+            eyeIcon.innerHTML = `
 
-                    <path
-                        d="M2 12s3.5-7 10-7
-                           10 7 10 7-3.5 7-10 7
-                           S2 12 2 12z"
-                    ></path>
+                <path
+                    d="M3 3l18 18"
+                ></path>
 
-                    <circle
-                        cx="12"
-                        cy="12"
-                        r="3"
-                    ></circle>
+                <path
+                    d="M10.6 5.1
+                       A10.8 10.8 0 0 1 12 5
+                       c6.5 0 10 7 10 7
+                       a18.3 18.3 0 0 1-3.1 4.2"
+                ></path>
 
-                `;
+                <path
+                    d="M6.2 6.2
+                       C3.5 8.1 2 12 2 12
+                       s3.5 7 10 7
+                       c1.8 0 3.4-.5 4.8-1.2"
+                ></path>
 
-            }
+            `;
 
         }
-    );
 
-}
+        else {
 
+            passwordInput.type = "password";
 
+            togglePassword.setAttribute(
+                "aria-label",
+                "Show password"
+            );
 
-/* =========================================================
-   SETUP PASSWORD TOGGLES
-========================================================= */
-
-setupPasswordToggle(
-    togglePassword,
-    passwordInput,
-    eyeIcon
-);
-
-
-setupPasswordToggle(
-    document.getElementById("toggleNewPassword"),
-    newPassword,
-    document.getElementById("newEyeIcon")
-);
+            togglePassword.setAttribute(
+                "title",
+                "Show password"
+            );
 
 
-setupPasswordToggle(
-    document.getElementById("toggleConfirmPassword"),
-    confirmPassword,
-    document.getElementById("confirmEyeIcon")
+            eyeIcon.innerHTML = `
+
+                <path
+                    d="M2 12s3.5-7 10-7
+                       10 7 10 7-3.5 7-10 7
+                       S2 12 2 12z"
+                ></path>
+
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                ></circle>
+
+            `;
+
+        }
+
+    }
 );
 
 
@@ -1687,70 +1598,13 @@ usernameInput.addEventListener(
 
 
 /* =========================================================
-   NORMALIZE EMAIL
-========================================================= */
-
-function normalizeEmail(email) {
-
-    return String(email || "")
-        .trim()
-        .toLowerCase();
-
-}
-
-
-
-/* =========================================================
-   NORMALIZE USERNAME
-========================================================= */
-
-function normalizeUsername(username) {
-
-    return String(username || "")
-        .trim()
-        .toLowerCase();
-
-}
-
-
-
-/* =========================================================
-   NORMALIZE PHONE
-========================================================= */
-
-function normalizePhone(phone) {
-
-    /*
-       Keep only numbers.
-
-       Example:
-
-       +265 999 123 456
-       becomes
-       265999123456
-
-       0999 123 456
-       becomes
-       0999123456
-    */
-
-    return String(phone || "")
-        .replace(/\D/g, "");
-
-}
-
-
-
-/* =========================================================
-   LOGIN
+   LOGIN FUNCTION
 ========================================================= */
 
 async function loginUser() {
 
-
     const username =
         usernameInput.value.trim();
-
 
     const password =
         passwordInput.value.trim();
@@ -1758,10 +1612,6 @@ async function loginUser() {
 
     errorMessage.textContent = "";
 
-
-    /*
-       Validate
-    */
 
     if (
         username === "" ||
@@ -1776,21 +1626,20 @@ async function loginUser() {
     }
 
 
-    /*
-       Disable button
-    */
-
     loginBtn.disabled = true;
 
-    loginBtn.textContent = "Signing in...";
+    loginBtn.textContent =
+        "Signing in...";
 
 
     try {
 
-
         /*
-           Query Firebase
-        */
+         * Your existing login system:
+         *
+         * users.username
+         * users.password
+         */
 
         const q = query(
 
@@ -1815,20 +1664,13 @@ async function loginUser() {
             await getDocs(q);
 
 
-        /*
-           No matching user
-        */
+        /* -----------------------------------------
+           WRONG PASSWORD
+        ----------------------------------------- */
 
         if (snapshot.empty) {
 
-
             failedAttempts++;
-
-
-            sessionStorage.setItem(
-                "staffLoginFailedAttempts",
-                failedAttempts
-            );
 
 
             errorMessage.textContent =
@@ -1836,14 +1678,13 @@ async function loginUser() {
 
 
             /*
-               Show reset option after
-               TWO consecutive failures.
-            */
+             * After two failed attempts,
+             * show password recovery option.
+             */
 
             if (failedAttempts >= 2) {
 
-                resetLinkContainer.style.display =
-                    "block";
+                forgotContainer.classList.add("show");
 
             }
 
@@ -1853,22 +1694,26 @@ async function loginUser() {
         }
 
 
-        /*
-           Get user
-        */
+        /* -----------------------------------------
+           SUCCESSFUL LOGIN
+        ----------------------------------------- */
 
-        const userDoc =
-            snapshot.docs[0];
+        failedAttempts = 0;
+
+        forgotContainer.classList.remove("show");
+
 
         const user =
-            userDoc.data();
+            snapshot.docs[0].data();
 
 
-        /*
-           Check account status
-        */
+        /* -----------------------------------------
+           ACCOUNT STATUS
+        ----------------------------------------- */
 
-        if (user.status !== "Active") {
+        if (
+            user.status !== "Active"
+        ) {
 
             errorMessage.textContent =
                 "Your account is inactive. Please contact the administrator.";
@@ -1878,22 +1723,9 @@ async function loginUser() {
         }
 
 
-        /*
-           Successful login.
-
-           Reset failed attempts.
-        */
-
-        failedAttempts = 0;
-
-        sessionStorage.removeItem(
-            "staffLoginFailedAttempts"
-        );
-
-
-        /*
-           Save login session
-        */
+        /* -----------------------------------------
+           SAVE LOGIN SESSION
+        ----------------------------------------- */
 
         localStorage.setItem(
 
@@ -1918,9 +1750,9 @@ async function loginUser() {
         );
 
 
-        /*
-           Redirect based on role
-        */
+        /* -----------------------------------------
+           ROLE REDIRECT
+        ----------------------------------------- */
 
         switch (user.role) {
 
@@ -1970,7 +1802,6 @@ async function loginUser() {
 
         }
 
-
     }
 
     catch (err) {
@@ -1986,12 +1817,12 @@ async function loginUser() {
 
     }
 
-
     finally {
 
         loginBtn.disabled = false;
 
-        loginBtn.textContent = "Login";
+        loginBtn.textContent =
+            "Login";
 
     }
 
@@ -2003,69 +1834,37 @@ async function loginUser() {
    OPEN RESET MODAL
 ========================================================= */
 
-resetLink.addEventListener(
+forgotPasswordBtn.addEventListener(
     "click",
-    openResetModal
+    function () {
+
+        resetError.textContent = "";
+
+        resetUsername.value =
+            usernameInput.value.trim();
+
+        resetEmail.value = "";
+
+        resetPhone.value = "";
+
+        newPassword.value = "";
+
+        confirmPassword.value = "";
+
+        verifiedUserId = null;
+
+
+        verificationStep.classList.add("active");
+
+        passwordStep.classList.remove("active");
+
+        successStep.classList.remove("show");
+
+
+        resetModal.classList.add("show");
+
+    }
 );
-
-
-function openResetModal() {
-
-    /*
-       Pre-fill username from login screen.
-    */
-
-    resetUsername.value =
-        usernameInput.value.trim();
-
-
-    resetEmail.value = "";
-
-    resetPhone.value = "";
-
-    newPassword.value = "";
-
-    confirmPassword.value = "";
-
-
-    resetError1.textContent = "";
-
-    resetError2.textContent = "";
-
-
-    verifiedUserDoc = null;
-
-
-    showResetStep(1);
-
-
-    resetModal.classList.add("show");
-
-
-    /*
-       Focus appropriate field.
-    */
-
-    setTimeout(
-        function () {
-
-            if (resetUsername.value.trim() !== "") {
-
-                resetEmail.focus();
-
-            }
-
-            else {
-
-                resetUsername.focus();
-
-            }
-
-        },
-        100
-    );
-
-}
 
 
 
@@ -2073,12 +1872,17 @@ function openResetModal() {
    CLOSE RESET MODAL
 ========================================================= */
 
-cancelResetBtn1.addEventListener(
+document.getElementById(
+    "cancelResetBtn"
+).addEventListener(
     "click",
     closeResetModal
 );
 
-cancelResetBtn2.addEventListener(
+
+document.getElementById(
+    "cancelPasswordBtn"
+).addEventListener(
     "click",
     closeResetModal
 );
@@ -2088,72 +1892,23 @@ function closeResetModal() {
 
     resetModal.classList.remove("show");
 
-    verifiedUserDoc = null;
+    resetError.textContent = "";
+
+    passwordError.textContent = "";
+
+    verifiedUserId = null;
 
 }
 
 
 
 /* =========================================================
-   CLOSE MODAL WHEN CLICKING OUTSIDE
+   VERIFY USER INFORMATION
 ========================================================= */
 
-resetModal.addEventListener(
-    "click",
-    function (event) {
-
-        if (event.target === resetModal) {
-
-            closeResetModal();
-
-        }
-
-    }
-);
-
-
-
-/* =========================================================
-   SHOW RESET STEP
-========================================================= */
-
-function showResetStep(step) {
-
-
-    resetStep1.classList.remove("active");
-
-    resetStep2.classList.remove("active");
-
-    resetStep3.classList.remove("active");
-
-
-    if (step === 1) {
-
-        resetStep1.classList.add("active");
-
-    }
-
-    else if (step === 2) {
-
-        resetStep2.classList.add("active");
-
-    }
-
-    else if (step === 3) {
-
-        resetStep3.classList.add("active");
-
-    }
-
-}
-
-
-
-/* =========================================================
-   VERIFY USER DETAILS
-========================================================= */
-
-verifyDetailsBtn.addEventListener(
+document.getElementById(
+    "verifyDetailsBtn"
+).addEventListener(
     "click",
     verifyAccountDetails
 );
@@ -2166,25 +1921,19 @@ async function verifyAccountDetails() {
     const username =
         resetUsername.value.trim();
 
-
     const email =
-        normalizeEmail(
-            resetEmail.value
-        );
-
+        resetEmail.value.trim().toLowerCase();
 
     const phone =
-        normalizePhone(
-            resetPhone.value
-        );
+        resetPhone.value.trim();
 
 
-    resetError1.textContent = "";
+    resetError.textContent = "";
 
 
-    /*
-       Basic validation
-    */
+    /* -----------------------------------------
+       VALIDATION
+    ----------------------------------------- */
 
     if (
         username === "" ||
@@ -2192,7 +1941,7 @@ async function verifyAccountDetails() {
         phone === ""
     ) {
 
-        resetError1.textContent =
+        resetError.textContent =
             "Please enter your username, email and phone number.";
 
         return;
@@ -2200,43 +1949,25 @@ async function verifyAccountDetails() {
     }
 
 
-    if (!email.includes("@")) {
-
-        resetError1.textContent =
-            "Please enter a valid email address.";
-
-        return;
-
-    }
+    const verifyButton =
+        document.getElementById(
+            "verifyDetailsBtn"
+        );
 
 
-    if (phone.length < 7) {
+    verifyButton.disabled = true;
 
-        resetError1.textContent =
-            "Please enter a valid phone number.";
-
-        return;
-
-    }
-
-
-    /*
-       Disable button
-    */
-
-    verifyDetailsBtn.disabled = true;
-
-    verifyDetailsBtn.textContent =
+    verifyButton.textContent =
         "Verifying...";
 
 
     try {
 
 
-        /*
-           Step 1:
-           Find the users account using username.
-        */
+        /* =================================================
+           STEP 1
+           FIND USER ACCOUNT BY USERNAME
+        ================================================= */
 
         const userQuery = query(
 
@@ -2255,12 +1986,9 @@ async function verifyAccountDetails() {
             await getDocs(userQuery);
 
 
-        /*
-           Don't reveal whether the
-           username exists.
-        */
-
-        if (userSnapshot.empty) {
+        if (
+            userSnapshot.empty
+        ) {
 
             throw new Error(
                 "verification_failed"
@@ -2270,68 +1998,25 @@ async function verifyAccountDetails() {
 
 
         /*
-           Get the matching users document.
-        */
+         * Get the actual users document.
+         */
 
-        let matchingUserDoc = null;
-
-
-        userSnapshot.forEach(
-            function (docSnapshot) {
-
-                if (!matchingUserDoc) {
-
-                    const user =
-                        docSnapshot.data();
-
-
-                    /*
-                       Check username
-                       case-insensitively.
-                    */
-
-                    if (
-                        normalizeUsername(
-                            user.username
-                        ) ===
-                        normalizeUsername(
-                            username
-                        )
-                    ) {
-
-                        matchingUserDoc =
-                            docSnapshot;
-
-                    }
-
-                }
-
-            }
-        );
-
-
-        if (!matchingUserDoc) {
-
-            throw new Error(
-                "verification_failed"
-            );
-
-        }
+        const userDoc =
+            userSnapshot.docs[0];
 
 
         const user =
-            matchingUserDoc.data();
+            userDoc.data();
 
 
-        /*
-           Account must be active.
-        */
+
+        /* =================================================
+           STEP 2
+           CHECK USER ACCOUNT STATUS
+        ================================================= */
 
         if (
-            String(user.status || "")
-                .trim()
-                .toLowerCase()
-            !== "active"
+            user.status !== "Active"
         ) {
 
             throw new Error(
@@ -2341,12 +2026,30 @@ async function verifyAccountDetails() {
         }
 
 
-        /*
-           We need staffID to find the
-           corresponding staff record.
-        */
 
-        if (!user.staffID) {
+        /* =================================================
+           STEP 3
+           IMPORTANT:
+           
+           users.staffID contains the FIRESTORE
+           DOCUMENT ID of the staff record.
+           
+           Example:
+           
+           users
+              username: "john"
+              staffID: "abc123xyz"
+           
+           staff
+              abc123xyz
+                  firstName: "John"
+                  email: "..."
+                  phone: "..."
+        ================================================= */
+
+        if (
+            !user.staffID
+        ) {
 
             throw new Error(
                 "verification_failed"
@@ -2355,106 +2058,22 @@ async function verifyAccountDetails() {
         }
 
 
-        /*
-           Step 2:
-           Find staff record using staffID.
-        */
-
-        const staffQuery = query(
-
-            collection(db, "staff"),
-
-            where(
-                "staffID",
-                "==",
+        const staffRef =
+            doc(
+                db,
+                "staff",
                 user.staffID
-            )
-
-        );
+            );
 
 
         const staffSnapshot =
-            await getDocs(staffQuery);
-
-
-        if (staffSnapshot.empty) {
-
-            throw new Error(
-                "verification_failed"
+            await getDoc(
+                staffRef
             );
 
-        }
-
-
-        /*
-           Find the matching staff record.
-        */
-
-        let matchingStaff = null;
-
-
-        staffSnapshot.forEach(
-            function (staffDoc) {
-
-                if (!matchingStaff) {
-
-                    matchingStaff =
-                        staffDoc.data();
-
-                }
-
-            }
-        );
-
-
-        if (!matchingStaff) {
-
-            throw new Error(
-                "verification_failed"
-            );
-
-        }
-
-
-        /*
-           Step 3:
-           Compare registered email.
-        */
-
-        const registeredEmail =
-            normalizeEmail(
-                matchingStaff.email
-            );
-
-
-        /*
-           Step 4:
-           Compare registered phone.
-        */
-
-        const registeredPhone =
-            normalizePhone(
-                matchingStaff.phone
-            );
-
-
-        const emailMatches =
-            registeredEmail !== "" &&
-            registeredEmail === email;
-
-
-        const phoneMatches =
-            registeredPhone !== "" &&
-            registeredPhone === phone;
-
-
-        /*
-           ALL THREE details must match.
-        */
 
         if (
-            !emailMatches ||
-            !phoneMatches
+            !staffSnapshot.exists()
         ) {
 
             throw new Error(
@@ -2464,55 +2083,136 @@ async function verifyAccountDetails() {
         }
 
 
-        /*
-           Successful verification.
-
-           Keep the Firebase document
-           reference in memory.
-        */
-
-        verifiedUserDoc =
-            matchingUserDoc;
+        const staff =
+            staffSnapshot.data();
 
 
-        /*
-           Move to new-password step.
-        */
 
-        showResetStep(2);
+        /* =================================================
+           STEP 4
+           GET REGISTERED EMAIL AND PHONE
+        ================================================= */
+
+        const registeredEmail =
+            String(
+                staff.email || ""
+            )
+            .trim()
+            .toLowerCase();
 
 
-        setTimeout(
-            function () {
+        const registeredPhone =
+            String(
+                staff.phone || ""
+            )
+            .trim();
 
-                newPassword.focus();
 
-            },
-            100
+
+        /* =================================================
+           STEP 5
+           COMPARE EMAIL
+        ================================================= */
+
+        if (
+            registeredEmail !== email
+        ) {
+
+            throw new Error(
+                "verification_failed"
+            );
+
+        }
+
+
+
+        /* =================================================
+           STEP 6
+           COMPARE PHONE
+           
+           We normalize spaces, +, -, brackets.
+           
+           Example:
+           
+           +265 991 123 456
+           
+           becomes:
+           
+           265991123456
+        ================================================= */
+
+        const normalizePhone =
+            value =>
+                String(value || "")
+                    .replace(/\D/g, "");
+
+
+        const enteredPhone =
+            normalizePhone(phone);
+
+
+        const actualPhone =
+            normalizePhone(
+                registeredPhone
+            );
+
+
+        if (
+            enteredPhone !== actualPhone
+        ) {
+
+            throw new Error(
+                "verification_failed"
+            );
+
+        }
+
+
+
+        /* =================================================
+           EVERYTHING MATCHES
+        ================================================= */
+
+        verifiedUserId =
+            userDoc.id;
+
+
+        verificationStep.classList.remove(
+            "active"
         );
+
+        passwordStep.classList.add(
+            "active"
+        );
+
+
+        passwordError.textContent = "";
+
+
+        newPassword.focus();
 
 
     }
 
-    catch (err) {
+    catch (error) {
 
         console.error(
-            "Password reset verification error:",
-            err
+            "Password reset verification:",
+            error
         );
 
 
-        resetError1.textContent =
-            "The information provided could not be verified. Please check your details and try again.";
+        resetError.textContent =
+            "The information could not be verified. Please check your username, registered email and phone number.";
 
     }
 
     finally {
 
-        verifyDetailsBtn.disabled = false;
+        verifyButton.disabled = false;
 
-        verifyDetailsBtn.textContent =
-            "Verify Details";
+        verifyButton.textContent =
+            "Verify";
 
     }
 
@@ -2524,62 +2224,86 @@ async function verifyAccountDetails() {
    CHANGE PASSWORD
 ========================================================= */
 
-changePasswordBtn.addEventListener(
+document.getElementById(
+    "changePasswordBtn"
+).addEventListener(
     "click",
-    changeStaffPassword
+    changePassword
 );
 
 
 
-async function changeStaffPassword() {
+async function changePassword() {
 
 
     const password =
         newPassword.value;
 
-
-    const confirmation =
+    const confirm =
         confirmPassword.value;
 
 
-    resetError2.textContent = "";
+    passwordError.textContent = "";
 
 
-    /*
-       Make sure verification happened.
-    */
+    /* -----------------------------------------
+       MAKE SURE VERIFICATION HAPPENED
+    ----------------------------------------- */
 
-    if (!verifiedUserDoc) {
+    if (
+        !verifiedUserId
+    ) {
 
-        resetError2.textContent =
-            "Your account has not been verified. Please start again.";
-
-        return;
-
-    }
-
-
-    /*
-       Password length
-    */
-
-    if (password.length < 6) {
-
-        resetError2.textContent =
-            "Password must contain at least 6 characters.";
+        passwordError.textContent =
+            "Please verify your account first.";
 
         return;
 
     }
 
 
-    /*
-       Password confirmation
-    */
+    /* -----------------------------------------
+       PASSWORD REQUIRED
+    ----------------------------------------- */
 
-    if (password !== confirmation) {
+    if (
+        password === "" ||
+        confirm === ""
+    ) {
 
-        resetError2.textContent =
+        passwordError.textContent =
+            "Please enter and confirm your new password.";
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------
+       MINIMUM PASSWORD LENGTH
+    ----------------------------------------- */
+
+    if (
+        password.length < 6
+    ) {
+
+        passwordError.textContent =
+            "Password must be at least 6 characters.";
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------
+       PASSWORD MATCH
+    ----------------------------------------- */
+
+    if (
+        password !== confirm
+    ) {
+
+        passwordError.textContent =
             "The passwords do not match.";
 
         return;
@@ -2587,43 +2311,81 @@ async function changeStaffPassword() {
     }
 
 
-    /*
-       Don't allow a blank password.
-    */
-
-    if (password.trim() === "") {
-
-        resetError2.textContent =
-            "Please enter a valid password.";
-
-        return;
-
-    }
+    const changeButton =
+        document.getElementById(
+            "changePasswordBtn"
+        );
 
 
-    /*
-       Disable button.
-    */
+    changeButton.disabled = true;
 
-    changePasswordBtn.disabled = true;
-
-    changePasswordBtn.textContent =
-        "Changing Password...";
+    changeButton.textContent =
+        "Changing...";
 
 
     try {
 
 
-        /*
-           Update the EXISTING users document.
+        /* =================================================
+           GET THE EXISTING USERS DOCUMENT
+        ================================================= */
 
-           We are intentionally not creating
-           another account.
-        */
+        const userRef =
+            doc(
+                db,
+                "users",
+                verifiedUserId
+            );
+
+
+        const userSnapshot =
+            await getDoc(
+                userRef
+            );
+
+
+        if (
+            !userSnapshot.exists()
+        ) {
+
+            throw new Error(
+                "User account no longer exists."
+            );
+
+        }
+
+
+        const user =
+            userSnapshot.data();
+
+
+        /* -----------------------------------------
+           MAKE SURE ACCOUNT IS STILL ACTIVE
+        ----------------------------------------- */
+
+        if (
+            user.status !== "Active"
+        ) {
+
+            throw new Error(
+                "This account is inactive."
+            );
+
+        }
+
+
+        /* =================================================
+           UPDATE PASSWORD
+           
+           This intentionally matches your current
+           login system, which stores:
+           
+           users.password
+        ================================================= */
 
         await updateDoc(
 
-            verifiedUserDoc.ref,
+            userRef,
 
             {
 
@@ -2638,33 +2400,43 @@ async function changeStaffPassword() {
         );
 
 
-        /*
-           Password changed successfully.
-        */
+        /* =================================================
+           SUCCESS
+        ================================================= */
 
-        showResetStep(3);
+        passwordStep.classList.remove(
+            "active"
+        );
+
+        successStep.classList.add(
+            "show"
+        );
+
+
+        verifiedUserId = null;
 
 
     }
 
-    catch (err) {
+    catch (error) {
 
         console.error(
             "Password change error:",
-            err
+            error
         );
 
 
-        resetError2.textContent =
+        passwordError.textContent =
+            error.message ||
             "Unable to change your password. Please try again.";
 
     }
 
     finally {
 
-        changePasswordBtn.disabled = false;
+        changeButton.disabled = false;
 
-        changePasswordBtn.textContent =
+        changeButton.textContent =
             "Change Password";
 
     }
@@ -2677,66 +2449,53 @@ async function changeStaffPassword() {
    RETURN TO LOGIN
 ========================================================= */
 
-returnLoginBtn.addEventListener(
+document.getElementById(
+    "returnLoginBtn"
+).addEventListener(
     "click",
     function () {
 
-
-        /*
-           Close reset window.
-        */
-
-        resetModal.classList.remove("show");
+        resetModal.classList.remove(
+            "show"
+        );
 
 
-        /*
-           Clear password fields.
-        */
+        usernameInput.value =
+            resetUsername.value;
+
 
         passwordInput.value = "";
 
-        newPassword.value = "";
-
-        confirmPassword.value = "";
-
-
-        /*
-           Keep username because it is convenient.
-        */
 
         passwordInput.focus();
 
 
-        /*
-           Clear reset link.
-        */
+        errorMessage.textContent =
+            "Your password has been changed successfully.";
 
-        resetLinkContainer.style.display =
-            "none";
+        errorMessage.style.color =
+            "#16a085";
 
 
-        /*
-           Reset failed attempts after
-           completing a password change.
-        */
-
-        failedAttempts = 0;
-
-        sessionStorage.removeItem(
-            "staffLoginFailedAttempts"
+        forgotContainer.classList.remove(
+            "show"
         );
 
 
-        /*
-           Clear verification object.
-        */
-
-        verifiedUserDoc = null;
+        failedAttempts = 0;
 
 
-        errorMessage.textContent =
-            "";
+        setTimeout(
+            function () {
 
+                errorMessage.textContent = "";
+
+                errorMessage.style.color =
+                    "#c62828";
+
+            },
+            4000
+        );
 
     }
 );
@@ -2744,16 +2503,15 @@ returnLoginBtn.addEventListener(
 
 
 /* =========================================================
-   ESCAPE KEY CLOSES MODAL
+   CLOSE MODAL WHEN CLICKING OUTSIDE
 ========================================================= */
 
-document.addEventListener(
-    "keydown",
+resetModal.addEventListener(
+    "click",
     function (event) {
 
         if (
-            event.key === "Escape" &&
-            resetModal.classList.contains("show")
+            event.target === resetModal
         ) {
 
             closeResetModal();
@@ -2762,8 +2520,6 @@ document.addEventListener(
 
     }
 );
-
-
 
 </script>
 
