@@ -471,7 +471,9 @@ window.deleteStaff=async function(id){
   alert("Staff deleted"); loadStaff();
 }
 window.viewStaff=function(id){ window.location.href="staff-profiless.html?id="+id; }
-window.editStaff=function(id){ alert("Edit module coming next"); }
+window.editStaff = function(id) {
+    window.location.href = "staff-edit.html?id=" + encodeURIComponent(id);
+};
 
 function clearForm(){
   document.querySelectorAll("#staffModal input").forEach(input=> input.value="");
