@@ -236,7 +236,9 @@ input:focus {
 }
 
 
-/* Professional SVG eye button */
+/* =========================================================
+   PASSWORD TOGGLE
+========================================================= */
 
 .toggle-password {
 
@@ -387,6 +389,62 @@ input:focus {
 
 
 /* =========================================================
+   SUCCESS MESSAGE
+========================================================= */
+
+.success {
+
+    min-height: 20px;
+
+    margin-top: 14px;
+
+    color: #16803c;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   FORGOT PASSWORD LINK
+========================================================= */
+
+.reset-link-container {
+
+    display: none;
+
+    margin-top: 10px;
+}
+
+.reset-link {
+
+    border: none;
+
+    background: transparent;
+
+    color: #003366;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    padding: 5px;
+}
+
+.reset-link:hover {
+
+    color: #0074b7;
+
+    text-decoration: underline;
+}
+
+
+/* =========================================================
    DIVIDER
 ========================================================= */
 
@@ -477,6 +535,247 @@ input:focus {
 
 
 /* =========================================================
+   RESET MODAL
+========================================================= */
+
+.modal {
+
+    display: none;
+
+    position: fixed;
+
+    z-index: 1000;
+
+    inset: 0;
+
+    background: rgba(0, 20, 40, 0.70);
+
+    padding: 20px;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+.modal.show {
+
+    display: flex;
+}
+
+.modal-box {
+
+    width: 100%;
+
+    max-width: 430px;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.35);
+
+    animation: modalIn 0.25s ease;
+}
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-header {
+
+    text-align: center;
+
+    margin-bottom: 22px;
+}
+
+.modal-header h2 {
+
+    color: #001f3f;
+
+    font-size: 21px;
+
+    margin-bottom: 8px;
+}
+
+.modal-header p {
+
+    color: #707982;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+.reset-step {
+
+    display: none;
+}
+
+.reset-step.active {
+
+    display: block;
+}
+
+
+/* =========================================================
+   RESET BUTTONS
+========================================================= */
+
+.reset-primary-btn {
+
+    width: 100%;
+
+    height: 48px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: linear-gradient(
+        135deg,
+        #001f3f,
+        #003b66
+    );
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    margin-top: 5px;
+}
+
+.reset-primary-btn:hover {
+
+    box-shadow:
+        0 7px 18px rgba(0, 31, 63, 0.22);
+}
+
+.reset-primary-btn:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+.cancel-btn {
+
+    width: 100%;
+
+    height: 45px;
+
+    margin-top: 10px;
+
+    border: 1px solid #d5dbe2;
+
+    border-radius: 9px;
+
+    background: #fff;
+
+    color: #34495e;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+
+    background: #f5f7f9;
+}
+
+
+/* =========================================================
+   RESET INFO
+========================================================= */
+
+.reset-info {
+
+    background: #f4f7fb;
+
+    border-left: 4px solid #003366;
+
+    padding: 11px 12px;
+
+    margin-bottom: 18px;
+
+    border-radius: 5px;
+
+    color: #4d5965;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    text-align: left;
+}
+
+.reset-error {
+
+    min-height: 20px;
+
+    margin-top: 12px;
+
+    color: #c62828;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    text-align: center;
+}
+
+.reset-success {
+
+    color: #16803c;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    text-align: center;
+
+    margin: 15px 0;
+}
+
+
+/* =========================================================
+   RESET PASSWORD EYE
+========================================================= */
+
+.reset-password-wrapper {
+
+    position: relative;
+}
+
+.reset-password-wrapper input {
+
+    padding-right: 48px;
+}
+
+
+/* =========================================================
    MOBILE
 ========================================================= */
 
@@ -515,6 +814,12 @@ input:focus {
 
         margin-bottom: 24px;
     }
+
+    .modal-box {
+
+        padding: 25px 20px;
+    }
+
 }
 
 </style>
@@ -523,159 +828,529 @@ input:focus {
 
 <body>
 
+
+<!-- =========================================================
+     LOGIN BOX
+========================================================= -->
+
 <div class="login-box">
 
-```
-<!-- LOGO -->
 
-<div class="logo-container">
+    <!-- LOGO -->
 
-    <img
-        src="../images/logo1 - Copy.png"
-        alt="Greysol Academy Logo"
-        class="logo"
-    >
+    <div class="logo-container">
 
-</div>
-
-
-<!-- TITLE -->
-
-<h1>GREYSOL ACADEMY</h1>
-
-<p class="subtitle">
-    Staff Portal
-</p>
-
-
-<!-- USERNAME -->
-
-<div class="form-group">
-
-    <label for="username">
-        Username
-    </label>
-
-    <input
-        id="username"
-        type="text"
-        placeholder="Enter your username"
-        autocomplete="username"
-        spellcheck="false"
-    >
-
-</div>
-
-
-<!-- PASSWORD -->
-
-<div class="form-group">
-
-    <label for="password">
-        Password
-    </label>
-
-    <div class="password-wrapper">
-
-        <input
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            autocomplete="current-password"
+        <img
+            src="../images/logo1 - Copy.png"
+            alt="Greysol Academy Logo"
+            class="logo"
         >
 
+    </div>
+
+
+    <!-- TITLE -->
+
+    <h1>GREYSOL ACADEMY</h1>
+
+    <p class="subtitle">
+        Staff Portal
+    </p>
+
+
+    <!-- USERNAME -->
+
+    <div class="form-group">
+
+        <label for="username">
+            Username
+        </label>
+
+        <input
+            id="username"
+            type="text"
+            placeholder="Enter your username"
+            autocomplete="username"
+            spellcheck="false"
+        >
+
+    </div>
+
+
+    <!-- PASSWORD -->
+
+    <div class="form-group">
+
+        <label for="password">
+            Password
+        </label>
+
+        <div class="password-wrapper">
+
+            <input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+            >
+
+
+            <button
+                type="button"
+                id="togglePassword"
+                class="toggle-password"
+                aria-label="Show password"
+                title="Show password"
+            >
+
+                <svg
+                    id="eyeIcon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        d="M2 12s3.5-7 10-7
+                           10 7 10 7-3.5 7-10 7
+                           S2 12 2 12z"
+                    ></path>
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="3"
+                    ></circle>
+
+                </svg>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOGIN BUTTON -->
+
+    <button
+        id="loginBtn"
+        type="button"
+    >
+
+        Login
+
+    </button>
+
+
+    <!-- ERROR -->
+
+    <p
+        id="error"
+        class="error"
+        role="alert"
+        aria-live="polite"
+    ></p>
+
+
+    <!-- FORGOT PASSWORD -->
+
+    <div
+        id="resetLinkContainer"
+        class="reset-link-container"
+    >
 
         <button
             type="button"
-            id="togglePassword"
-            class="toggle-password"
-            aria-label="Show password"
-            title="Show password"
+            id="resetLink"
+            class="reset-link"
         >
 
-            <!-- Eye icon -->
-
-            <svg
-                id="eyeIcon"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-            >
-
-                <path
-                    d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"
-                ></path>
-
-                <circle
-                    cx="12"
-                    cy="12"
-                    r="3"
-                ></circle>
-
-            </svg>
+            Forgot Password? / Change Password
 
         </button>
+
+    </div>
+
+
+    <!-- DIVIDER -->
+
+    <div class="divider">
+        <span>OR</span>
+    </div>
+
+
+    <!-- STUDENT LOGIN -->
+
+    <div class="links">
+
+        <a href="student-login.html">
+
+            <span>Student Login</span>
+
+            <span>→</span>
+
+        </a>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        Greysol Academy Staff Portal<br>
+
+        Authorized personnel only
 
     </div>
 
 </div>
 
 
-<!-- LOGIN BUTTON -->
 
-<button
-    id="loginBtn"
-    type="button"
+<!-- =========================================================
+     PASSWORD RESET MODAL
+========================================================= -->
+
+<div
+    id="resetModal"
+    class="modal"
 >
 
-    Login
 
-</button>
-
-
-<!-- ERROR -->
-
-<p
-    id="error"
-    class="error"
-    role="alert"
-    aria-live="polite"
-></p>
+    <div class="modal-box">
 
 
-<!-- DIVIDER -->
+        <!-- =================================================
+             STEP 1
+        ================================================== -->
 
-<div class="divider">
-    <span>OR</span>
+        <div
+            id="resetStep1"
+            class="reset-step active"
+        >
+
+            <div class="modal-header">
+
+                <h2>Change Password</h2>
+
+                <p>
+                    Verify your registered account details
+                    before choosing a new password.
+                </p>
+
+            </div>
+
+
+            <div class="reset-info">
+
+                Enter the <strong>username</strong>,
+                <strong>email address</strong> and
+                <strong>phone number</strong> registered
+                with your Greysol Academy staff account.
+
+            </div>
+
+
+            <!-- Username -->
+
+            <div class="form-group">
+
+                <label for="resetUsername">
+                    Username
+                </label>
+
+                <input
+                    id="resetUsername"
+                    type="text"
+                    placeholder="Enter your username"
+                    autocomplete="username"
+                    spellcheck="false"
+                >
+
+            </div>
+
+
+            <!-- Email -->
+
+            <div class="form-group">
+
+                <label for="resetEmail">
+                    Registered Email
+                </label>
+
+                <input
+                    id="resetEmail"
+                    type="email"
+                    placeholder="Enter your registered email"
+                    autocomplete="email"
+                >
+
+            </div>
+
+
+            <!-- Phone -->
+
+            <div class="form-group">
+
+                <label for="resetPhone">
+                    Registered Phone Number
+                </label>
+
+                <input
+                    id="resetPhone"
+                    type="tel"
+                    placeholder="Enter your registered phone number"
+                    autocomplete="tel"
+                >
+
+            </div>
+
+
+            <button
+                type="button"
+                id="verifyDetailsBtn"
+                class="reset-primary-btn"
+            >
+
+                Verify Details
+
+            </button>
+
+
+            <button
+                type="button"
+                id="cancelResetBtn1"
+                class="cancel-btn"
+            >
+
+                Cancel
+
+            </button>
+
+
+            <p
+                id="resetError1"
+                class="reset-error"
+                role="alert"
+            ></p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             STEP 2
+        ================================================== -->
+
+        <div
+            id="resetStep2"
+            class="reset-step"
+        >
+
+            <div class="modal-header">
+
+                <h2>Create New Password</h2>
+
+                <p>
+                    Your account details have been verified.
+                    Enter your new password below.
+                </p>
+
+            </div>
+
+
+            <!-- New Password -->
+
+            <div class="form-group">
+
+                <label for="newPassword">
+                    New Password
+                </label>
+
+                <div class="reset-password-wrapper">
+
+                    <input
+                        id="newPassword"
+                        type="password"
+                        placeholder="Enter new password"
+                        autocomplete="new-password"
+                    >
+
+                    <button
+                        type="button"
+                        id="toggleNewPassword"
+                        class="toggle-password"
+                        aria-label="Show password"
+                        title="Show password"
+                    >
+
+                        <svg
+                            id="newEyeIcon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                d="M2 12s3.5-7 10-7
+                                   10 7 10 7-3.5 7-10 7
+                                   S2 12 2 12z"
+                            ></path>
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="3"
+                            ></circle>
+
+                        </svg>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Confirm Password -->
+
+            <div class="form-group">
+
+                <label for="confirmPassword">
+                    Confirm New Password
+                </label>
+
+                <div class="reset-password-wrapper">
+
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="Confirm new password"
+                        autocomplete="new-password"
+                    >
+
+                    <button
+                        type="button"
+                        id="toggleConfirmPassword"
+                        class="toggle-password"
+                        aria-label="Show password"
+                        title="Show password"
+                    >
+
+                        <svg
+                            id="confirmEyeIcon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+
+                            <path
+                                d="M2 12s3.5-7 10-7
+                                   10 7 10 7-3.5 7-10 7
+                                   S2 12 2 12z"
+                            ></path>
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="3"
+                            ></circle>
+
+                        </svg>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="reset-info">
+
+                Password must contain at least
+                <strong>6 characters</strong>.
+
+            </div>
+
+
+            <button
+                type="button"
+                id="changePasswordBtn"
+                class="reset-primary-btn"
+            >
+
+                Change Password
+
+            </button>
+
+
+            <button
+                type="button"
+                id="cancelResetBtn2"
+                class="cancel-btn"
+            >
+
+                Cancel
+
+            </button>
+
+
+            <p
+                id="resetError2"
+                class="reset-error"
+                role="alert"
+            ></p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             STEP 3
+        ================================================== -->
+
+        <div
+            id="resetStep3"
+            class="reset-step"
+        >
+
+            <div class="modal-header">
+
+                <h2>Password Changed</h2>
+
+                <p>
+                    Your staff account password has been
+                    changed successfully.
+                </p>
+
+            </div>
+
+
+            <p class="reset-success">
+
+                You can now close this message and log in
+                using your new password.
+
+            </p>
+
+
+            <button
+                type="button"
+                id="returnLoginBtn"
+                class="reset-primary-btn"
+            >
+
+                Return to Login
+
+            </button>
+
+        </div>
+
+
+    </div>
+
 </div>
 
 
-<!-- STUDENT LOGIN -->
-
-<div class="links">
-
-    <a href="student-login.html">
-
-        <span>Student Login</span>
-
-        <span>→</span>
-
-    </a>
-
-</div>
-
-
-<!-- FOOTER -->
-
-<div class="footer">
-
-    Greysol Academy Staff Portal<br>
-
-    Authorized personnel only
-
-</div>
-```
-
-</div>
 
 <script type="module">
 
@@ -697,7 +1372,8 @@ import {
     collection,
     query,
     where,
-    getDocs
+    getDocs,
+    updateDoc
 
 }
 
@@ -737,7 +1413,7 @@ const db = getFirestore(app);
 
 
 /* =========================================================
-   ELEMENTS
+   LOGIN ELEMENTS
 ========================================================= */
 
 const usernameInput =
@@ -758,103 +1434,216 @@ const togglePassword =
 const eyeIcon =
     document.getElementById("eyeIcon");
 
+const resetLinkContainer =
+    document.getElementById("resetLinkContainer");
+
+const resetLink =
+    document.getElementById("resetLink");
+
 
 
 /* =========================================================
-   SHOW / HIDE PASSWORD
+   RESET ELEMENTS
 ========================================================= */
 
-togglePassword.addEventListener(
-    "click",
-    function () {
+const resetModal =
+    document.getElementById("resetModal");
 
-        const isPassword =
-            passwordInput.type === "password";
+const resetStep1 =
+    document.getElementById("resetStep1");
 
+const resetStep2 =
+    document.getElementById("resetStep2");
 
-        if (isPassword) {
-
-            passwordInput.type = "text";
-
-            togglePassword.setAttribute(
-                "aria-label",
-                "Hide password"
-            );
-
-            togglePassword.setAttribute(
-                "title",
-                "Hide password"
-            );
+const resetStep3 =
+    document.getElementById("resetStep3");
 
 
-            /* Change eye to crossed eye */
+const resetUsername =
+    document.getElementById("resetUsername");
 
-            eyeIcon.innerHTML = `
+const resetEmail =
+    document.getElementById("resetEmail");
 
-                <path
-                    d="M3 3l18 18"
-                ></path>
+const resetPhone =
+    document.getElementById("resetPhone");
 
-                <path
-                    d="M10.6 5.1
-                       A10.8 10.8 0 0 1 12 5
-                       c6.5 0 10 7 10 7
-                       a18.3 18.3 0 0 1-3.1 4.2"
-                ></path>
 
-                <path
-                    d="M6.2 6.2
-                       C3.5 8.1 2 12 2 12
-                       s3.5 7 10 7
-                       c1.8 0 3.4-.5 4.8-1.2"
-                ></path>
+const verifyDetailsBtn =
+    document.getElementById("verifyDetailsBtn");
 
-            `;
+const changePasswordBtn =
+    document.getElementById("changePasswordBtn");
+
+const cancelResetBtn1 =
+    document.getElementById("cancelResetBtn1");
+
+const cancelResetBtn2 =
+    document.getElementById("cancelResetBtn2");
+
+const returnLoginBtn =
+    document.getElementById("returnLoginBtn");
+
+
+const newPassword =
+    document.getElementById("newPassword");
+
+const confirmPassword =
+    document.getElementById("confirmPassword");
+
+
+const resetError1 =
+    document.getElementById("resetError1");
+
+const resetError2 =
+    document.getElementById("resetError2");
+
+
+
+/* =========================================================
+   FAILED LOGIN ATTEMPTS
+========================================================= */
+
+let failedAttempts =
+    Number(sessionStorage.getItem("staffLoginFailedAttempts") || 0);
+
+
+/*
+   Account information found during verification.
+
+   This is kept only in memory and disappears when
+   the page is refreshed.
+*/
+
+let verifiedUserDoc = null;
+
+
+
+/* =========================================================
+   PASSWORD EYE FUNCTION
+========================================================= */
+
+function setupPasswordToggle(
+    button,
+    input,
+    icon
+) {
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            const isPassword =
+                input.type === "password";
+
+
+            if (isPassword) {
+
+                input.type = "text";
+
+                button.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
+
+                button.setAttribute(
+                    "title",
+                    "Hide password"
+                );
+
+
+                icon.innerHTML = `
+
+                    <path
+                        d="M3 3l18 18"
+                    ></path>
+
+                    <path
+                        d="M10.6 5.1
+                           A10.8 10.8 0 0 1 12 5
+                           c6.5 0 10 7 10 7
+                           a18.3 18.3 0 0 1-3.1 4.2"
+                    ></path>
+
+                    <path
+                        d="M6.2 6.2
+                           C3.5 8.1 2 12 2 12
+                           s3.5 7 10 7
+                           c1.8 0 3.4-.5 4.8-1.2"
+                    ></path>
+
+                `;
+
+            }
+
+            else {
+
+                input.type = "password";
+
+                button.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
+
+                button.setAttribute(
+                    "title",
+                    "Show password"
+                );
+
+
+                icon.innerHTML = `
+
+                    <path
+                        d="M2 12s3.5-7 10-7
+                           10 7 10 7-3.5 7-10 7
+                           S2 12 2 12z"
+                    ></path>
+
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="3"
+                    ></circle>
+
+                `;
+
+            }
 
         }
+    );
 
-        else {
-
-            passwordInput.type = "password";
-
-            togglePassword.setAttribute(
-                "aria-label",
-                "Show password"
-            );
-
-            togglePassword.setAttribute(
-                "title",
-                "Show password"
-            );
+}
 
 
-            /* Normal eye */
 
-            eyeIcon.innerHTML = `
+/* =========================================================
+   SETUP PASSWORD TOGGLES
+========================================================= */
 
-                <path
-                    d="M2 12s3.5-7 10-7
-                       10 7 10 7-3.5 7-10 7
-                       S2 12 2 12z"
-                ></path>
+setupPasswordToggle(
+    togglePassword,
+    passwordInput,
+    eyeIcon
+);
 
-                <circle
-                    cx="12"
-                    cy="12"
-                    r="3"
-                ></circle>
 
-            `;
+setupPasswordToggle(
+    document.getElementById("toggleNewPassword"),
+    newPassword,
+    document.getElementById("newEyeIcon")
+);
 
-        }
 
-    }
+setupPasswordToggle(
+    document.getElementById("toggleConfirmPassword"),
+    confirmPassword,
+    document.getElementById("confirmEyeIcon")
 );
 
 
 
 /* =========================================================
-   LOGIN
+   LOGIN BUTTON
 ========================================================= */
 
 loginBtn.addEventListener(
@@ -898,7 +1687,62 @@ usernameInput.addEventListener(
 
 
 /* =========================================================
-   LOGIN FUNCTION
+   NORMALIZE EMAIL
+========================================================= */
+
+function normalizeEmail(email) {
+
+    return String(email || "")
+        .trim()
+        .toLowerCase();
+
+}
+
+
+
+/* =========================================================
+   NORMALIZE USERNAME
+========================================================= */
+
+function normalizeUsername(username) {
+
+    return String(username || "")
+        .trim()
+        .toLowerCase();
+
+}
+
+
+
+/* =========================================================
+   NORMALIZE PHONE
+========================================================= */
+
+function normalizePhone(phone) {
+
+    /*
+       Keep only numbers.
+
+       Example:
+
+       +265 999 123 456
+       becomes
+       265999123456
+
+       0999 123 456
+       becomes
+       0999123456
+    */
+
+    return String(phone || "")
+        .replace(/\D/g, "");
+
+}
+
+
+
+/* =========================================================
+   LOGIN
 ========================================================= */
 
 async function loginUser() {
@@ -915,7 +1759,9 @@ async function loginUser() {
     errorMessage.textContent = "";
 
 
-    /* Validate */
+    /*
+       Validate
+    */
 
     if (
         username === "" ||
@@ -930,7 +1776,9 @@ async function loginUser() {
     }
 
 
-    /* Disable button */
+    /*
+       Disable button
+    */
 
     loginBtn.disabled = true;
 
@@ -940,7 +1788,9 @@ async function loginUser() {
     try {
 
 
-        /* Query Firebase */
+        /*
+           Query Firebase
+        */
 
         const q = query(
 
@@ -965,25 +1815,58 @@ async function loginUser() {
             await getDocs(q);
 
 
-        /* No matching user */
+        /*
+           No matching user
+        */
 
         if (snapshot.empty) {
 
+
+            failedAttempts++;
+
+
+            sessionStorage.setItem(
+                "staffLoginFailedAttempts",
+                failedAttempts
+            );
+
+
             errorMessage.textContent =
                 "Invalid username or password.";
+
+
+            /*
+               Show reset option after
+               TWO consecutive failures.
+            */
+
+            if (failedAttempts >= 2) {
+
+                resetLinkContainer.style.display =
+                    "block";
+
+            }
+
 
             return;
 
         }
 
 
-        /* Get user */
+        /*
+           Get user
+        */
+
+        const userDoc =
+            snapshot.docs[0];
 
         const user =
-            snapshot.docs[0].data();
+            userDoc.data();
 
 
-        /* Check account status */
+        /*
+           Check account status
+        */
 
         if (user.status !== "Active") {
 
@@ -995,9 +1878,22 @@ async function loginUser() {
         }
 
 
-        /* =================================================
-           SAVE LOGIN SESSION
-        ================================================= */
+        /*
+           Successful login.
+
+           Reset failed attempts.
+        */
+
+        failedAttempts = 0;
+
+        sessionStorage.removeItem(
+            "staffLoginFailedAttempts"
+        );
+
+
+        /*
+           Save login session
+        */
 
         localStorage.setItem(
 
@@ -1022,9 +1918,9 @@ async function loginUser() {
         );
 
 
-        /* =================================================
-           REDIRECT BASED ON ROLE
-        ================================================= */
+        /*
+           Redirect based on role
+        */
 
         switch (user.role) {
 
@@ -1100,6 +1996,774 @@ async function loginUser() {
     }
 
 }
+
+
+
+/* =========================================================
+   OPEN RESET MODAL
+========================================================= */
+
+resetLink.addEventListener(
+    "click",
+    openResetModal
+);
+
+
+function openResetModal() {
+
+    /*
+       Pre-fill username from login screen.
+    */
+
+    resetUsername.value =
+        usernameInput.value.trim();
+
+
+    resetEmail.value = "";
+
+    resetPhone.value = "";
+
+    newPassword.value = "";
+
+    confirmPassword.value = "";
+
+
+    resetError1.textContent = "";
+
+    resetError2.textContent = "";
+
+
+    verifiedUserDoc = null;
+
+
+    showResetStep(1);
+
+
+    resetModal.classList.add("show");
+
+
+    /*
+       Focus appropriate field.
+    */
+
+    setTimeout(
+        function () {
+
+            if (resetUsername.value.trim() !== "") {
+
+                resetEmail.focus();
+
+            }
+
+            else {
+
+                resetUsername.focus();
+
+            }
+
+        },
+        100
+    );
+
+}
+
+
+
+/* =========================================================
+   CLOSE RESET MODAL
+========================================================= */
+
+cancelResetBtn1.addEventListener(
+    "click",
+    closeResetModal
+);
+
+cancelResetBtn2.addEventListener(
+    "click",
+    closeResetModal
+);
+
+
+function closeResetModal() {
+
+    resetModal.classList.remove("show");
+
+    verifiedUserDoc = null;
+
+}
+
+
+
+/* =========================================================
+   CLOSE MODAL WHEN CLICKING OUTSIDE
+========================================================= */
+
+resetModal.addEventListener(
+    "click",
+    function (event) {
+
+        if (event.target === resetModal) {
+
+            closeResetModal();
+
+        }
+
+    }
+);
+
+
+
+/* =========================================================
+   SHOW RESET STEP
+========================================================= */
+
+function showResetStep(step) {
+
+
+    resetStep1.classList.remove("active");
+
+    resetStep2.classList.remove("active");
+
+    resetStep3.classList.remove("active");
+
+
+    if (step === 1) {
+
+        resetStep1.classList.add("active");
+
+    }
+
+    else if (step === 2) {
+
+        resetStep2.classList.add("active");
+
+    }
+
+    else if (step === 3) {
+
+        resetStep3.classList.add("active");
+
+    }
+
+}
+
+
+
+/* =========================================================
+   VERIFY USER DETAILS
+========================================================= */
+
+verifyDetailsBtn.addEventListener(
+    "click",
+    verifyAccountDetails
+);
+
+
+
+async function verifyAccountDetails() {
+
+
+    const username =
+        resetUsername.value.trim();
+
+
+    const email =
+        normalizeEmail(
+            resetEmail.value
+        );
+
+
+    const phone =
+        normalizePhone(
+            resetPhone.value
+        );
+
+
+    resetError1.textContent = "";
+
+
+    /*
+       Basic validation
+    */
+
+    if (
+        username === "" ||
+        email === "" ||
+        phone === ""
+    ) {
+
+        resetError1.textContent =
+            "Please enter your username, email and phone number.";
+
+        return;
+
+    }
+
+
+    if (!email.includes("@")) {
+
+        resetError1.textContent =
+            "Please enter a valid email address.";
+
+        return;
+
+    }
+
+
+    if (phone.length < 7) {
+
+        resetError1.textContent =
+            "Please enter a valid phone number.";
+
+        return;
+
+    }
+
+
+    /*
+       Disable button
+    */
+
+    verifyDetailsBtn.disabled = true;
+
+    verifyDetailsBtn.textContent =
+        "Verifying...";
+
+
+    try {
+
+
+        /*
+           Step 1:
+           Find the users account using username.
+        */
+
+        const userQuery = query(
+
+            collection(db, "users"),
+
+            where(
+                "username",
+                "==",
+                username
+            )
+
+        );
+
+
+        const userSnapshot =
+            await getDocs(userQuery);
+
+
+        /*
+           Don't reveal whether the
+           username exists.
+        */
+
+        if (userSnapshot.empty) {
+
+            throw new Error(
+                "verification_failed"
+            );
+
+        }
+
+
+        /*
+           Get the matching users document.
+        */
+
+        let matchingUserDoc = null;
+
+
+        userSnapshot.forEach(
+            function (docSnapshot) {
+
+                if (!matchingUserDoc) {
+
+                    const user =
+                        docSnapshot.data();
+
+
+                    /*
+                       Check username
+                       case-insensitively.
+                    */
+
+                    if (
+                        normalizeUsername(
+                            user.username
+                        ) ===
+                        normalizeUsername(
+                            username
+                        )
+                    ) {
+
+                        matchingUserDoc =
+                            docSnapshot;
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        if (!matchingUserDoc) {
+
+            throw new Error(
+                "verification_failed"
+            );
+
+        }
+
+
+        const user =
+            matchingUserDoc.data();
+
+
+        /*
+           Account must be active.
+        */
+
+        if (
+            String(user.status || "")
+                .trim()
+                .toLowerCase()
+            !== "active"
+        ) {
+
+            throw new Error(
+                "verification_failed"
+            );
+
+        }
+
+
+        /*
+           We need staffID to find the
+           corresponding staff record.
+        */
+
+        if (!user.staffID) {
+
+            throw new Error(
+                "verification_failed"
+            );
+
+        }
+
+
+        /*
+           Step 2:
+           Find staff record using staffID.
+        */
+
+        const staffQuery = query(
+
+            collection(db, "staff"),
+
+            where(
+                "staffID",
+                "==",
+                user.staffID
+            )
+
+        );
+
+
+        const staffSnapshot =
+            await getDocs(staffQuery);
+
+
+        if (staffSnapshot.empty) {
+
+            throw new Error(
+                "verification_failed"
+            );
+
+        }
+
+
+        /*
+           Find the matching staff record.
+        */
+
+        let matchingStaff = null;
+
+
+        staffSnapshot.forEach(
+            function (staffDoc) {
+
+                if (!matchingStaff) {
+
+                    matchingStaff =
+                        staffDoc.data();
+
+                }
+
+            }
+        );
+
+
+        if (!matchingStaff) {
+
+            throw new Error(
+                "verification_failed"
+            );
+
+        }
+
+
+        /*
+           Step 3:
+           Compare registered email.
+        */
+
+        const registeredEmail =
+            normalizeEmail(
+                matchingStaff.email
+            );
+
+
+        /*
+           Step 4:
+           Compare registered phone.
+        */
+
+        const registeredPhone =
+            normalizePhone(
+                matchingStaff.phone
+            );
+
+
+        const emailMatches =
+            registeredEmail !== "" &&
+            registeredEmail === email;
+
+
+        const phoneMatches =
+            registeredPhone !== "" &&
+            registeredPhone === phone;
+
+
+        /*
+           ALL THREE details must match.
+        */
+
+        if (
+            !emailMatches ||
+            !phoneMatches
+        ) {
+
+            throw new Error(
+                "verification_failed"
+            );
+
+        }
+
+
+        /*
+           Successful verification.
+
+           Keep the Firebase document
+           reference in memory.
+        */
+
+        verifiedUserDoc =
+            matchingUserDoc;
+
+
+        /*
+           Move to new-password step.
+        */
+
+        showResetStep(2);
+
+
+        setTimeout(
+            function () {
+
+                newPassword.focus();
+
+            },
+            100
+        );
+
+
+    }
+
+    catch (err) {
+
+        console.error(
+            "Password reset verification error:",
+            err
+        );
+
+
+        resetError1.textContent =
+            "The information provided could not be verified. Please check your details and try again.";
+
+    }
+
+    finally {
+
+        verifyDetailsBtn.disabled = false;
+
+        verifyDetailsBtn.textContent =
+            "Verify Details";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   CHANGE PASSWORD
+========================================================= */
+
+changePasswordBtn.addEventListener(
+    "click",
+    changeStaffPassword
+);
+
+
+
+async function changeStaffPassword() {
+
+
+    const password =
+        newPassword.value;
+
+
+    const confirmation =
+        confirmPassword.value;
+
+
+    resetError2.textContent = "";
+
+
+    /*
+       Make sure verification happened.
+    */
+
+    if (!verifiedUserDoc) {
+
+        resetError2.textContent =
+            "Your account has not been verified. Please start again.";
+
+        return;
+
+    }
+
+
+    /*
+       Password length
+    */
+
+    if (password.length < 6) {
+
+        resetError2.textContent =
+            "Password must contain at least 6 characters.";
+
+        return;
+
+    }
+
+
+    /*
+       Password confirmation
+    */
+
+    if (password !== confirmation) {
+
+        resetError2.textContent =
+            "The passwords do not match.";
+
+        return;
+
+    }
+
+
+    /*
+       Don't allow a blank password.
+    */
+
+    if (password.trim() === "") {
+
+        resetError2.textContent =
+            "Please enter a valid password.";
+
+        return;
+
+    }
+
+
+    /*
+       Disable button.
+    */
+
+    changePasswordBtn.disabled = true;
+
+    changePasswordBtn.textContent =
+        "Changing Password...";
+
+
+    try {
+
+
+        /*
+           Update the EXISTING users document.
+
+           We are intentionally not creating
+           another account.
+        */
+
+        await updateDoc(
+
+            verifiedUserDoc.ref,
+
+            {
+
+                password:
+                    password,
+
+                updatedAt:
+                    new Date()
+
+            }
+
+        );
+
+
+        /*
+           Password changed successfully.
+        */
+
+        showResetStep(3);
+
+
+    }
+
+    catch (err) {
+
+        console.error(
+            "Password change error:",
+            err
+        );
+
+
+        resetError2.textContent =
+            "Unable to change your password. Please try again.";
+
+    }
+
+    finally {
+
+        changePasswordBtn.disabled = false;
+
+        changePasswordBtn.textContent =
+            "Change Password";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   RETURN TO LOGIN
+========================================================= */
+
+returnLoginBtn.addEventListener(
+    "click",
+    function () {
+
+
+        /*
+           Close reset window.
+        */
+
+        resetModal.classList.remove("show");
+
+
+        /*
+           Clear password fields.
+        */
+
+        passwordInput.value = "";
+
+        newPassword.value = "";
+
+        confirmPassword.value = "";
+
+
+        /*
+           Keep username because it is convenient.
+        */
+
+        passwordInput.focus();
+
+
+        /*
+           Clear reset link.
+        */
+
+        resetLinkContainer.style.display =
+            "none";
+
+
+        /*
+           Reset failed attempts after
+           completing a password change.
+        */
+
+        failedAttempts = 0;
+
+        sessionStorage.removeItem(
+            "staffLoginFailedAttempts"
+        );
+
+
+        /*
+           Clear verification object.
+        */
+
+        verifiedUserDoc = null;
+
+
+        errorMessage.textContent =
+            "";
+
+
+    }
+);
+
+
+
+/* =========================================================
+   ESCAPE KEY CLOSES MODAL
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape" &&
+            resetModal.classList.contains("show")
+        ) {
+
+            closeResetModal();
+
+        }
+
+    }
+);
+
+
 
 </script>
 
