@@ -2854,6 +2854,36 @@ tr:last-child td{
 <script src="functions/accounting-dashboard.js"></script>
 <script src="functions/session-timeout.js"></script>
 <script src="functions/notifications.js"></script>
+  <script>
+/* GREYSOL IDLE LOGOUT - 30 SEC TRIAL */
+(function(){
+  const LIMIT = 30 * 1000; // 30 seconds - change to 15*60*1000 later
+  const KEY = "greysolLastActivity";
+  function getUser(){
+    try{ return JSON.parse(localStorage.getItem("loggedUser") || sessionStorage.getItem("loggedUser") || "null"); }catch{ return null; }
+  }
+  function logout(){
+    localStorage.setItem("greysolReturnPage", location.href);
+    localStorage.removeItem("loggedUser");
+    sessionStorage.removeItem("loggedUser");
+    localStorage.removeItem(KEY);
+    sessionStorage.removeItem(KEY);
+    location.replace("../staff-login.html?session=expired");
+  }
+  if(!getUser()) return;
+  let last = Date.now();
+  function touch(){ last = Date.now(); localStorage.setItem(KEY, last+""); sessionStorage.setItem(KEY, last+""); }
+  ["click","keydown","mousemove","touchstart","scroll"].forEach(e=>window.addEventListener(e,touch,{passive:true}));
+  touch();
+  setInterval(()=>{
+    const stored = Number(localStorage.getItem(KEY) || sessionStorage.getItem(KEY) || last);
+    if(Date.now() - stored >= LIMIT){
+      alert("Session expired - idle 30s");
+      logout();
+    }
+  }, 3000);
+})();
+</script>
  </body>
 </html>
 </body>
