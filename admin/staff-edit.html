@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" type="image/x-icon" href="../images/logo1 - Copy.png">
+
+<title>Greysol Academy | Edit Staff</title>
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+>
+
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+:root {
+
+    --navy: #001f3f;
+    --blue: #003366;
+    --gold: #f4b400;
+
+    --green: #16a085;
+    --red: #e74c3c;
+
+    --light: #f4f7fb;
+    --white: #ffffff;
+
+    --text: #263238;
+    --muted: #777;
+
+    --border: #dce1e6;
+
+    --shadow: 0 5px 15px rgba(0,0,0,.08);
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+
+    background: var(--light);
+
+    display: flex;
+
+    height: 100vh;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+.main-loader {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(244,247,251,.96);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    flex-direction: column;
+
+    z-index: 99999;
+
+    color: var(--navy);
+
+    transition: .3s;
+}
+
+.main-loader.hidden {
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.spinner {
+
+    width: 50px;
+
+    height: 50px;
+
+    border: 4px solid rgba(0,31,63,.2);
+
+    border-top: 4px solid var(--navy);
+
+    border-radius: 50%;
+
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+
+    width: 270px;
+
+    background: var(--navy);
+
+    color: white;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    transition: .3s;
+
+    z-index: 1000;
+
+    scrollbar-width: none;
+}
+
+.sidebar::-webkit-scrollbar {
+
+    width: 0;
+}
+
+.logo {
+
+    padding: 25px;
+
+    text-align: center;
+
+    border-bottom: 1px solid rgba(255,255,255,.15);
+}
+
+.logo img {
+
+    width: 80px;
+
+    margin-bottom: 10px;
+}
+
+.logo h2 {
+
+    font-size: 22px;
+
+    margin-bottom: 5px;
+}
+
+.logo p {
+
+    font-size: 13px;
+
+    opacity: .8;
+}
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+.menu {
+
+    padding: 15px 0 100px;
+}
+
+.menu a {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 14px 25px;
+
+    color: white;
+
+    text-decoration: none;
+
+    transition: .25s;
+}
+
+.menu a:hover {
+
+    background: rgba(255,255,255,.12);
+
+    padding-left: 35px;
+}
+
+.menu a.active {
+
+    background: rgba(255,255,255,.18);
+
+    padding-left: 35px;
+}
+
+.menu i {
+
+    width: 22px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   ACCORDION
+========================================================= */
+
+.menu-group {
+
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.menu-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 14px 25px;
+
+    cursor: pointer;
+
+    color: white;
+
+    transition: .3s;
+}
+
+.menu-header:hover {
+
+    background: rgba(255,255,255,.12);
+}
+
+.menu-header i:first-child {
+
+    width: 22px;
+
+    text-align: center;
+}
+
+.arrow {
+
+    margin-left: auto;
+
+    font-size: 12px;
+
+    transition: transform .3s ease;
+}
+
+.menu-group.active .arrow {
+
+    transform: rotate(180deg);
+}
+
+.submenu {
+
+    max-height: 0;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    transition:
+        max-height .35s ease,
+        opacity .25s ease;
+
+    background: rgba(0,0,0,.15);
+}
+
+.menu-group.active .submenu {
+
+    max-height: 700px;
+
+    opacity: 1;
+}
+
+.submenu a {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 12px 25px 12px 55px;
+
+    font-size: 14px;
+
+    color: #ddd;
+}
+
+.submenu a:hover {
+
+    color: white;
+
+    padding-left: 65px;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.topbar {
+
+    height: 75px;
+
+    background: white;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 0 30px;
+
+    box-shadow: var(--shadow);
+
+    flex-shrink: 0;
+}
+
+.left-top {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+.left-top h2 {
+
+    color: var(--navy);
+
+    font-size: 21px;
+}
+
+#menuBtn {
+
+    font-size: 24px;
+
+    cursor: pointer;
+
+    color: var(--navy);
+
+    display: none;
+}
+
+.admin {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    text-align: right;
+}
+
+.admin span {
+
+    color: var(--navy);
+
+    font-weight: bold;
+}
+
+.admin small {
+
+    display: block;
+
+    font-weight: normal;
+
+    font-size: 12px;
+
+    opacity: .7;
+}
+
+.admin img {
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 50%;
+}
+
+.overlay {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0,0,0,.45);
+
+    z-index: 999;
+}
+
+.overlay.show {
+
+    display: block;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content {
+
+    padding: 30px;
+
+    overflow: auto;
+
+    flex: 1;
+
+    scrollbar-width: none;
+}
+
+.content::-webkit-scrollbar {
+
+    width: 0;
+}
+
+
+/* =========================================================
+   PAGE TITLE
+========================================================= */
+
+.page-title {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+.page-title h1 {
+
+    color: var(--navy);
+
+    font-size: 27px;
+}
+
+.page-title p {
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================================
+   BOX
+========================================================= */
+
+.box {
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 15px;
+
+    box-shadow: var(--shadow);
+
+    margin-bottom: 20px;
+}
+
+.box h3 {
+
+    color: var(--navy);
+
+    margin-bottom: 25px;
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   STAFF HEADER
+========================================================= */
+
+.staff-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding-bottom: 25px;
+
+    margin-bottom: 25px;
+
+    border-bottom: 1px solid #edf0f3;
+}
+
+.staff-icon {
+
+    width: 65px;
+
+    height: 65px;
+
+    border-radius: 50%;
+
+    background: #eef4f8;
+
+    color: var(--navy);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 27px;
+}
+
+.staff-header h2 {
+
+    color: var(--navy);
+
+    font-size: 21px;
+}
+
+.staff-header p {
+
+    color: #777;
+
+    font-size: 13px;
+
+    margin-top: 4px;
+}
+
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.form-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(220px, 1fr));
+
+    gap: 20px;
+}
+
+.form-group {
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+.form-group.full {
+
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #34495e;
+
+    margin-bottom: 7px;
+}
+
+.form-group label span {
+
+    color: var(--red);
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+input,
+select {
+
+    width: 100%;
+
+    height: 46px;
+
+    padding: 0 13px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    background: #fafbfc;
+
+    color: #222;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: .2s;
+}
+
+input:focus,
+select:focus {
+
+    background: white;
+
+    border-color: var(--blue);
+
+    box-shadow:
+        0 0 0 3px rgba(0,51,102,.09);
+}
+
+
+/* =========================================================
+   STAFF ID
+========================================================= */
+
+.readonly-field {
+
+    background: #f0f2f4;
+
+    color: #667;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   BUTTON AREA
+========================================================= */
+
+.form-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin-top: 30px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #edf0f3;
+}
+
+button {
+
+    min-height: 44px;
+
+    padding: 11px 19px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: .2s;
+}
+
+button:hover {
+
+    transform: translateY(-1px);
+}
+
+.cancel-btn {
+
+    background: #e9edf1;
+
+    color: #34495e;
+}
+
+.cancel-btn:hover {
+
+    background: #dfe4e8;
+}
+
+.save-btn {
+
+    background: var(--green);
+
+    color: white;
+}
+
+.save-btn:hover {
+
+    background: #128c73;
+}
+
+.save-btn:disabled {
+
+    opacity: .65;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.message {
+
+    display: none;
+
+    padding: 12px 15px;
+
+    border-radius: 8px;
+
+    margin-bottom: 20px;
+
+    font-size: 13px;
+}
+
+.message.success {
+
+    display: block;
+
+    background: #e9f8f3;
+
+    color: #11765f;
+
+    border: 1px solid #bce9dc;
+}
+
+.message.error {
+
+    display: block;
+
+    background: #fdeeee;
+
+    color: #b52b27;
+
+    border: 1px solid #f3c4c1;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width: 900px) {
+
+    .sidebar {
+
+        position: absolute;
+
+        left: -270px;
+
+        height: 100%;
+
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+
+        left: 0;
+    }
+
+    #menuBtn {
+
+        display: block;
+    }
+
+    .form-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+
+        grid-column: auto;
+    }
+}
+
+
+@media(max-width: 600px) {
+
+    .topbar {
+
+        padding: 0 18px;
+
+        height: 68px;
+    }
+
+    .left-top h2 {
+
+        font-size: 18px;
+    }
+
+    .admin div {
+
+        display: none;
+    }
+
+    .content {
+
+        padding: 18px;
+    }
+
+    .box {
+
+        padding: 20px;
+    }
+
+    .page-title h1 {
+
+        font-size: 23px;
+    }
+
+    .form-actions {
+
+        flex-direction: column-reverse;
+    }
+
+    .form-actions button {
+
+        width: 100%;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ======================================================
+     OVERLAY
+====================================================== -->
+
+<div class="overlay" id="overlay"></div>
+
+<!-- ======================================================
+     LOADER
+====================================================== -->
+
+<div class="main-loader" id="mainLoader">
+
+```
+<div class="spinner"></div>
+
+<p style="margin-top:15px">
+    Loading Staff Information...
+</p>
+```
+
+</div>
+
+<!-- ======================================================
+     SIDEBAR
+====================================================== -->
+
+<div class="sidebar" id="sidebar">
+
+```
+<div class="logo">
+
+    <img
+        src="../images/logo1 - Copy.png"
+        alt="Greysol Academy"
+    >
+
+    <h2>GREYSOL ACADEMY</h2>
+
+    <p>School Management System</p>
+
+</div>
+
+
+<div class="menu">
+
+
+    <a href="admin-dashboard.html">
+
+        <i class="fas fa-gauge"></i>
+
+        <span>Dashboard</span>
+
+    </a>
+
+
+    <!-- STUDENTS -->
+
+    <div class="menu-group">
+
+        <div class="menu-header">
+
+            <i class="fas fa-user-graduate"></i>
+
+            <span>Students</span>
+
+            <i class="fas fa-chevron-down arrow"></i>
+
+        </div>
+
+        <div class="submenu">
+
+            <a href="registration.html">
+                <i class="fas fa-user-plus"></i>
+                Register Student
+            </a>
+
+            <a href="student-list.html">
+                <i class="fas fa-users"></i>
+                Student List
+            </a>
+
+            <a href="student-statement.html">
+                <i class="fas fa-file-invoice"></i>
+                Student Statement
+            </a>
+
+            <a href="#">
+                <i class="fas fa-arrow-up"></i>
+                Promotion
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- FEES -->
+
+    <div class="menu-group">
+
+        <div class="menu-header">
+
+            <i class="fas fa-money-bill-wave"></i>
+
+            <span>Fees Management</span>
+
+            <i class="fas fa-chevron-down arrow"></i>
+
+        </div>
+
+        <div class="submenu">
+
+            <a href="invoice.html">
+                <i class="fas fa-file-circle-plus"></i>
+                Create Invoice
+            </a>
+
+            <a href="invoice-list.html">
+                <i class="fas fa-file-lines"></i>
+                Invoice List
+            </a>
+
+            <a href="payment.html">
+                <i class="fas fa-cash-register"></i>
+                Receive Payment
+            </a>
+
+            <a href="#">
+                <i class="fas fa-receipt"></i>
+                Receipts
+            </a>
+
+            <a href="student-statement.html">
+                <i class="fas fa-file-invoice-dollar"></i>
+                Fee Statements
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACCOUNTING -->
+
+    <div class="menu-group">
+
+        <div class="menu-header">
+
+            <i class="fas fa-calculator"></i>
+
+            <span>Accounting</span>
+
+            <i class="fas fa-chevron-down arrow"></i>
+
+        </div>
+
+        <div class="submenu">
+
+            <a href="fee-balances.html">
+                <i class="fas fa-wallet"></i>
+                Student Fee Balances
+            </a>
+
+            <a href="#">
+                <i class="fas fa-list"></i>
+                Chart of Accounts
+            </a>
+
+            <a href="#">
+                <i class="fas fa-book"></i>
+                Journal Entries
+            </a>
+
+            <a href="#">
+                <i class="fas fa-book-open"></i>
+                General Ledger
+            </a>
+
+            <a href="#">
+                <i class="fas fa-scale-balanced"></i>
+                Trial Balance
+            </a>
+
+            <a href="#">
+                <i class="fas fa-chart-line"></i>
+                Income Statement
+            </a>
+
+            <a href="#">
+                <i class="fas fa-landmark"></i>
+                Balance Sheet
+            </a>
+
+            <a href="#">
+                <i class="fas fa-money-check"></i>
+                Cash Book
+            </a>
+
+            <a href="#">
+                <i class="fas fa-boxes-stacked"></i>
+                Fixed Assets
+            </a>
+
+            <a href="#">
+                <i class="fas fa-receipt"></i>
+                Expense Tracker
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACADEMICS -->
+
+    <div class="menu-group">
+
+        <div class="menu-header">
+
+            <i class="fas fa-school"></i>
+
+            <span>Academics</span>
+
+            <i class="fas fa-chevron-down arrow"></i>
+
+        </div>
+
+        <div class="submenu">
+
+            <a href="#">
+                <i class="fas fa-chalkboard"></i>
+                Classes
+            </a>
+
+            <a href="#">
+                <i class="fas fa-book"></i>
+                Subjects
+            </a>
+
+            <a href="#">
+                <i class="fas fa-calendar"></i>
+                Timetable
+            </a>
+
+            <a href="#">
+                <i class="fas fa-chart-column"></i>
+                Results
+            </a>
+
+            <a href="#">
+                <i class="fas fa-user-check"></i>
+                Attendance
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- STAFF -->
+
+    <div class="menu-group active">
+
+        <div class="menu-header">
+
+            <i class="fas fa-users"></i>
+
+            <span>Staff</span>
+
+            <i class="fas fa-chevron-down arrow"></i>
+
+        </div>
+
+        <div class="submenu">
+
+            <a
+                href="staff-list.html"
+                class="active"
+            >
+
+                <i class="fas fa-user-tie"></i>
+
+                Staff List
+
+            </a>
+
+            <a href="#">
+
+                <i class="fas fa-money-check-dollar"></i>
+
+                Payroll
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- REPORTS -->
+
+    <div class="menu-group">
+
+        <div class="menu-header">
+
+            <i class="fas fa-chart-pie"></i>
+
+            <span>Reports</span>
+
+            <i class="fas fa-chevron-down arrow"></i>
+
+        </div>
+
+        <div class="submenu">
+
+            <a href="#">
+                <i class="fas fa-file"></i>
+                Fee Reports
+            </a>
+
+            <a href="#">
+                <i class="fas fa-chart-line"></i>
+                Financial Reports
+            </a>
+
+            <a href="#">
+                <i class="fas fa-user-graduate"></i>
+                Student Reports
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SETTINGS -->
+
+    <div class="menu-group">
+
+        <div class="menu-header">
+
+            <i class="fas fa-cog"></i>
+
+            <span>Settings</span>
+
+            <i class="fas fa-chevron-down arrow"></i>
+
+        </div>
+
+        <div class="submenu">
+
+            <a href="#">
+                <i class="fas fa-school"></i>
+                School Information
+            </a>
+
+            <a href="#">
+                <i class="fas fa-calendar-days"></i>
+                Academic Year
+            </a>
+
+            <a href="#">
+                <i class="fas fa-user-shield"></i>
+                User Management
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOGOUT -->
+
+    <a href="#" id="logoutBtn">
+
+        <i class="fas fa-right-from-bracket"></i>
+
+        Logout
+
+    </a>
+
+
+</div>
+```
+
+</div>
+
+<!-- ======================================================
+     MAIN
+====================================================== -->
+
+<div class="main">
+
+```
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+    <div class="left-top">
+
+        <i
+            class="fas fa-bars"
+            id="menuBtn"
+        ></i>
+
+        <h2>Edit Staff Member</h2>
+
+    </div>
+
+
+    <div class="admin">
+
+        <div>
+
+            <span id="adminName">
+                Loading...
+            </span>
+
+            <small id="adminRole">
+                -
+            </small>
+
+        </div>
+
+        <img
+            src="../images/user.png"
+            alt="Administrator"
+        >
+
+    </div>
+
+</div>
+
+
+<!-- CONTENT -->
+
+<div class="content">
+
+
+    <div class="page-title">
+
+        <div>
+
+            <h1>Edit Staff Information</h1>
+
+            <p>
+                Update the staff member's information below.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="box">
+
+
+        <!-- STAFF HEADER -->
+
+        <div class="staff-header">
+
+            <div class="staff-icon">
+
+                <i class="fas fa-user-pen"></i>
+
+            </div>
+
+            <div>
+
+                <h2 id="staffNameHeading">
+                    Staff Member
+                </h2>
+
+                <p id="staffIDHeading">
+                    Loading staff information...
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+
+        <!-- FORM -->
+
+        <form id="staffForm">
+
+
+            <div class="form-grid">
+
+
+                <!-- STAFF ID -->
+
+                <div class="form-group">
+
+                    <label>
+                        Staff ID
+                    </label>
+
+                    <input
+                        id="staffID"
+                        type="text"
+                        class="readonly-field"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- FIRST NAME -->
+
+                <div class="form-group">
+
+                    <label>
+                        First Name
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        id="firstName"
+                        type="text"
+                        placeholder="Enter first name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- SURNAME -->
+
+                <div class="form-group">
+
+                    <label>
+                        Surname
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        id="surname"
+                        type="text"
+                        placeholder="Enter surname"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- GENDER -->
+
+                <div class="form-group">
+
+                    <label>
+                        Gender
+                    </label>
+
+                    <select id="gender">
+
+                        <option value="">
+                            Select Gender
+                        </option>
+
+                        <option value="Male">
+                            Male
+                        </option>
+
+                        <option value="Female">
+                            Female
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Phone Number
+                    </label>
+
+                    <input
+                        id="phone"
+                        type="text"
+                        placeholder="Enter phone number"
+                    >
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label>
+                        Email Address
+                    </label>
+
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="Enter email address"
+                    >
+
+                </div>
+
+
+                <!-- ROLE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Role
+                        <span>*</span>
+                    </label>
+
+                    <select id="role" required>
+
+                        <option value="">
+                            Select Role
+                        </option>
+
+                        <option value="Administrator">
+                            Administrator
+                        </option>
+
+                        <option value="Head Teacher">
+                            Head Teacher
+                        </option>
+
+                        <option value="Deputy Head Teacher">
+                            Deputy Head Teacher
+                        </option>
+
+                        <option value="Accountant">
+                            Accountant
+                        </option>
+
+                        <option value="Bursar">
+                            Bursar
+                        </option>
+
+                        <option value="Teacher">
+                            Teacher
+                        </option>
+
+                        <option value="Class Teacher">
+                            Class Teacher
+                        </option>
+
+                        <option value="Secretary">
+                            Secretary
+                        </option>
+
+                        <option value="Librarian">
+                            Librarian
+                        </option>
+
+                        <option value="Other Staff">
+                            Other Staff
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- DEPARTMENT -->
+
+                <div class="form-group">
+
+                    <label>
+                        Department
+                    </label>
+
+                    <select id="department">
+
+                        <option value="">
+                            Select Department
+                        </option>
+
+                        <option value="Administration">
+                            Administration
+                        </option>
+
+                        <option value="Finance">
+                            Finance
+                        </option>
+
+                        <option value="Academics">
+                            Academics
+                        </option>
+
+                        <option value="Support">
+                            Support
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- USERNAME -->
+
+                <div class="form-group">
+
+                    <label>
+                        Login Username
+                    </label>
+
+                    <input
+                        id="username"
+                        type="text"
+                        placeholder="Enter username"
+                    >
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="form-group">
+
+                    <label>
+                        Account Status
+                    </label>
+
+                    <select id="status">
+
+                        <option value="Active">
+                            Active
+                        </option>
+
+                        <option value="Inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    id="cancelBtn"
+                >
+
+                    <i class="fas fa-arrow-left"></i>
+
+                    Cancel
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                    id="saveBtn"
+                >
+
+                    <i class="fas fa-save"></i>
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<script type="module">
+
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+import {
+
+    initializeApp
+
+}
+
+from
+
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+
+    getFirestore,
+    doc,
+    getDoc,
+    updateDoc
+
+}
+
+from
+
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyAgoW4EU_hvrWHSxJciW0qUWeUXOr-msgw",
+
+    authDomain:
+        "greysol-academy.firebaseapp.com",
+
+    projectId:
+        "greysol-academy",
+
+    storageBucket:
+        "greysol-academy.firebasestorage.app",
+
+    messagingSenderId:
+        "700477093508",
+
+    appId:
+        "1:700477093508:web:d1f95a63483b8e9ab934d1",
+
+    measurementId:
+        "G-XY8XSZJ9HE"
+
+};
+
+
+const app =
+    initializeApp(firebaseConfig);
+
+const db =
+    getFirestore(app);
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const loader =
+    document.getElementById("mainLoader");
+
+const message =
+    document.getElementById("message");
+
+const saveBtn =
+    document.getElementById("saveBtn");
+
+
+/* =========================================================
+   GET STAFF ID FROM URL
+========================================================= */
+
+const urlParams =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const staffDocumentID =
+    urlParams.get("id");
+
+
+/* =========================================================
+   30 MINUTE AUTO LOGOUT
+========================================================= */
+
+let logoutTimer;
+
+const INACTIVITY_LIMIT =
+    30 * 60 * 1000;
+
+
+function resetLogoutTimer() {
+
+    clearTimeout(logoutTimer);
+
+    logoutTimer = setTimeout(() => {
+
+        alert(
+            "You have been logged out due to inactivity."
+        );
+
+        localStorage.removeItem(
+            "loggedUser"
+        );
+
+        window.location.href =
+            "staff-login.html";
+
+    }, INACTIVITY_LIMIT);
+
+}
+
+
+[
+    "click",
+    "mousemove",
+    "keypress",
+    "scroll",
+    "touchstart"
+].forEach(event => {
+
+    document.addEventListener(
+        event,
+        resetLogoutTimer
+    );
+
+});
+
+resetLogoutTimer();
+
+
+/* =========================================================
+   ADMIN ONLY
+========================================================= */
+
+const loggedUser =
+    JSON.parse(
+        localStorage.getItem("loggedUser")
+    );
+
+
+const userRole =
+    (loggedUser?.role || "")
+        .toString()
+        .trim()
+        .toLowerCase();
+
+
+if (
+    !loggedUser ||
+    userRole !== "administrator"
+) {
+
+    alert(
+        "Access Denied. Administrator only."
+    );
+
+    window.location.href =
+        "staff-login.html";
+
+}
+
+
+/* =========================================================
+   SHOW ADMIN
+========================================================= */
+
+document.getElementById(
+    "adminName"
+).innerText =
+    loggedUser.username;
+
+
+document.getElementById(
+    "adminRole"
+).innerText =
+    loggedUser.role.toUpperCase();
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+document.getElementById(
+    "logoutBtn"
+).onclick = function(e) {
+
+    e.preventDefault();
+
+    clearTimeout(logoutTimer);
+
+    localStorage.removeItem(
+        "loggedUser"
+    );
+
+    window.location.href =
+        "staff-login.html";
+
+};
+
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+document.getElementById(
+    "menuBtn"
+).onclick = function() {
+
+    document.getElementById(
+        "sidebar"
+    ).classList.add("active");
+
+    document.getElementById(
+        "overlay"
+    ).classList.add("show");
+
+};
+
+
+document.getElementById(
+    "overlay"
+).onclick = function() {
+
+    document.getElementById(
+        "sidebar"
+    ).classList.remove("active");
+
+    document.getElementById(
+        "overlay"
+    ).classList.remove("show");
+
+};
+
+
+/* =========================================================
+   SIDEBAR ACCORDION
+========================================================= */
+
+const groups =
+    document.querySelectorAll(
+        ".menu-group"
+    );
+
+
+groups.forEach(group => {
+
+    const header =
+        group.querySelector(
+            ".menu-header"
+        );
+
+
+    header.addEventListener(
+        "click",
+        function() {
+
+            if (
+                group.classList.contains(
+                    "active"
+                )
+            ) {
+
+                group.classList.remove(
+                    "active"
+                );
+
+                return;
+
+            }
+
+
+            groups.forEach(g =>
+                g.classList.remove(
+                    "active"
+                )
+            );
+
+
+            group.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   SHOW MESSAGE
+========================================================= */
+
+function showMessage(
+    text,
+    type
+) {
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+
+/* =========================================================
+   LOAD STAFF
+========================================================= */
+
+async function loadStaff() {
+
+
+    if (!staffDocumentID) {
+
+        showMessage(
+            "No staff member was selected.",
+            "error"
+        );
+
+        loader.classList.add(
+            "hidden"
+        );
+
+        saveBtn.disabled = true;
+
+        return;
+
+    }
+
+
+    try {
+
+
+        const staffRef =
+            doc(
+                db,
+                "staff",
+                staffDocumentID
+            );
+
+
+        const staffSnapshot =
+            await getDoc(staffRef);
+
+
+        if (!staffSnapshot.exists()) {
+
+            showMessage(
+                "The selected staff member could not be found.",
+                "error"
+            );
+
+            saveBtn.disabled = true;
+
+            return;
+
+        }
+
+
+        const staff =
+            staffSnapshot.data();
+
+
+        /* =============================================
+           FILL FORM
+        ============================================= */
+
+        document.getElementById(
+            "staffID"
+        ).value =
+            staff.staffID || "";
+
+
+        document.getElementById(
+            "firstName"
+        ).value =
+            staff.firstName || "";
+
+
+        document.getElementById(
+            "surname"
+        ).value =
+            staff.surname || "";
+
+
+        document.getElementById(
+            "gender"
+        ).value =
+            staff.gender || "";
+
+
+        document.getElementById(
+            "phone"
+        ).value =
+            staff.phone || "";
+
+
+        document.getElementById(
+            "email"
+        ).value =
+            staff.email || "";
+
+
+        document.getElementById(
+            "role"
+        ).value =
+            staff.role || "";
+
+
+        document.getElementById(
+            "department"
+        ).value =
+            staff.department || "";
+
+
+        document.getElementById(
+            "username"
+        ).value =
+            staff.username || "";
+
+
+        document.getElementById(
+            "status"
+        ).value =
+            staff.status || "Active";
+
+
+        /* =============================================
+           HEADER
+        ============================================= */
+
+        const fullName =
+            `${staff.firstName || ""} ${staff.surname || ""}`
+                .trim();
+
+
+        document.getElementById(
+            "staffNameHeading"
+        ).textContent =
+            fullName || "Staff Member";
+
+
+        document.getElementById(
+            "staffIDHeading"
+        ).textContent =
+            `Staff ID: ${staff.staffID || "-"}`;
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to load staff information: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+    finally {
+
+        loader.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+loadStaff();
+
+
+/* =========================================================
+   SAVE CHANGES
+========================================================= */
+
+document.getElementById(
+    "staffForm"
+).addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const firstName =
+            document.getElementById(
+                "firstName"
+            ).value.trim();
+
+
+        const surname =
+            document.getElementById(
+                "surname"
+            ).value.trim();
+
+
+        const role =
+            document.getElementById(
+                "role"
+            ).value;
+
+
+        if (
+            firstName === "" ||
+            surname === "" ||
+            role === ""
+        ) {
+
+            showMessage(
+                "Please complete all required fields.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (!staffDocumentID) {
+
+            showMessage(
+                "No staff member selected.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        saveBtn.disabled = true;
+
+        saveBtn.innerHTML = `
+
+            <i class="fas fa-spinner fa-spin"></i>
+
+            Saving...
+
+        `;
+
+
+        try {
+
+
+            const updatedData = {
+
+                firstName:
+                    firstName,
+
+                surname:
+                    surname,
+
+                gender:
+                    document.getElementById(
+                        "gender"
+                    ).value,
+
+                phone:
+                    document.getElementById(
+                        "phone"
+                    ).value.trim(),
+
+                email:
+                    document.getElementById(
+                        "email"
+                    ).value.trim(),
+
+                role:
+                    role,
+
+                department:
+                    document.getElementById(
+                        "department"
+                    ).value,
+
+                username:
+                    document.getElementById(
+                        "username"
+                    ).value.trim(),
+
+                status:
+                    document.getElementById(
+                        "status"
+                    ).value,
+
+                updatedAt:
+                    new Date()
+
+            };
+
+
+            const staffRef =
+                doc(
+                    db,
+                    "staff",
+                    staffDocumentID
+                );
+
+
+            await updateDoc(
+                staffRef,
+                updatedData
+            );
+
+
+            showMessage(
+                "Staff information updated successfully.",
+                "success"
+            );
+
+
+            document.getElementById(
+                "staffNameHeading"
+            ).textContent =
+                `${firstName} ${surname}`;
+
+
+            /* Return to staff list after a short delay */
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "staff-list.html";
+
+            }, 1200);
+
+
+        }
+
+        catch(error) {
+
+            console.error(error);
+
+            showMessage(
+                "Unable to save changes: " +
+                error.message,
+                "error"
+            );
+
+        }
+
+        finally {
+
+            saveBtn.disabled = false;
+
+            saveBtn.innerHTML = `
+
+                <i class="fas fa-save"></i>
+
+                Save Changes
+
+            `;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CANCEL
+========================================================= */
+
+document.getElementById(
+    "cancelBtn"
+).onclick = function() {
+
+    window.location.href =
+        "staff-list.html";
+
+};
+
+
+</script>
+
+</body>
+
+</html>
