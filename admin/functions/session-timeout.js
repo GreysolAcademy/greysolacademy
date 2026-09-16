@@ -1,6 +1,6 @@
 // functions/timer.js - LINK THIS TO ALL PAGES
 
-const SESSION_TIMEOUT = 60 * 1000; // 30 minutes - change as you want
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes - change as you want
 const WARNING_BEFORE = 0; // show message immediately when expired
 let timeoutId;
 let countdownId;
