@@ -4,7 +4,7 @@
    TRIAL VERSION: 1 MINUTE
 ========================================================= */
 
-const INACTIVITY_LIMIT = 60 * 1000;
+const INACTIVITY_LIMIT = 10 * 1000;
 
 const LAST_ACTIVITY_KEY = "greysolLastActivity";
 const RETURN_PAGE_KEY = "greysolReturnPage";
