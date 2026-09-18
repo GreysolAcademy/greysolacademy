@@ -1,4266 +1,1387 @@
 /* =========================================================
    ALTOS ACADEMY
-   PREMIUM SECONDARY SCHOOL WEBSITE
-   ========================================================= */
-
-
-/* =========================================================
-   ROOT VARIABLES
+   MAIN JAVASCRIPT
 ========================================================= */
 
-:root {
+document.addEventListener("DOMContentLoaded", () => {
 
-    --navy: #062b49;
-    --navy-dark: #031b2e;
-    --navy-deep: #021522;
+    /* =====================================================
+       PAGE LOADER
+    ===================================================== */
 
-    --sky: #38a9e8;
-    --sky-light: #7dd3fc;
-    --sky-soft: rgba(56, 169, 232, 0.12);
+    const pageLoader = document.getElementById("pageLoader");
 
-    --ice: #eef8fd;
+    setTimeout(() => {
 
-    --white: #ffffff;
+        if(pageLoader){
+            pageLoader.classList.add("hidden");
+        }
 
-    --text: #566572;
-    --text-dark: #263642;
-    --text-light: #7c8b96;
+    }, 600);
 
-    --border: #e1e9ee;
 
-    --shadow-sm:
-        0 8px 25px rgba(6, 43, 73, 0.08);
+    /* =====================================================
+       TYPING EFFECT
+    ===================================================== */
 
-    --shadow:
-        0 20px 55px rgba(6, 43, 73, 0.12);
+    const typingText = document.getElementById("typingText");
 
-    --shadow-lg:
-        0 30px 80px rgba(6, 43, 73, 0.18);
+    const phrases = [
+        "Inspiring Excellence",
+        "Shaping Tomorrow",
+        "Empowering Young Minds",
+        "Building Future Leaders"
+    ];
 
-    --radius-sm: 8px;
-    --radius: 16px;
-    --radius-lg: 24px;
+    let phraseIndex = 0;
+    let characterIndex = 0;
+    let deleting = false;
 
-    --transition:
-        all 0.35s ease;
+    const typeSpeed = 80;
+    const deleteSpeed = 45;
+    const pauseTime = 1800;
 
-}
 
+    function typeWriter(){
 
-/* =========================================================
-   RESET
-========================================================= */
+        if(!typingText) return;
 
-* {
+        const currentPhrase = phrases[phraseIndex];
 
-    margin: 0;
-    padding: 0;
+        if(!deleting){
 
-    box-sizing: border-box;
+            characterIndex++;
 
-}
+            typingText.textContent =
+                currentPhrase.substring(0, characterIndex);
 
+            if(characterIndex === currentPhrase.length){
 
-html {
+                deleting = true;
 
-    scroll-behavior: smooth;
+                setTimeout(typeWriter, pauseTime);
 
-}
+                return;
+            }
 
+        }else{
 
-body {
+            characterIndex--;
 
-    font-family: "Inter", sans-serif;
+            typingText.textContent =
+                currentPhrase.substring(0, characterIndex);
 
-    color: var(--text);
+            if(characterIndex === 0){
 
-    background: var(--white);
+                deleting = false;
 
-    line-height: 1.7;
+                phraseIndex =
+                    (phraseIndex + 1) % phrases.length;
+            }
+        }
 
-    overflow-x: hidden;
+        setTimeout(
+            typeWriter,
+            deleting ? deleteSpeed : typeSpeed
+        );
+    }
 
-}
 
+    setTimeout(typeWriter, 900);
 
-img {
 
-    max-width: 100%;
+    /* =====================================================
+       HERO SLIDER
+    ===================================================== */
 
-    display: block;
+    const heroSlides =
+        document.querySelectorAll(".hero-slide");
 
-}
+    const heroDots =
+        document.querySelectorAll(".hero-dot");
 
+    const heroPrev =
+        document.getElementById("heroPrev");
 
-a {
+    const heroNext =
+        document.getElementById("heroNext");
 
-    text-decoration: none;
+    let currentSlide = 0;
+    let heroTimer;
 
-    color: inherit;
 
-}
+    function showSlide(index){
 
+        if(!heroSlides.length) return;
 
-button,
-input,
-textarea,
-select {
+        if(index < 0){
+            index = heroSlides.length - 1;
+        }
 
-    font-family: inherit;
+        if(index >= heroSlides.length){
+            index = 0;
+        }
 
-}
+        currentSlide = index;
 
+        heroSlides.forEach((slide, i) => {
 
-button {
+            slide.classList.toggle(
+                "active",
+                i === currentSlide
+            );
 
-    cursor: pointer;
+        });
 
-}
 
+        heroDots.forEach((dot, i) => {
 
-/* =========================================================
-   GLOBAL CONTAINER
-========================================================= */
+            dot.classList.toggle(
+                "active",
+                i === currentSlide
+            );
 
-.container {
+        });
+    }
 
-    width: min(1180px, 92%);
 
-    margin: auto;
+    function nextSlide(){
 
-}
+        showSlide(currentSlide + 1);
 
+    }
 
-/* =========================================================
-   PAGE LOADER
-========================================================= */
 
-.page-loader {
+    function previousSlide(){
 
-    position: fixed;
+        showSlide(currentSlide - 1);
 
-    inset: 0;
+    }
 
-    background: var(--navy-dark);
 
-    z-index: 9999;
+    function startHeroTimer(){
 
-    display: flex;
+        clearInterval(heroTimer);
 
-    align-items: center;
+        heroTimer =
+            setInterval(nextSlide, 6000);
+    }
 
-    justify-content: center;
 
-    transition:
-        opacity 0.5s ease,
-        visibility 0.5s ease;
+    function stopHeroTimer(){
 
-}
+        clearInterval(heroTimer);
 
+    }
 
-.page-loader.hidden {
 
-    opacity: 0;
+    if(heroNext){
 
-    visibility: hidden;
+        heroNext.addEventListener(
+            "click",
+            () => {
 
-}
+                nextSlide();
+                startHeroTimer();
 
-
-.loader-logo {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    color: white;
-
-    font-weight: 800;
-
-    letter-spacing: 2px;
-
-}
-
-
-.loader-mark {
-
-    width: 48px;
-
-    height: 48px;
-
-    border: 2px solid var(--sky);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    color: var(--sky);
-
-    font-size: 22px;
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-}
-
-
-/* =========================================================
-   TOP BAR
-========================================================= */
-
-.top-bar {
-
-    background: var(--navy-dark);
-
-    color: rgba(255,255,255,0.82);
-
-    font-size: 12px;
-
-}
-
-
-.top-bar-inner {
-
-    min-height: 38px;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 20px;
-
-}
-
-
-.top-left span,
-.top-right a {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-}
-
-
-.top-right {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 16px;
-
-}
-
-
-.top-right a {
-
-    transition: var(--transition);
-
-}
-
-
-.top-right a:hover {
-
-    color: var(--sky-light);
-
-}
-
-
-.top-right i,
-.top-left i {
-
-    color: var(--sky);
-
-}
-
-
-.top-divider {
-
-    width: 1px;
-
-    height: 14px;
-
-    background: rgba(255,255,255,0.2);
-
-}
-
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-.main-header {
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 1000;
-
-    background: rgba(255,255,255,0.96);
-
-    backdrop-filter: blur(15px);
-
-    border-bottom: 1px solid rgba(6,43,73,0.08);
-
-    transition: var(--transition);
-
-}
-
-
-.nav-container {
-
-    height: 84px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 25px;
-
-}
-
-
-/* =========================================================
-   LOGO
-========================================================= */
-
-.school-logo {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    flex-shrink: 0;
-
-}
-
-
-.logo-symbol {
-
-    width: 47px;
-
-    height: 47px;
-
-    background: var(--navy);
-
-    color: var(--sky-light);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    position: relative;
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size: 24px;
-
-    font-weight: 800;
-
-}
-
-
-.logo-symbol::after {
-
-    content: "";
-
-    position: absolute;
-
-    right: -5px;
-
-    bottom: -5px;
-
-    width: 14px;
-
-    height: 14px;
-
-    border-right: 2px solid var(--sky);
-
-    border-bottom: 2px solid var(--sky);
-
-}
-
-
-.logo-text {
-
-    display: flex;
-
-    flex-direction: column;
-
-    line-height: 1;
-
-}
-
-
-.logo-text strong {
-
-    color: var(--navy);
-
-    font-size: 18px;
-
-    letter-spacing: 2px;
-
-}
-
-
-.logo-text small {
-
-    color: var(--sky);
-
-    font-size: 9px;
-
-    letter-spacing: 3px;
-
-    margin-top: 5px;
-
-}
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-.main-nav {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 28px;
-
-}
-
-
-.nav-link {
-
-    position: relative;
-
-    color: var(--text-dark);
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    padding: 31px 0;
-
-    transition: var(--transition);
-
-}
-
-
-.nav-link::after {
-
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-
-    bottom: 21px;
-
-    width: 0;
-
-    height: 2px;
-
-    background: var(--sky);
-
-    transition: width 0.3s ease;
-
-}
-
-
-.nav-link:hover,
-.nav-link.active {
-
-    color: var(--navy);
-
-}
-
-
-.nav-link:hover::after,
-.nav-link.active::after {
-
-    width: 100%;
-
-}
-
-
-/* =========================================================
-   STUDENT LOGIN
-========================================================= */
-
-.student-login {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 9px;
-
-    background: var(--navy);
-
-    color: white;
-
-    padding: 13px 18px;
-
-    border-radius: 6px;
-
-    font-size: 12px;
-
-    font-weight: 700;
-
-    transition: var(--transition);
-
-    white-space: nowrap;
-
-}
-
-
-.student-login i {
-
-    color: var(--sky-light);
-
-}
-
-
-.student-login:hover {
-
-    background: var(--sky);
-
-    color: var(--navy-dark);
-
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 10px 25px rgba(56,169,232,0.25);
-
-}
-
-
-/* =========================================================
-   MOBILE MENU BUTTON
-========================================================= */
-
-.mobile-menu-btn {
-
-    display: none;
-
-    width: 44px;
-
-    height: 44px;
-
-    border: 0;
-
-    background: var(--navy);
-
-    border-radius: 6px;
-
-    padding: 10px;
-
-}
-
-
-.mobile-menu-btn span {
-
-    display: block;
-
-    height: 2px;
-
-    width: 100%;
-
-    background: white;
-
-    margin: 5px 0;
-
-    transition: var(--transition);
-
-}
-
-
-/* =========================================================
-   MOBILE NAV
-========================================================= */
-
-.mobile-nav {
-
-    display: none;
-
-    background: white;
-
-    border-top: 1px solid var(--border);
-
-    box-shadow: var(--shadow);
-
-}
-
-
-.mobile-nav a {
-
-    display: block;
-
-    padding: 15px 5%;
-
-    border-bottom: 1px solid var(--border);
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    color: var(--navy);
-
-}
-
-
-.mobile-nav a:hover {
-
-    background: var(--ice);
-
-}
-
-
-.mobile-login {
-
-    background: var(--navy) !important;
-
-    color: white !important;
-
-}
-
-
-.mobile-login i {
-
-    color: var(--sky-light);
-
-    margin-right: 8px;
-
-}
-
-
-/* =========================================================
-   HERO
-========================================================= */
-
-.hero {
-
-    min-height: 720px;
-
-    position: relative;
-
-    overflow: hidden;
-
-    background: var(--navy-dark);
-
-    display: flex;
-
-    align-items: center;
-
-}
-
-
-/* =========================================================
-   HERO SLIDES
-========================================================= */
-
-.hero-slides {
-
-    position: absolute;
-
-    inset: 0;
-
-}
-
-
-.hero-slide {
-
-    position: absolute;
-
-    inset: 0;
-
-    background-size: cover;
-
-    background-position: center;
-
-    opacity: 0;
-
-    transform: scale(1.05);
-
-    transition:
-        opacity 1.2s ease,
-        transform 7s ease;
-
-}
-
-
-.hero-slide.active {
-
-    opacity: 1;
-
-    transform: scale(1);
-
-}
-
-
-.hero-overlay {
-
-    position: absolute;
-
-    inset: 0;
-
-    background:
-        linear-gradient(
-            90deg,
-            rgba(3,27,46,0.97) 0%,
-            rgba(3,27,46,0.88) 42%,
-            rgba(3,27,46,0.50) 72%,
-            rgba(3,27,46,0.35) 100%
+            }
         );
 
-}
-
-
-/* =========================================================
-   HERO CONTENT
-========================================================= */
-
-.hero-container {
-
-    position: relative;
-
-    z-index: 2;
-
-    display: grid;
-
-    grid-template-columns:
-        minmax(0, 1fr)
-        360px;
-
-    gap: 80px;
-
-    align-items: center;
-
-    padding-top: 70px;
-
-    padding-bottom: 90px;
-
-}
-
-
-.hero-content {
-
-    max-width: 720px;
-
-}
-
-
-.hero-label {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    color: var(--sky-light);
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    letter-spacing: 3px;
-
-    margin-bottom: 18px;
-
-}
-
-
-.label-line {
-
-    width: 42px;
-
-    height: 2px;
-
-    background: var(--sky);
-
-}
-
-
-.hero h1 {
-
-    color: white;
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size:
-        clamp(48px, 6vw, 76px);
-
-    line-height: 1.05;
-
-    min-height: 160px;
-
-    margin-bottom: 25px;
-
-    letter-spacing: -1.5px;
-
-}
-
-
-.typing-cursor {
-
-    color: var(--sky);
-
-    animation:
-        cursorBlink 0.8s infinite;
-
-}
-
-
-@keyframes cursorBlink {
-
-    0%,
-    50% {
-
-        opacity: 1;
-
     }
 
-    51%,
-    100% {
 
-        opacity: 0;
+    if(heroPrev){
 
-    }
+        heroPrev.addEventListener(
+            "click",
+            () => {
 
-}
+                previousSlide();
+                startHeroTimer();
 
-
-.hero-description {
-
-    max-width: 650px;
-
-    color: rgba(255,255,255,0.78);
-
-    font-size: 16px;
-
-    line-height: 1.9;
-
-    margin-bottom: 34px;
-
-}
-
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-.hero-buttons {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    flex-wrap: wrap;
-
-}
-
-
-.btn {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 12px;
-
-    min-height: 52px;
-
-    padding: 0 23px;
-
-    border-radius: 5px;
-
-    font-size: 12px;
-
-    font-weight: 800;
-
-    letter-spacing: 0.3px;
-
-    transition: var(--transition);
-
-}
-
-
-.btn-primary {
-
-    background: var(--sky);
-
-    color: var(--navy-dark);
-
-}
-
-
-.btn-primary:hover {
-
-    background: var(--sky-light);
-
-    transform: translateY(-3px);
-
-    box-shadow:
-        0 12px 30px rgba(56,169,232,0.3);
-
-}
-
-
-.btn-outline {
-
-    border: 1px solid rgba(255,255,255,0.45);
-
-    color: white;
-
-}
-
-
-.btn-outline:hover {
-
-    background: white;
-
-    color: var(--navy);
-
-    transform: translateY(-3px);
-
-}
-
-
-.btn-outline-white {
-
-    border: 1px solid rgba(255,255,255,0.55);
-
-    color: white;
-
-}
-
-
-.btn-outline-white:hover {
-
-    background: white;
-
-    color: var(--navy);
-
-}
-
-
-/* =========================================================
-   HERO TRUST
-========================================================= */
-
-.hero-trust {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 25px;
-
-    flex-wrap: wrap;
-
-    margin-top: 38px;
-
-    padding-top: 24px;
-
-    border-top:
-        1px solid rgba(255,255,255,0.15);
-
-}
-
-
-.trust-item {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    color: rgba(255,255,255,0.75);
-
-    font-size: 11px;
-
-    font-weight: 600;
-
-}
-
-
-.trust-item i {
-
-    color: var(--sky);
-
-}
-
-
-/* =========================================================
-   HERO SIDE CARD
-========================================================= */
-
-.hero-side-card {
-
-    position: relative;
-
-    background:
-        rgba(255,255,255,0.96);
-
-    border-radius: 14px;
-
-    overflow: hidden;
-
-    box-shadow: var(--shadow-lg);
-
-}
-
-
-.hero-card-top {
-
-    background: var(--navy);
-
-    color: white;
-
-    padding: 17px 20px;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    letter-spacing: 2px;
-
-}
-
-
-.hero-card-top i {
-
-    color: var(--sky);
-
-    font-size: 18px;
-
-}
-
-
-.hero-card-main {
-
-    padding: 35px 28px 30px;
-
-}
-
-
-.hero-card-small {
-
-    color: var(--sky);
-
-    font-size: 9px;
-
-    font-weight: 800;
-
-    letter-spacing: 2px;
-
-}
-
-
-.hero-card-main h3 {
-
-    color: var(--navy);
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size: 28px;
-
-    line-height: 1.3;
-
-    margin-top: 10px;
-
-}
-
-
-.hero-card-bottom {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    border-top: 1px solid var(--border);
-
-}
-
-
-.hero-card-bottom div {
-
-    padding: 17px 12px;
-
-    text-align: center;
-
-    border-right: 1px solid var(--border);
-
-}
-
-
-.hero-card-bottom div:last-child {
-
-    border-right: 0;
-
-}
-
-
-.hero-card-bottom strong {
-
-    display: block;
-
-    color: var(--navy);
-
-    font-size: 10px;
-
-    letter-spacing: 1px;
-
-}
-
-
-.hero-card-bottom span {
-
-    display: block;
-
-    color: var(--text-light);
-
-    font-size: 9px;
-
-    margin-top: 3px;
-
-}
-
-
-/* =========================================================
-   HERO CONTROLS
-========================================================= */
-
-.hero-arrow {
-
-    position: absolute;
-
-    z-index: 5;
-
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    width: 48px;
-
-    height: 48px;
-
-    border-radius: 50%;
-
-    border:
-        1px solid rgba(255,255,255,0.25);
-
-    background:
-        rgba(255,255,255,0.08);
-
-    color: white;
-
-    backdrop-filter: blur(5px);
-
-    transition: var(--transition);
-
-}
-
-
-.hero-arrow:hover {
-
-    background: var(--sky);
-
-    color: var(--navy-dark);
-
-    border-color: var(--sky);
-
-}
-
-
-.hero-prev {
-
-    left: 25px;
-
-}
-
-
-.hero-next {
-
-    right: 25px;
-
-}
-
-
-/* =========================================================
-   HERO DOTS
-========================================================= */
-
-.hero-dots {
-
-    position: absolute;
-
-    bottom: 30px;
-
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    z-index: 5;
-
-    display: flex;
-
-    gap: 8px;
-
-}
-
-
-.hero-dots button {
-
-    width: 26px;
-
-    height: 3px;
-
-    border: 0;
-
-    background:
-        rgba(255,255,255,0.4);
-
-    transition: var(--transition);
-
-}
-
-
-.hero-dots button.active {
-
-    width: 48px;
-
-    background: var(--sky);
-
-}
-
-
-/* =========================================================
-   SCHOOL HIGHLIGHTS
-========================================================= */
-
-.school-highlights {
-
-    position: relative;
-
-    z-index: 10;
-
-    margin-top: -1px;
-
-    background: white;
-
-    border-bottom: 1px solid var(--border);
-
-}
-
-
-.highlights-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-}
-
-
-.highlight-item {
-
-    min-height: 105px;
-
-    padding: 20px 22px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    border-right: 1px solid var(--border);
-
-}
-
-
-.highlight-item:last-child {
-
-    border-right: 0;
-
-}
-
-
-.highlight-icon {
-
-    width: 45px;
-
-    height: 45px;
-
-    flex-shrink: 0;
-
-    background: var(--ice);
-
-    color: var(--sky);
-
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    transition: var(--transition);
-
-}
-
-
-.highlight-item:hover .highlight-icon {
-
-    background: var(--sky);
-
-    color: white;
-
-    transform: rotate(8deg);
-
-}
-
-
-.highlight-item strong {
-
-    display: block;
-
-    color: var(--navy);
-
-    font-size: 12px;
-
-}
-
-
-.highlight-item span {
-
-    display: block;
-
-    color: var(--text-light);
-
-    font-size: 10px;
-
-    margin-top: 3px;
-
-}
-
-
-/* =========================================================
-   SECTION GLOBAL
-========================================================= */
-
-.section {
-
-    padding: 110px 0;
-
-}
-
-
-.section-heading {
-
-    max-width: 650px;
-
-}
-
-
-.section-heading.centered {
-
-    margin-left: auto;
-
-    margin-right: auto;
-
-    text-align: center;
-
-}
-
-
-.section-label {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    color: var(--sky);
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    letter-spacing: 2.5px;
-
-    margin-bottom: 14px;
-
-}
-
-
-.section-label::before {
-
-    content: "";
-
-    width: 25px;
-
-    height: 2px;
-
-    background: var(--sky);
-
-}
-
-
-.centered .section-label::before {
-
-    display: none;
-
-}
-
-
-.section-heading h2 {
-
-    color: var(--navy);
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size:
-        clamp(36px, 4vw, 52px);
-
-    line-height: 1.15;
-
-    letter-spacing: -0.8px;
-
-}
-
-
-.section-heading h2 span {
-
-    color: var(--sky);
-
-}
-
-
-.section-heading p {
-
-    margin-top: 18px;
-
-    color: var(--text);
-
-    font-size: 15px;
-
-    line-height: 1.9;
-
-}
-
-
-/* =========================================================
-   ABOUT
-========================================================= */
-
-.about-section {
-
-    background: white;
-
-}
-
-
-.about-section > .container > .section-heading {
-
-    margin-bottom: 65px;
-
-}
-
-
-.about-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        0.95fr
-        1.05fr;
-
-    gap: 90px;
-
-    align-items: center;
-
-}
-
-
-.about-image-wrapper {
-
-    position: relative;
-
-}
-
-
-.about-image {
-
-    height: 520px;
-
-    overflow: hidden;
-
-    border-radius: 12px;
-
-}
-
-
-.about-image img {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
-
-    transition:
-        transform 0.8s ease;
-
-}
-
-
-.about-image-wrapper:hover
-.about-image img {
-
-    transform: scale(1.04);
-
-}
-
-
-.about-image::after {
-
-    content: "";
-
-    position: absolute;
-
-    inset: 20px;
-
-    border:
-        1px solid rgba(255,255,255,0.35);
-
-    border-radius: 8px;
-
-    pointer-events: none;
-
-}
-
-
-.about-badge {
-
-    position: absolute;
-
-    right: -35px;
-
-    bottom: 35px;
-
-    background: var(--navy);
-
-    color: white;
-
-    min-width: 190px;
-
-    padding: 18px 20px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 13px;
-
-    border-radius: 8px;
-
-    box-shadow: var(--shadow);
-
-}
-
-
-.about-badge i {
-
-    width: 42px;
-
-    height: 42px;
-
-    border-radius: 50%;
-
-    background: rgba(56,169,232,0.14);
-
-    color: var(--sky);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-}
-
-
-.about-badge strong {
-
-    display: block;
-
-    font-size: 12px;
-
-    letter-spacing: 2px;
-
-}
-
-
-.about-badge span {
-
-    display: block;
-
-    color: var(--sky-light);
-
-    font-size: 10px;
-
-    margin-top: 3px;
-
-}
-
-
-.about-content h3 {
-
-    color: var(--navy);
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size: 34px;
-
-    line-height: 1.2;
-
-    margin-bottom: 20px;
-
-}
-
-
-.about-content > p {
-
-    font-size: 14px;
-
-    margin-bottom: 16px;
-
-}
-
-
-.about-features {
-
-    margin-top: 30px;
-
-    display: grid;
-
-    gap: 18px;
-
-}
-
-
-.about-feature {
-
-    display: flex;
-
-    gap: 14px;
-
-}
-
-
-.feature-icon {
-
-    width: 34px;
-
-    height: 34px;
-
-    flex-shrink: 0;
-
-    border-radius: 50%;
-
-    background: var(--sky-soft);
-
-    color: var(--sky);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 11px;
-
-}
-
-
-.about-feature strong {
-
-    display: block;
-
-    color: var(--navy);
-
-    font-size: 12px;
-
-}
-
-
-.about-feature span {
-
-    display: block;
-
-    font-size: 11px;
-
-    color: var(--text-light);
-
-}
-
-
-.text-link {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    margin-top: 28px;
-
-    color: var(--navy);
-
-    font-size: 12px;
-
-    font-weight: 800;
-
-}
-
-
-.text-link i {
-
-    color: var(--sky);
-
-    transition: var(--transition);
-
-}
-
-
-.text-link:hover i {
-
-    transform: translateX(5px);
-
-}
-
-
-/* =========================================================
-   WHY ALTOS
-========================================================= */
-
-.why-section {
-
-    background: var(--ice);
-
-}
-
-
-.why-section .section-heading {
-
-    margin-bottom: 55px;
-
-}
-
-
-.why-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 18px;
-
-}
-
-
-.why-card {
-
-    position: relative;
-
-    background: white;
-
-    padding: 35px 28px;
-
-    min-height: 350px;
-
-    border: 1px solid rgba(6,43,73,0.05);
-
-    overflow: hidden;
-
-    transition: var(--transition);
-
-}
-
-
-.why-card::before {
-
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-
-    bottom: 0;
-
-    width: 100%;
-
-    height: 3px;
-
-    background: var(--sky);
-
-    transform:
-        scaleX(0);
-
-    transform-origin: left;
-
-    transition:
-        transform 0.4s ease;
-
-}
-
-
-.why-card:hover {
-
-    transform: translateY(-8px);
-
-    box-shadow: var(--shadow);
-
-}
-
-
-.why-card:hover::before {
-
-    transform: scaleX(1);
-
-}
-
-
-.why-number {
-
-    position: absolute;
-
-    top: 20px;
-
-    right: 20px;
-
-    color: rgba(6,43,73,0.08);
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size: 38px;
-
-    font-weight: 800;
-
-}
-
-
-.why-icon {
-
-    width: 58px;
-
-    height: 58px;
-
-    border-radius: 50%;
-
-    background: var(--ice);
-
-    color: var(--sky);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 20px;
-
-    margin-bottom: 25px;
-
-    transition: var(--transition);
-
-}
-
-
-.why-card:hover .why-icon {
-
-    background: var(--sky);
-
-    color: white;
-
-    transform: rotate(5deg);
-
-}
-
-
-.why-card h3 {
-
-    color: var(--navy);
-
-    font-size: 17px;
-
-    margin-bottom: 12px;
-
-}
-
-
-.why-card p {
-
-    font-size: 12px;
-
-    line-height: 1.8;
-
-    color: var(--text);
-
-}
-
-
-.why-card a {
-
-    position: absolute;
-
-    left: 28px;
-
-    bottom: 25px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    color: var(--navy);
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-}
-
-
-.why-card a i {
-
-    color: var(--sky);
-
-}
-
-
-/* =========================================================
-   ACADEMICS
-========================================================= */
-
-.academics-section {
-
-    background: white;
-
-}
-
-
-.academics-header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: flex-end;
-
-    gap: 40px;
-
-    margin-bottom: 55px;
-
-}
-
-
-.outline-link {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    border: 1px solid var(--navy);
-
-    color: var(--navy);
-
-    padding: 13px 18px;
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    white-space: nowrap;
-
-    transition: var(--transition);
-
-}
-
-
-.outline-link:hover {
-
-    background: var(--navy);
-
-    color: white;
-
-}
-
-
-.outline-link i {
-
-    color: var(--sky);
-
-}
-
-
-.academic-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    border-top: 1px solid var(--border);
-
-    border-left: 1px solid var(--border);
-
-}
-
-
-.academic-card {
-
-    position: relative;
-
-    min-height: 320px;
-
-    padding: 35px 28px;
-
-    border-right: 1px solid var(--border);
-
-    border-bottom: 1px solid var(--border);
-
-    transition: var(--transition);
-
-}
-
-
-.academic-card:hover {
-
-    background: var(--ice);
-
-}
-
-
-.academic-icon {
-
-    width: 55px;
-
-    height: 55px;
-
-    background: var(--navy);
-
-    color: var(--sky-light);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 8px;
-
-    margin-bottom: 30px;
-
-    transition: var(--transition);
-
-}
-
-
-.academic-card:hover .academic-icon {
-
-    background: var(--sky);
-
-    color: var(--navy-dark);
-
-}
-
-
-.academic-card h3 {
-
-    color: var(--navy);
-
-    font-size: 17px;
-
-    margin-bottom: 12px;
-
-}
-
-
-.academic-card p {
-
-    font-size: 12px;
-
-    line-height: 1.85;
-
-}
-
-
-.academic-arrow {
-
-    position: absolute;
-
-    bottom: 25px;
-
-    right: 25px;
-
-    color: var(--sky);
-
-}
-
-
-/* =========================================================
-   STUDENT LIFE
-========================================================= */
-
-.student-life-section {
-
-    background: var(--ice);
-
-}
-
-
-.student-life-section .section-heading {
-
-    margin-bottom: 55px;
-
-}
-
-
-.life-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        1.35fr
-        0.65fr
-        0.65fr;
-
-    grid-template-rows:
-        260px
-        260px;
-
-    gap: 15px;
-
-}
-
-
-.life-main {
-
-    grid-row: span 2;
-
-    position: relative;
-
-    overflow: hidden;
-
-    border-radius: 10px;
-
-}
-
-
-.life-main img,
-.life-card img {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
-
-    transition:
-        transform 0.7s ease;
-
-}
-
-
-.life-main:hover img,
-.life-card:hover img {
-
-    transform: scale(1.07);
-
-}
-
-
-.life-main::after,
-.life-card::after {
-
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    background:
-        linear-gradient(
-            to top,
-            rgba(3,27,46,0.85),
-            rgba(3,27,46,0.05)
+            }
         );
 
-}
+    }
 
 
-.life-overlay {
+    heroDots.forEach(dot => {
 
-    position: absolute;
+        dot.addEventListener(
+            "click",
+            () => {
 
-    z-index: 2;
+                const slide =
+                    Number(dot.dataset.slide);
 
-    left: 30px;
+                showSlide(slide);
 
-    right: 30px;
+                startHeroTimer();
 
-    bottom: 30px;
-
-    color: white;
-
-}
-
-
-.life-overlay span {
-
-    color: var(--sky-light);
-
-    font-size: 9px;
-
-    letter-spacing: 2px;
-
-    font-weight: 800;
-
-}
-
-
-.life-overlay h3 {
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size: 30px;
-
-    line-height: 1.2;
-
-    margin-top: 7px;
-
-}
-
-
-.life-card {
-
-    position: relative;
-
-    overflow: hidden;
-
-    border-radius: 10px;
-
-}
-
-
-.life-card-overlay {
-
-    position: absolute;
-
-    z-index: 2;
-
-    left: 20px;
-
-    bottom: 20px;
-
-    color: white;
-
-}
-
-
-.life-card-overlay i {
-
-    color: var(--sky-light);
-
-    margin-bottom: 6px;
-
-}
-
-
-.life-card-overlay h3 {
-
-    font-size: 14px;
-
-}
-
-
-/* =========================================================
-   VALUES
-========================================================= */
-
-.values-section {
-
-    background: white;
-
-}
-
-
-.values-layout {
-
-    display: grid;
-
-    grid-template-columns:
-        1fr
-        0.9fr;
-
-    gap: 90px;
-
-    align-items: center;
-
-}
-
-
-.values-content h2 {
-
-    color: var(--navy);
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size:
-        clamp(36px, 4vw, 50px);
-
-    line-height: 1.15;
-
-}
-
-
-.values-content h2 span {
-
-    color: var(--sky);
-
-}
-
-
-.values-content > p {
-
-    max-width: 500px;
-
-    margin-top: 18px;
-
-    font-size: 14px;
-
-}
-
-
-.values-list {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 25px;
-
-    margin-top: 40px;
-
-}
-
-
-.value-item {
-
-    display: flex;
-
-    gap: 13px;
-
-}
-
-
-.value-icon {
-
-    width: 38px;
-
-    height: 38px;
-
-    flex-shrink: 0;
-
-    background: var(--ice);
-
-    color: var(--sky);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 50%;
-
-}
-
-
-.value-item h3 {
-
-    color: var(--navy);
-
-    font-size: 13px;
-
-}
-
-
-.value-item p {
-
-    font-size: 10px;
-
-    line-height: 1.7;
-
-    margin-top: 3px;
-
-}
-
-
-.values-image {
-
-    position: relative;
-
-    height: 550px;
-
-}
-
-
-.values-image > img {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
-
-    border-radius: 12px;
-
-}
-
-
-.values-image-card {
-
-    position: absolute;
-
-    left: -30px;
-
-    bottom: 35px;
-
-    background: var(--navy);
-
-    color: white;
-
-    padding: 23px 28px;
-
-    border-left: 4px solid var(--sky);
-
-    box-shadow: var(--shadow);
-
-}
-
-
-.values-image-card span {
-
-    display: block;
-
-    color: var(--sky-light);
-
-    font-size: 9px;
-
-    letter-spacing: 2px;
-
-    font-weight: 800;
-
-}
-
-
-.values-image-card strong {
-
-    display: block;
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size: 22px;
-
-    line-height: 1.35;
-
-    margin-top: 5px;
-
-}
-
-
-/* =========================================================
-   ADMISSIONS
-========================================================= */
-
-.admissions-section {
-
-    position: relative;
-
-    min-height: 500px;
-
-    display: flex;
-
-    align-items: center;
-
-    overflow: hidden;
-
-}
-
-
-.admissions-background {
-
-    position: absolute;
-
-    inset: 0;
-
-}
-
-
-.admissions-background img {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
-
-}
-
-
-.admissions-overlay {
-
-    position: absolute;
-
-    inset: 0;
-
-    background:
-        linear-gradient(
-            90deg,
-            rgba(3,27,46,0.96),
-            rgba(3,27,46,0.80),
-            rgba(3,27,46,0.45)
+            }
         );
 
-}
+    });
 
 
-.admissions-content {
+    const heroSection =
+        document.querySelector(".hero-section");
 
-    position: relative;
 
-    z-index: 2;
+    if(heroSection){
 
-    padding-top: 100px;
+        heroSection.addEventListener(
+            "mouseenter",
+            stopHeroTimer
+        );
 
-    padding-bottom: 100px;
+        heroSection.addEventListener(
+            "mouseleave",
+            startHeroTimer
+        );
 
-}
-
-
-.light-label {
-
-    color: var(--sky-light);
-
-}
-
-
-.admissions-content h2 {
-
-    max-width: 700px;
-
-    color: white;
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size:
-        clamp(40px, 5vw, 60px);
-
-    line-height: 1.1;
-
-}
-
-
-.admissions-content h2 span {
-
-    color: var(--sky-light);
-
-}
-
-
-.admissions-content p {
-
-    max-width: 600px;
-
-    color: rgba(255,255,255,0.75);
-
-    margin-top: 18px;
-
-    font-size: 15px;
-
-}
-
-
-.admission-buttons {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 13px;
-
-    margin-top: 30px;
-
-}
-
-
-/* =========================================================
-   NEWS
-========================================================= */
-
-.news-section {
-
-    background: white;
-
-}
-
-
-.news-header {
-
-    display: flex;
-
-    align-items: flex-end;
-
-    justify-content: space-between;
-
-    gap: 40px;
-
-    margin-bottom: 55px;
-
-}
-
-
-.news-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 22px;
-
-}
-
-
-.news-card {
-
-    border: 1px solid var(--border);
-
-    background: white;
-
-    transition: var(--transition);
-
-}
-
-
-.news-card:hover {
-
-    transform: translateY(-7px);
-
-    box-shadow: var(--shadow);
-
-}
-
-
-.news-image {
-
-    height: 230px;
-
-    position: relative;
-
-    overflow: hidden;
-
-}
-
-
-.news-image img {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
-
-    transition:
-        transform 0.6s ease;
-
-}
-
-
-.news-card:hover .news-image img {
-
-    transform: scale(1.06);
-
-}
-
-
-.news-tag {
-
-    position: absolute;
-
-    top: 15px;
-
-    left: 15px;
-
-    background: var(--sky);
-
-    color: var(--navy-dark);
-
-    padding: 6px 10px;
-
-    font-size: 8px;
-
-    font-weight: 800;
-
-    letter-spacing: 1px;
-
-}
-
-
-.news-content {
-
-    padding: 25px;
-
-}
-
-
-.news-date {
-
-    color: var(--sky);
-
-    font-size: 8px;
-
-    font-weight: 800;
-
-    letter-spacing: 1.5px;
-
-}
-
-
-.news-content h3 {
-
-    color: var(--navy);
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size: 20px;
-
-    line-height: 1.3;
-
-    margin: 8px 0 10px;
-
-}
-
-
-.news-content p {
-
-    font-size: 11px;
-
-    line-height: 1.8;
-
-}
-
-
-.news-content a {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    margin-top: 18px;
-
-    color: var(--navy);
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-}
-
-
-.news-content a i {
-
-    color: var(--sky);
-
-}
-
-
-/* =========================================================
-   STUDENT PORTAL CTA
-========================================================= */
-
-.portal-section {
-
-    background: var(--navy);
-
-    color: white;
-
-}
-
-
-.portal-inner {
-
-    min-height: 190px;
-
-    display: grid;
-
-    grid-template-columns:
-        75px
-        1fr
-        auto;
-
-    align-items: center;
-
-    gap: 30px;
-
-}
-
-
-.portal-icon {
-
-    width: 65px;
-
-    height: 65px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(56,169,232,0.12);
-
-    border:
-        1px solid rgba(56,169,232,0.3);
-
-    color: var(--sky-light);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 24px;
-
-}
-
-
-.portal-content > span {
-
-    color: var(--sky-light);
-
-    font-size: 9px;
-
-    font-weight: 800;
-
-    letter-spacing: 2px;
-
-}
-
-
-.portal-content h2 {
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size: 28px;
-
-    margin-top: 5px;
-
-}
-
-
-.portal-content p {
-
-    color: rgba(255,255,255,0.65);
-
-    font-size: 11px;
-
-    max-width: 650px;
-
-    margin-top: 4px;
-
-}
-
-
-.portal-button {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    background: var(--sky);
-
-    color: var(--navy-dark);
-
-    padding: 15px 21px;
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    white-space: nowrap;
-
-    transition: var(--transition);
-
-}
-
-
-.portal-button:hover {
-
-    background: var(--sky-light);
-
-    transform: translateY(-2px);
-
-}
-
-
-/* =========================================================
-   CONTACT
-========================================================= */
-
-.contact-section {
-
-    background: var(--ice);
-
-}
-
-
-.contact-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        0.85fr
-        1.15fr;
-
-    gap: 90px;
-
-    align-items: start;
-
-}
-
-
-.contact-info h2 {
-
-    color: var(--navy);
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    font-size:
-        clamp(36px, 4vw, 50px);
-
-    line-height: 1.15;
-
-}
-
-
-.contact-info h2 span {
-
-    color: var(--sky);
-
-}
-
-
-.contact-info > p {
-
-    margin-top: 18px;
-
-    font-size: 13px;
-
-    line-height: 1.9;
-
-}
-
-
-.contact-details {
-
-    margin-top: 35px;
-
-    display: grid;
-
-    gap: 22px;
-
-}
-
-
-.contact-item {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-}
-
-
-.contact-icon {
-
-    width: 43px;
-
-    height: 43px;
-
-    flex-shrink: 0;
-
-    background: white;
-
-    color: var(--sky);
-
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    box-shadow:
-        0 5px 20px rgba(6,43,73,0.06);
-
-}
-
-
-.contact-item span {
-
-    display: block;
-
-    font-size: 8px;
-
-    color: var(--text-light);
-
-    font-weight: 800;
-
-    letter-spacing: 1.5px;
-
-}
-
-
-.contact-item strong {
-
-    display: block;
-
-    color: var(--navy);
-
-    font-size: 12px;
-
-    margin-top: 2px;
-
-}
-
-
-.contact-form-wrapper {
-
-    background: white;
-
-    padding: 40px;
-
-    box-shadow: var(--shadow-sm);
-
-}
-
-
-.form-row {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 16px;
-
-}
-
-
-.form-group {
-
-    margin-bottom: 17px;
-
-}
-
-
-.form-group label {
-
-    display: block;
-
-    color: var(--navy);
-
-    font-size: 10px;
-
-    font-weight: 700;
-
-    margin-bottom: 7px;
-
-}
-
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-
-    width: 100%;
-
-    border: 1px solid var(--border);
-
-    background: #fbfdfe;
-
-    padding: 12px 14px;
-
-    outline: none;
-
-    font-size: 11px;
-
-    color: var(--text-dark);
-
-    transition: var(--transition);
-
-    border-radius: 4px;
-
-}
-
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-
-    border-color: var(--sky);
-
-    background: white;
-
-    box-shadow:
-        0 0 0 3px rgba(56,169,232,0.08);
-
-}
-
-
-.form-group textarea {
-
-    resize: vertical;
-
-}
-
-
-.form-submit {
-
-    width: 100%;
-
-    border: 0;
-
-    background: var(--navy);
-
-    color: white;
-
-    min-height: 50px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 10px;
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    transition: var(--transition);
-
-}
-
-
-.form-submit:hover {
-
-    background: var(--sky);
-
-    color: var(--navy-dark);
-
-}
-
-
-/* =========================================================
-   FOOTER
-========================================================= */
-
-.footer {
-
-    background: var(--navy-dark);
-
-    color: rgba(255,255,255,0.65);
-
-}
-
-
-.footer-grid {
-
-    padding-top: 75px;
-
-    padding-bottom: 60px;
-
-    display: grid;
-
-    grid-template-columns:
-        1.5fr
-        0.7fr
-        0.8fr
-        1fr;
-
-    gap: 55px;
-
-}
-
-
-.footer-brand {
-
-    max-width: 330px;
-
-}
-
-
-.footer-logo .logo-text strong {
-
-    color: white;
-
-}
-
-
-.footer-brand > p {
-
-    font-size: 11px;
-
-    line-height: 1.9;
-
-    margin-top: 22px;
-
-}
-
-
-.social-links {
-
-    display: flex;
-
-    gap: 8px;
-
-    margin-top: 22px;
-
-}
-
-
-.social-links a {
-
-    width: 34px;
-
-    height: 34px;
-
-    border:
-        1px solid rgba(255,255,255,0.15);
-
-    color: rgba(255,255,255,0.7);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 50%;
-
-    font-size: 11px;
-
-    transition: var(--transition);
-
-}
-
-
-.social-links a:hover {
-
-    background: var(--sky);
-
-    color: var(--navy-dark);
-
-    border-color: var(--sky);
-
-}
-
-
-.footer-column {
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: flex-start;
-
-}
-
-
-.footer-column h3 {
-
-    color: white;
-
-    font-size: 12px;
-
-    margin-bottom: 20px;
-
-}
-
-
-.footer-column a,
-.footer-column > span {
-
-    font-size: 10px;
-
-    margin-bottom: 11px;
-
-    transition: var(--transition);
-
-}
-
-
-.footer-column a:hover {
-
-    color: var(--sky-light);
-
-    transform: translateX(3px);
-
-}
-
-
-.footer-column span {
-
-    display: flex;
-
-    gap: 8px;
-
-    line-height: 1.5;
-
-}
-
-
-.footer-column span i {
-
-    color: var(--sky);
-
-    margin-top: 3px;
-
-}
-
-
-/* =========================================================
-   FOOTER BOTTOM
-========================================================= */
+    }
 
-.footer-bottom {
 
-    border-top:
-        1px solid rgba(255,255,255,0.08);
+    document.addEventListener(
+        "keydown",
+        event => {
 
-}
+            if(event.key === "ArrowRight"){
+                nextSlide();
+                startHeroTimer();
+            }
 
+            if(event.key === "ArrowLeft"){
+                previousSlide();
+                startHeroTimer();
+            }
 
-.footer-bottom-inner {
+        }
+    );
 
-    min-height: 65px;
 
-    display: flex;
+    showSlide(0);
+    startHeroTimer();
 
-    justify-content: space-between;
 
-    align-items: center;
+    /* =====================================================
+       MOBILE MENU
+    ===================================================== */
 
-    gap: 20px;
+    const mobileToggle =
+        document.getElementById("mobileMenuToggle");
 
-}
+    const mainNav =
+        document.getElementById("mainNav");
 
 
-.footer-bottom p {
+    function closeMobileMenu(){
 
-    font-size: 9px;
+        if(!mainNav || !mobileToggle) return;
 
-    color: rgba(255,255,255,0.45);
+        mainNav.classList.remove("open");
 
-}
+        mobileToggle.setAttribute(
+            "aria-expanded",
+            "false"
+        );
 
+    }
 
-/* =========================================================
-   BACK TO TOP
-========================================================= */
 
-.back-to-top {
+    if(mobileToggle && mainNav){
 
-    position: fixed;
+        mobileToggle.addEventListener(
+            "click",
+            () => {
 
-    right: 22px;
+                const isOpen =
+                    mainNav.classList.toggle("open");
 
-    bottom: 22px;
+                mobileToggle.setAttribute(
+                    "aria-expanded",
+                    String(isOpen)
+                );
 
-    width: 45px;
+            }
+        );
 
-    height: 45px;
+    }
 
-    border: 0;
 
-    background: var(--sky);
+    /* =====================================================
+       HEADER SCROLL
+    ===================================================== */
 
-    color: var(--navy-dark);
+    const siteHeader =
+        document.getElementById("siteHeader");
 
-    border-radius: 50%;
 
-    z-index: 500;
+    function updateHeader(){
 
-    opacity: 0;
+        if(!siteHeader) return;
 
-    visibility: hidden;
+        siteHeader.classList.toggle(
+            "scrolled",
+            window.scrollY > 30
+        );
 
-    transform:
-        translateY(15px);
+    }
 
-    transition: var(--transition);
 
-    box-shadow: var(--shadow-sm);
+    window.addEventListener(
+        "scroll",
+        updateHeader,
+        { passive:true }
+    );
 
-}
+    updateHeader();
 
 
-.back-to-top.show {
+    /* =====================================================
+       TEAM SECTION REVEAL
+       Team remains hidden until About is navigated to.
+    ===================================================== */
 
-    opacity: 1;
+    const aboutSection =
+        document.getElementById("about");
 
-    visibility: visible;
+    const teamSection =
+        document.getElementById("our-team");
 
-    transform:
-        translateY(0);
 
-}
+    function revealTeamSection(){
 
+        if(!teamSection) return;
 
-.back-to-top:hover {
+        teamSection.classList.add("is-visible");
 
-    background: var(--navy);
+    }
 
-    color: white;
 
-}
+    /* =====================================================
+       SMOOTH INTERNAL NAVIGATION
+    ===================================================== */
 
+    const internalLinks =
+        document.querySelectorAll('a[href^="#"]');
 
-/* =========================================================
-   SCROLL REVEAL
-========================================================= */
 
-.reveal {
+    internalLinks.forEach(link => {
 
-    opacity: 0;
+        link.addEventListener(
+            "click",
+            event => {
 
-    transform:
-        translateY(30px);
+                const targetId =
+                    link.getAttribute("href");
 
-    transition:
-        opacity 0.8s ease,
-        transform 0.8s ease;
+                if(!targetId || targetId === "#"){
+                    return;
+                }
 
-}
+                const target =
+                    document.querySelector(targetId);
 
+                if(!target){
+                    return;
+                }
 
-.reveal.active {
+                event.preventDefault();
 
-    opacity: 1;
 
-    transform:
-        translateY(0);
+                /* -----------------------------------------
+                   ABOUT NAVIGATION
+                ----------------------------------------- */
 
-}
+                if(targetId === "#about"){
 
+                    revealTeamSection();
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+                }
 
 
-/* =========================================================
-   1100px
-========================================================= */
+                /* -----------------------------------------
+                   TEAM DIRECT NAVIGATION
+                ----------------------------------------- */
 
-@media (max-width: 1100px) {
+                if(targetId === "#our-team"){
 
-    .main-nav {
+                    revealTeamSection();
 
-        gap: 18px;
+                }
 
-    }
 
+                closeMobileMenu();
 
-    .hero-container {
 
-        grid-template-columns:
-            minmax(0, 1fr)
-            310px;
+                const headerHeight =
+                    siteHeader
+                        ? siteHeader.offsetHeight
+                        : 0;
 
-        gap: 45px;
+                const targetPosition =
+                    target.getBoundingClientRect().top +
+                    window.pageYOffset -
+                    headerHeight -
+                    10;
 
-    }
 
+                window.scrollTo({
+                    top:targetPosition,
+                    behavior:"smooth"
+                });
 
-    .why-grid {
+            }
+        );
 
-        grid-template-columns:
-            repeat(2, 1fr);
+    });
 
-    }
 
+    /* =====================================================
+       SHOW TEAM WHEN PAGE IS DIRECTLY LOADED WITH #ABOUT
+    ===================================================== */
 
-    .academic-grid {
+    if(
+        window.location.hash === "#about" ||
+        window.location.hash === "#our-team"
+    ){
 
-        grid-template-columns:
-            repeat(2, 1fr);
+        revealTeamSection();
 
     }
-
 
-    .about-grid,
-    .values-layout,
-    .contact-grid {
 
-        gap: 55px;
+    /* =====================================================
+       ACTIVE NAVIGATION
+    ===================================================== */
 
-    }
-
-}
+    const navLinks =
+        document.querySelectorAll(".nav-link");
 
+    const sections =
+        document.querySelectorAll(
+            "main section[id]"
+        );
 
-/* =========================================================
-   900px
-========================================================= */
 
-@media (max-width: 900px) {
+    function updateActiveNav(){
 
-    .top-left {
+        const scrollPosition =
+            window.scrollY + 180;
 
-        display: none;
+        let currentSection = "home";
 
-    }
 
+        sections.forEach(section => {
 
-    .top-bar-inner {
+            const top =
+                section.offsetTop;
 
-        justify-content: center;
+            const height =
+                section.offsetHeight;
 
-    }
+            if(
+                scrollPosition >= top &&
+                scrollPosition < top + height
+            ){
 
+                currentSection =
+                    section.id;
 
-    .main-nav {
+            }
 
-        display: none;
+        });
 
-    }
 
+        navLinks.forEach(link => {
 
-    .student-login {
+            const href =
+                link.getAttribute("href");
 
-        margin-left: auto;
+            link.classList.toggle(
+                "active",
+                href === `#${currentSection}`
+            );
 
-    }
+        });
 
 
-    .mobile-menu-btn {
+        /* Team belongs to About */
 
-        display: block;
+        if(
+            currentSection === "our-team"
+        ){
 
-    }
+            navLinks.forEach(link => {
 
+                link.classList.toggle(
+                    "active",
+                    link.getAttribute("href") === "#about"
+                );
 
-    .mobile-nav.open {
+            });
 
-        display: block;
+        }
 
     }
-
 
-    .hero {
 
-        min-height: 680px;
+    window.addEventListener(
+        "scroll",
+        updateActiveNav,
+        { passive:true }
+    );
 
-    }
-
+    updateActiveNav();
 
-    .hero-container {
 
-        grid-template-columns: 1fr;
+    /* =====================================================
+       SCROLL REVEAL
+    ===================================================== */
 
-        padding-top: 90px;
-
-    }
+    const revealElements =
+        document.querySelectorAll(".reveal");
 
 
-    .hero-side-card {
+    const revealObserver =
+        new IntersectionObserver(
+            entries => {
 
-        display: none;
+                entries.forEach(entry => {
 
-    }
+                    if(entry.isIntersecting){
 
+                        entry.target.classList.add("visible");
 
-    .hero h1 {
+                        revealObserver.unobserve(
+                            entry.target
+                        );
 
-        min-height: 120px;
+                    }
 
-    }
+                });
 
+            },
+            {
+                threshold:.12
+            }
+        );
 
-    .highlights-grid {
 
-        grid-template-columns:
-            repeat(2, 1fr);
+    revealElements.forEach(element => {
 
-    }
+        revealObserver.observe(element);
 
+    });
 
-    .highlight-item:nth-child(2) {
 
-        border-right: 0;
+    /* =====================================================
+       WHY ALTOS MODAL
+    ===================================================== */
 
-    }
+    const featureModal =
+        document.getElementById("featureModal");
 
+    const featureModalBack =
+        document.getElementById("featureModalBack");
 
-    .highlight-item:nth-child(3),
-    .highlight-item:nth-child(4) {
+    const featureModalIcon =
+        document.getElementById("featureModalIcon");
 
-        border-top: 1px solid var(--border);
+    const featureModalLabel =
+        document.getElementById("featureModalLabel");
 
-    }
+    const featureModalTitle =
+        document.getElementById("featureModalTitle");
 
+    const featureModalDescription =
+        document.getElementById("featureModalDescription");
 
-    .about-grid,
-    .values-layout,
-    .contact-grid {
+    const featureModalPoints =
+        document.getElementById("featureModalPoints");
 
-        grid-template-columns: 1fr;
 
-    }
+    const featureData = {
 
+        academic:{
 
-    .about-image {
+            title:"Academic Excellence",
 
-        height: 500px;
+            icon:"fa-solid fa-book-open-reader",
 
-    }
+            description:
+                "Academic excellence at Altos Academy is about more than marks. It is about building strong foundations, developing disciplined study habits, encouraging curiosity and helping every learner understand their own progress.",
 
+            points:[
+                "Strong academic foundations",
+                "Disciplined study habits",
+                "Curiosity and active learning",
+                "Continuous improvement"
+            ]
 
-    .values-image {
+        },
 
-        height: 500px;
 
-    }
+        character:{
 
+            title:"Character & Discipline",
 
-    .values-image-card {
+            icon:"fa-solid fa-scale-balanced",
 
-        left: 20px;
+            description:
+                "Character and discipline provide the foundation for responsible learning. Students are encouraged to understand accountability, respect others, act with integrity and take responsibility for their choices.",
 
-    }
+            points:[
+                "Personal accountability",
+                "Respect for others",
+                "Integrity in action",
+                "Responsibility and self-discipline"
+            ]
 
+        },
 
-    .life-grid {
 
-        grid-template-columns:
-            1fr 1fr;
+        creativity:{
 
-        grid-template-rows:
-            350px 220px 220px;
+            title:"Creativity & Thinking",
 
-    }
+            icon:"fa-solid fa-lightbulb",
 
+            description:
+                "Learning becomes deeper when students are encouraged to ask questions, investigate ideas and think independently. Creativity and critical thinking help learners approach unfamiliar problems with confidence.",
 
-    .life-main {
+            points:[
+                "Critical thinking",
+                "Problem solving",
+                "Curiosity and exploration",
+                "Independent thought"
+            ]
 
-        grid-column: span 2;
+        },
 
-        grid-row: span 1;
 
-    }
+        leadership:{
 
+            title:"Leadership",
 
-    .portal-inner {
+            icon:"fa-solid fa-people-group",
 
-        grid-template-columns:
-            65px 1fr;
+            description:
+                "Leadership is developed through responsibility, communication, initiative and service. Students are encouraged to develop confidence while understanding that leadership also means contributing positively to others.",
 
-        padding-top: 35px;
+            points:[
+                "Responsibility",
+                "Communication",
+                "Initiative",
+                "Service and confidence"
+            ]
 
-        padding-bottom: 35px;
+        }
 
-    }
+    };
 
 
-    .portal-button {
+    function openFeatureModal(key, trigger){
 
-        grid-column: 2;
+        if(
+            !featureModal ||
+            !featureData[key]
+        ){
+            return;
+        }
 
-        justify-self: start;
+        const data =
+            featureData[key];
 
-    }
 
+        featureModalIcon.innerHTML =
+            `<i class="${data.icon}"></i>`;
 
-    .footer-grid {
+        featureModalLabel.textContent =
+            "WHY ALTOS ACADEMY";
 
-        grid-template-columns:
-            repeat(2, 1fr);
+        featureModalTitle.textContent =
+            data.title;
 
-    }
+        featureModalDescription.textContent =
+            data.description;
 
-}
 
+        featureModalPoints.innerHTML =
+            data.points.map(point => {
 
-/* =========================================================
-   650px
-========================================================= */
+                return `
+                    <div class="feature-point">
+                        <i class="fa-solid fa-check"></i>
+                        ${point}
+                    </div>
+                `;
 
-@media (max-width: 650px) {
+            }).join("");
 
-    .top-right {
 
-        gap: 10px;
+        featureModal.classList.add("active");
 
-    }
+        featureModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
 
+        document.body.classList.add(
+            "modal-open"
+        );
 
-    .top-right a {
 
-        font-size: 9px;
+        featureModalBack._trigger =
+            trigger;
 
-    }
 
+        setTimeout(() => {
 
-    .top-divider {
+            featureModalBack.focus();
 
-        display: none;
+        }, 50);
 
     }
 
 
-    .nav-container {
+    function closeFeatureModal(){
 
-        height: 72px;
+        if(!featureModal) return;
 
-    }
-
+        featureModal.classList.remove("active");
 
-    .school-logo .logo-text strong {
+        featureModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
-        font-size: 15px;
-
-    }
+        document.body.classList.remove(
+            "modal-open"
+        );
 
 
-    .logo-symbol {
+        if(
+            featureModalBack._trigger
+        ){
 
-        width: 40px;
+            featureModalBack._trigger.focus();
 
-        height: 40px;
+            featureModalBack._trigger =
+                null;
 
-        font-size: 20px;
+        }
 
     }
 
-
-    .student-login span {
-
-        display: none;
-
-    }
 
+    document
+        .querySelectorAll(".why-read-more")
+        .forEach(link => {
 
-    .student-login {
+            link.addEventListener(
+                "click",
+                event => {
 
-        width: 42px;
+                    event.preventDefault();
 
-        height: 42px;
+                    openFeatureModal(
+                        link.dataset.feature,
+                        link
+                    );
 
-        padding: 0;
+                }
+            );
 
-    }
+        });
 
 
-    .hero {
+    if(featureModalBack){
 
-        min-height: 650px;
+        featureModalBack.addEventListener(
+            "click",
+            closeFeatureModal
+        );
 
     }
-
-
-    .hero-container {
-
-        padding-top: 65px;
 
-        padding-bottom: 80px;
 
-    }
+    /* =====================================================
+       TEAM MODAL
+    ===================================================== */
 
+    const teamModal =
+        document.getElementById("teamModal");
 
-    .hero h1 {
+    const teamModalBack =
+        document.getElementById("teamModalBack");
 
-        font-size: 44px;
+    const teamModalInitials =
+        document.getElementById("teamModalInitials");
 
-        min-height: 100px;
+    const teamModalRole =
+        document.getElementById("teamModalRole");
 
-    }
+    const teamModalName =
+        document.getElementById("teamModalName");
 
+    const teamModalBio =
+        document.getElementById("teamModalBio");
 
-    .hero-description {
+    const teamModalPoints =
+        document.getElementById("teamModalPoints");
 
-        font-size: 13px;
 
-    }
+    const teamData = {
 
+        mayesero:{
 
-    .hero-trust {
+            name:"Mayesero Solomon",
 
-        gap: 12px;
+            role:"PRINCIPAL",
 
-    }
+            initials:"MS",
 
+            bio:
+                "Mayesero Solomon serves as the Principal of Altos Academy. This profile area is designed to present the Principal’s official background, educational journey, leadership experience and vision for the Academy. The detailed biography can be added here as the official profile information is provided.",
 
-    .trust-item {
+            points:[
+                "School leadership",
+                "Educational direction",
+                "Academic and institutional development"
+            ]
 
-        font-size: 9px;
+        },
 
-    }
 
+        daniel:{
 
-    .hero-arrow {
+            name:"Daniel Kaphale",
 
-        width: 38px;
+            role:"ACCOUNTANT",
 
-        height: 38px;
+            initials:"DK",
 
-    }
+            bio:
+                "Daniel Kaphale serves as the Accountant at Altos Academy. This profile area is designed to present his official professional background, educational journey, experience and contribution to the Academy. The detailed biography can be added here using the official information supplied by the school.",
 
+            points:[
+                "Financial administration",
+                "Financial reporting and accountability",
+                "Support for institutional operations"
+            ]
 
-    .hero-prev {
+        },
 
-        left: 12px;
 
-    }
+        blessing:{
 
+            name:"Blessing Mwale",
 
-    .hero-next {
+            role:"HEADTEACHER",
 
-        right: 12px;
+            initials:"BM",
 
-    }
+            bio:
+                "Blessing Mwale serves as the Headteacher at Altos Academy. This profile area is designed to present the official background, educational journey, leadership experience and educational philosophy of the Headteacher. The detailed biography can be added here when the official profile is provided.",
 
+            points:[
+                "Academic leadership",
+                "Teaching and learning coordination",
+                "Student and school development"
+            ]
 
-    .highlights-grid {
+        },
 
-        grid-template-columns: 1fr;
 
-    }
+        allie:{
 
+            name:"Allie Malota",
 
-    .highlight-item,
-    .highlight-item:nth-child(2),
-    .highlight-item:nth-child(3),
-    .highlight-item:nth-child(4) {
+            role:"TEACHER",
 
-        border-right: 0;
+            initials:"AM",
 
-        border-top: 1px solid var(--border);
+            bio:
+                "Allie Malota is a Teacher at Altos Academy. This profile area is reserved for the official professional background, educational qualifications, teaching experience and subject responsibilities. The detailed biography can be added here when the official profile information is available.",
 
-    }
+            points:[
+                "Teaching and learning",
+                "Student development",
+                "Classroom support"
+            ]
 
+        },
 
-    .highlight-item:first-child {
 
-        border-top: 0;
+        teacher01:{
+            name:"Teacher 01",
+            role:"TEACHER",
+            initials:"T1",
+            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
+            points:["Profile pending"]
+        },
 
-    }
+        teacher02:{
+            name:"Teacher 02",
+            role:"TEACHER",
+            initials:"T2",
+            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
+            points:["Profile pending"]
+        },
 
+        teacher03:{
+            name:"Teacher 03",
+            role:"TEACHER",
+            initials:"T3",
+            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
+            points:["Profile pending"]
+        },
 
-    .section {
+        teacher04:{
+            name:"Teacher 04",
+            role:"TEACHER",
+            initials:"T4",
+            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
+            points:["Profile pending"]
+        },
 
-        padding: 80px 0;
+        teacher05:{
+            name:"Teacher 05",
+            role:"TEACHER",
+            initials:"T5",
+            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
+            points:["Profile pending"]
+        },
 
-    }
+        teacher06:{
+            name:"Teacher 06",
+            role:"TEACHER",
+            initials:"T6",
+            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
+            points:["Profile pending"]
+        },
 
+        teacher07:{
+            name:"Teacher 07",
+            role:"TEACHER",
+            initials:"T7",
+            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
+            points:["Profile pending"]
+        },
 
-    .section-heading h2 {
+        teacher08:{
+            name:"Teacher 08",
+            role:"TEACHER",
+            initials:"T8",
+            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
+            points:["Profile pending"]
+        },
 
-        font-size: 36px;
+        teacher09:{
+            name:"Teacher 09",
+            role:"TEACHER",
+            initials:"T9",
+            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
+            points:["Profile pending"]
+        },
 
-    }
+        teacher10:{
+            name:"Teacher 10",
+            role:"TEACHER",
+            initials:"T10",
+            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
+            points:["Profile pending"]
+        }
 
+    };
 
-    .about-image {
 
-        height: 400px;
+    function openTeamModal(key, trigger){
 
-    }
+        if(
+            !teamModal ||
+            !teamData[key]
+        ){
+            return;
+        }
 
+        const data =
+            teamData[key];
 
-    .about-badge {
 
-        right: 15px;
+        teamModalInitials.textContent =
+            data.initials;
 
-        bottom: 20px;
+        teamModalRole.textContent =
+            data.role;
 
-    }
+        teamModalName.textContent =
+            data.name;
 
+        teamModalBio.textContent =
+            data.bio;
 
-    .why-grid {
 
-        grid-template-columns: 1fr;
+        teamModalPoints.innerHTML =
+            data.points.map(point => {
 
-    }
+                return `
+                    <div class="team-modal-point">
+                        <i class="fa-solid fa-check"></i>
+                        ${point}
+                    </div>
+                `;
 
+            }).join("");
 
-    .why-card {
 
-        min-height: 310px;
+        teamModal.classList.add("active");
 
-    }
+        teamModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
 
+        document.body.classList.add(
+            "modal-open"
+        );
 
-    .academics-header,
-    .news-header {
 
-        display: block;
+        teamModalBack._trigger =
+            trigger;
 
-    }
 
+        setTimeout(() => {
 
-    .academics-header .outline-link,
-    .news-header .outline-link {
+            teamModalBack.focus();
 
-        margin-top: 25px;
+        }, 50);
 
     }
-
-
-    .academic-grid {
 
-        grid-template-columns: 1fr;
 
-    }
+    function closeTeamModal(){
 
+        if(!teamModal) return;
 
-    .life-grid {
+        teamModal.classList.remove("active");
 
-        display: grid;
+        teamModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
-        grid-template-columns: 1fr;
+        document.body.classList.remove(
+            "modal-open"
+        );
 
-        grid-template-rows:
-            300px
-            210px
-            210px
-            210px
-            210px;
 
-    }
+        if(
+            teamModalBack._trigger
+        ){
 
+            teamModalBack._trigger.focus();
 
-    .life-main {
+            teamModalBack._trigger =
+                null;
 
-        grid-column: auto;
+        }
 
     }
-
-
-    .values-list {
 
-        grid-template-columns: 1fr;
 
-    }
-
+    document
+        .querySelectorAll(".team-node")
+        .forEach(node => {
 
-    .values-image {
+            node.addEventListener(
+                "click",
+                () => {
 
-        height: 400px;
+                    openTeamModal(
+                        node.dataset.person,
+                        node
+                    );
 
-    }
+                }
+            );
 
+        });
 
-    .admissions-content {
 
-        padding-top: 80px;
+    if(teamModalBack){
 
-        padding-bottom: 80px;
+        teamModalBack.addEventListener(
+            "click",
+            closeTeamModal
+        );
 
     }
-
 
-    .admissions-content h2 {
 
-        font-size: 40px;
+    /* =====================================================
+       IMPORTANT:
+       MODALS ONLY CLOSE THROUGH THEIR BACK BUTTON.
+       ESCAPE DOES NOT CLOSE THEM.
+    ===================================================== */
 
-    }
+    document.addEventListener(
+        "keydown",
+        event => {
 
+            if(event.key === "Escape"){
 
-    .news-grid {
+                if(
+                    featureModal &&
+                    featureModal.classList.contains("active")
+                ){
 
-        grid-template-columns: 1fr;
+                    event.preventDefault();
 
-    }
+                    return;
+                }
 
 
-    .portal-inner {
+                if(
+                    teamModal &&
+                    teamModal.classList.contains("active")
+                ){
 
-        grid-template-columns: 1fr;
+                    event.preventDefault();
 
-        text-align: center;
+                    return;
+                }
 
-        justify-items: center;
+            }
 
-    }
+        }
+    );
 
 
-    .portal-content {
+    /* =====================================================
+       ORBIT PAUSE
+       Rotation pauses when the user hovers/focuses
+       an individual feature.
+    ===================================================== */
 
-        text-align: center;
+    const orbitTrack =
+        document.querySelector(".orbit-track");
 
-    }
+    const orbitItems =
+        document.querySelectorAll(".orbit-item");
 
+    const orbitInners =
+        document.querySelectorAll(".orbit-item-inner");
 
-    .portal-button {
 
-        grid-column: auto;
+    function pauseOrbit(){
 
-        justify-self: center;
+        if(!orbitTrack) return;
 
-    }
+        orbitTrack.style.animationPlayState =
+            "paused";
 
+        orbitInners.forEach(inner => {
 
-    .contact-form-wrapper {
+            inner.style.animationPlayState =
+                "paused";
 
-        padding: 25px 20px;
+        });
 
     }
-
 
-    .form-row {
 
-        grid-template-columns: 1fr;
+    function resumeOrbit(){
 
-        gap: 0;
-
-    }
+        if(!orbitTrack) return;
 
+        orbitTrack.style.animationPlayState =
+            "running";
 
-    .footer-grid {
+        orbitInners.forEach(inner => {
 
-        grid-template-columns: 1fr;
+            inner.style.animationPlayState =
+                "running";
 
-        gap: 35px;
+        });
 
     }
 
 
-    .footer-brand {
+    orbitItems.forEach(item => {
 
-        max-width: none;
+        item.addEventListener(
+            "mouseenter",
+            pauseOrbit
+        );
 
-    }
-
+        item.addEventListener(
+            "mouseleave",
+            resumeOrbit
+        );
 
-    .footer-bottom-inner {
+        item.addEventListener(
+            "focus",
+            pauseOrbit
+        );
 
-        flex-direction: column;
+        item.addEventListener(
+            "blur",
+            resumeOrbit
+        );
 
-        justify-content: center;
+    });
 
-        padding: 18px 0;
 
-        text-align: center;
-
-    }
+    /* =====================================================
+       CONTACT FORM
+       Front-end visual confirmation only.
+    ===================================================== */
 
-}
+    const contactForm =
+        document.getElementById("contactForm");
 
 
-/* =========================================================
-   450px
-========================================================= */
+    if(contactForm){
 
-@media (max-width: 450px) {
+        contactForm.addEventListener(
+            "submit",
+            event => {
 
-    .top-right a:first-child {
+                event.preventDefault();
 
-        display: none;
+                const button =
+                    contactForm.querySelector("button");
 
-    }
+                if(!button) return;
 
 
-    .hero h1 {
+                const originalText =
+                    button.innerHTML;
 
-        font-size: 39px;
 
-    }
+                button.innerHTML =
+                    `<i class="fa-solid fa-check"></i> Message Sent`;
 
+                button.disabled = true;
 
-    .hero-buttons {
 
-        flex-direction: column;
+                setTimeout(() => {
 
-        align-items: stretch;
+                    button.innerHTML =
+                        originalText;
 
-    }
+                    button.disabled = false;
 
+                    contactForm.reset();
 
-    .btn {
+                }, 2500);
 
-        width: 100%;
+            }
+        );
 
     }
-
 
-    .hero-trust {
 
-        display: grid;
+    /* =====================================================
+       BACK TO TOP
+    ===================================================== */
 
-        grid-template-columns: 1fr;
+    const backToTop =
+        document.getElementById("backToTop");
 
-    }
 
+    function updateBackToTop(){
 
-    .about-image {
+        if(!backToTop) return;
 
-        height: 340px;
+        backToTop.classList.toggle(
+            "visible",
+            window.scrollY > 500
+        );
 
     }
-
 
-    .about-badge {
 
-        min-width: 160px;
+    window.addEventListener(
+        "scroll",
+        updateBackToTop,
+        { passive:true }
+    );
 
-        padding: 13px;
 
-    }
+    if(backToTop){
 
+        backToTop.addEventListener(
+            "click",
+            () => {
 
-    .values-image {
+                window.scrollTo({
+                    top:0,
+                    behavior:"smooth"
+                });
 
-        height: 340px;
+            }
+        );
 
     }
-
 
-    .values-image-card {
 
-        left: 10px;
+    updateBackToTop();
 
-        bottom: 15px;
 
-        padding: 17px 20px;
+    /* =====================================================
+       CURRENT YEAR
+    ===================================================== */
 
-    }
+    const currentYear =
+        document.getElementById("currentYear");
 
 
-    .values-image-card strong {
+    if(currentYear){
 
-        font-size: 18px;
+        currentYear.textContent =
+            new Date().getFullYear();
 
     }
-
 
-    .contact-info h2 {
 
-        font-size: 38px;
+    /* =====================================================
+       PREVENT IMAGE DRAGGING
+    ===================================================== */
 
-    }
+    document
+        .querySelectorAll("img")
+        .forEach(image => {
 
-}
+            image.setAttribute(
+                "draggable",
+                "false"
+            );
 
+        });
 
-/* =========================================================
-   ACCESSIBILITY
-========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
+    /* =====================================================
+       MOBILE RESIZE SAFETY
+    ===================================================== */
 
-    *,
-    *::before,
-    *::after {
+    window.addEventListener(
+        "resize",
+        () => {
 
-        scroll-behavior: auto !important;
+            if(
+                window.innerWidth > 900
+            ){
 
-        animation-duration: 0.01ms !important;
+                closeMobileMenu();
 
-        animation-iteration-count: 1 !important;
+            }
 
-        transition-duration: 0.01ms !important;
-
-    }
+        }
+    );
 
-}
+});
