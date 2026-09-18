@@ -5,89 +5,125 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
+
     /* =====================================================
        PAGE LOADER
     ===================================================== */
 
-    const pageLoader = document.getElementById("pageLoader");
+    const pageLoader =
+        document.getElementById("pageLoader");
 
-    setTimeout(() => {
+    if (pageLoader) {
 
-        if(pageLoader){
-            pageLoader.classList.add("hidden");
-        }
+        window.addEventListener("load", () => {
 
-    }, 600);
+            setTimeout(() => {
+
+                pageLoader.classList.add("loaded");
+
+            }, 600);
+
+        });
+
+    }
 
 
     /* =====================================================
        TYPING EFFECT
     ===================================================== */
 
-    const typingText = document.getElementById("typingText");
+    const typingText =
+        document.getElementById("typingText");
 
-    const phrases = [
-        "Inspiring Excellence",
-        "Shaping Tomorrow",
-        "Empowering Young Minds",
-        "Building Future Leaders"
-    ];
+    if (typingText) {
 
-    let phraseIndex = 0;
-    let characterIndex = 0;
-    let deleting = false;
+        const phrases = [
+            "Inspiring Excellence",
+            "Shaping Tomorrow",
+            "Empowering Young Minds",
+            "Building Future Leaders"
+        ];
 
-    const typeSpeed = 80;
-    const deleteSpeed = 45;
-    const pauseTime = 1800;
+        let phraseIndex = 0;
+        let characterIndex = 0;
+
+        let deleting = false;
+
+        const typeSpeed = 80;
+        const deleteSpeed = 45;
+        const pauseTime = 1800;
 
 
-    function typeWriter(){
+        function typeEffect() {
 
-        if(!typingText) return;
+            const currentPhrase =
+                phrases[phraseIndex];
 
-        const currentPhrase = phrases[phraseIndex];
 
-        if(!deleting){
+            if (!deleting) {
 
-            characterIndex++;
+                typingText.textContent =
+                    currentPhrase.substring(
+                        0,
+                        characterIndex + 1
+                    );
 
-            typingText.textContent =
-                currentPhrase.substring(0, characterIndex);
+                characterIndex++;
 
-            if(characterIndex === currentPhrase.length){
 
-                deleting = true;
+                if (
+                    characterIndex ===
+                    currentPhrase.length
+                ) {
 
-                setTimeout(typeWriter, pauseTime);
+                    deleting = true;
 
-                return;
+                    setTimeout(
+                        typeEffect,
+                        pauseTime
+                    );
+
+                    return;
+
+                }
+
+            } else {
+
+                typingText.textContent =
+                    currentPhrase.substring(
+                        0,
+                        characterIndex - 1
+                    );
+
+                characterIndex--;
+
+
+                if (characterIndex === 0) {
+
+                    deleting = false;
+
+                    phraseIndex =
+                        (phraseIndex + 1) %
+                        phrases.length;
+
+                }
+
             }
 
-        }else{
 
-            characterIndex--;
+            setTimeout(
+                typeEffect,
+                deleting
+                    ? deleteSpeed
+                    : typeSpeed
+            );
 
-            typingText.textContent =
-                currentPhrase.substring(0, characterIndex);
-
-            if(characterIndex === 0){
-
-                deleting = false;
-
-                phraseIndex =
-                    (phraseIndex + 1) % phrases.length;
-            }
         }
 
-        setTimeout(
-            typeWriter,
-            deleting ? deleteSpeed : typeSpeed
-        );
+
+        typeEffect();
+
     }
-
-
-    setTimeout(typeWriter, 900);
 
 
     /* =====================================================
@@ -106,206 +142,223 @@ document.addEventListener("DOMContentLoaded", () => {
     const heroNext =
         document.getElementById("heroNext");
 
-    let currentSlide = 0;
-    let heroTimer;
+
+    if (heroSlides.length) {
+
+        let currentSlide = 0;
+
+        let heroInterval;
 
 
-    function showSlide(index){
+        function showSlide(index) {
 
-        if(!heroSlides.length) return;
+            currentSlide =
+                (index + heroSlides.length) %
+                heroSlides.length;
 
-        if(index < 0){
-            index = heroSlides.length - 1;
-        }
 
-        if(index >= heroSlides.length){
-            index = 0;
-        }
+            heroSlides.forEach(
+                (slide, i) => {
 
-        currentSlide = index;
+                    slide.classList.toggle(
+                        "active",
+                        i === currentSlide
+                    );
 
-        heroSlides.forEach((slide, i) => {
-
-            slide.classList.toggle(
-                "active",
-                i === currentSlide
+                }
             );
 
-        });
 
+            heroDots.forEach(
+                (dot, i) => {
 
-        heroDots.forEach((dot, i) => {
+                    dot.classList.toggle(
+                        "active",
+                        i === currentSlide
+                    );
 
-            dot.classList.toggle(
-                "active",
-                i === currentSlide
+                }
             );
 
-        });
-    }
+        }
 
 
-    function nextSlide(){
+        function nextSlide() {
 
-        showSlide(currentSlide + 1);
+            showSlide(currentSlide + 1);
 
-    }
-
-
-    function previousSlide(){
-
-        showSlide(currentSlide - 1);
-
-    }
+        }
 
 
-    function startHeroTimer(){
+        function previousSlide() {
 
-        clearInterval(heroTimer);
+            showSlide(currentSlide - 1);
 
-        heroTimer =
-            setInterval(nextSlide, 6000);
-    }
+        }
 
 
-    function stopHeroTimer(){
+        function startHeroSlider() {
 
-        clearInterval(heroTimer);
+            clearInterval(heroInterval);
 
-    }
+            heroInterval =
+                setInterval(
+                    nextSlide,
+                    6000
+                );
+
+        }
 
 
-    if(heroNext){
-
-        heroNext.addEventListener(
+        heroNext?.addEventListener(
             "click",
             () => {
 
                 nextSlide();
-                startHeroTimer();
+                startHeroSlider();
 
             }
         );
 
-    }
 
-
-    if(heroPrev){
-
-        heroPrev.addEventListener(
+        heroPrev?.addEventListener(
             "click",
             () => {
 
                 previousSlide();
-                startHeroTimer();
+                startHeroSlider();
 
             }
         );
 
-    }
 
+        heroDots.forEach(
+            dot => {
 
-    heroDots.forEach(dot => {
+                dot.addEventListener(
+                    "click",
+                    () => {
 
-        dot.addEventListener(
-            "click",
-            () => {
+                        const index =
+                            Number(
+                                dot.dataset.slide
+                            );
 
-                const slide =
-                    Number(dot.dataset.slide);
+                        showSlide(index);
 
-                showSlide(slide);
+                        startHeroSlider();
 
-                startHeroTimer();
+                    }
+                );
 
             }
         );
 
-    });
+
+        const heroSection =
+            document.querySelector(".hero-section");
 
 
-    const heroSection =
-        document.querySelector(".hero-section");
-
-
-    if(heroSection){
-
-        heroSection.addEventListener(
+        heroSection?.addEventListener(
             "mouseenter",
-            stopHeroTimer
+            () => clearInterval(heroInterval)
         );
 
-        heroSection.addEventListener(
+
+        heroSection?.addEventListener(
             "mouseleave",
-            startHeroTimer
+            startHeroSlider
         );
+
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "ArrowRight"
+                ) {
+
+                    nextSlide();
+                    startHeroSlider();
+
+                }
+
+                if (
+                    event.key === "ArrowLeft"
+                ) {
+
+                    previousSlide();
+                    startHeroSlider();
+
+                }
+
+            }
+        );
+
+
+        showSlide(0);
+        startHeroSlider();
 
     }
-
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if(event.key === "ArrowRight"){
-                nextSlide();
-                startHeroTimer();
-            }
-
-            if(event.key === "ArrowLeft"){
-                previousSlide();
-                startHeroTimer();
-            }
-
-        }
-    );
-
-
-    showSlide(0);
-    startHeroTimer();
 
 
     /* =====================================================
        MOBILE MENU
     ===================================================== */
 
-    const mobileToggle =
-        document.getElementById("mobileMenuToggle");
+    const mobileMenuButton =
+        document.getElementById(
+            "mobileMenuButton"
+        );
 
     const mainNav =
         document.getElementById("mainNav");
 
 
-    function closeMobileMenu(){
+    if (
+        mobileMenuButton &&
+        mainNav
+    ) {
 
-        if(!mainNav || !mobileToggle) return;
-
-        mainNav.classList.remove("open");
-
-        mobileToggle.setAttribute(
-            "aria-expanded",
-            "false"
-        );
-
-    }
-
-
-    if(mobileToggle && mainNav){
-
-        mobileToggle.addEventListener(
+        mobileMenuButton.addEventListener(
             "click",
             () => {
 
-                const isOpen =
-                    mainNav.classList.toggle("open");
+                const open =
+                    mainNav.classList.toggle(
+                        "mobile-open"
+                    );
 
-                mobileToggle.setAttribute(
+                mobileMenuButton.setAttribute(
                     "aria-expanded",
-                    String(isOpen)
+                    open ? "true" : "false"
                 );
 
             }
         );
+
+
+        mainNav.querySelectorAll("a")
+            .forEach(link => {
+
+                link.addEventListener(
+                    "click",
+                    () => {
+
+                        mainNav.classList.remove(
+                            "mobile-open"
+                        );
+
+                        mobileMenuButton.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                    }
+                );
+
+            });
 
     }
 
@@ -318,13 +371,13 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("siteHeader");
 
 
-    function updateHeader(){
+    function updateHeader() {
 
-        if(!siteHeader) return;
+        if (!siteHeader) return;
 
         siteHeader.classList.toggle(
             "scrolled",
-            window.scrollY > 30
+            window.scrollY > 20
         );
 
     }
@@ -333,124 +386,10 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener(
         "scroll",
         updateHeader,
-        { passive:true }
+        { passive: true }
     );
 
     updateHeader();
-
-
-    /* =====================================================
-       TEAM SECTION REVEAL
-       Team remains hidden until About is navigated to.
-    ===================================================== */
-
-    const aboutSection =
-        document.getElementById("about");
-
-    const teamSection =
-        document.getElementById("our-team");
-
-
-    function revealTeamSection(){
-
-        if(!teamSection) return;
-
-        teamSection.classList.add("is-visible");
-
-    }
-
-
-    /* =====================================================
-       SMOOTH INTERNAL NAVIGATION
-    ===================================================== */
-
-    const internalLinks =
-        document.querySelectorAll('a[href^="#"]');
-
-
-    internalLinks.forEach(link => {
-
-        link.addEventListener(
-            "click",
-            event => {
-
-                const targetId =
-                    link.getAttribute("href");
-
-                if(!targetId || targetId === "#"){
-                    return;
-                }
-
-                const target =
-                    document.querySelector(targetId);
-
-                if(!target){
-                    return;
-                }
-
-                event.preventDefault();
-
-
-                /* -----------------------------------------
-                   ABOUT NAVIGATION
-                ----------------------------------------- */
-
-                if(targetId === "#about"){
-
-                    revealTeamSection();
-
-                }
-
-
-                /* -----------------------------------------
-                   TEAM DIRECT NAVIGATION
-                ----------------------------------------- */
-
-                if(targetId === "#our-team"){
-
-                    revealTeamSection();
-
-                }
-
-
-                closeMobileMenu();
-
-
-                const headerHeight =
-                    siteHeader
-                        ? siteHeader.offsetHeight
-                        : 0;
-
-                const targetPosition =
-                    target.getBoundingClientRect().top +
-                    window.pageYOffset -
-                    headerHeight -
-                    10;
-
-
-                window.scrollTo({
-                    top:targetPosition,
-                    behavior:"smooth"
-                });
-
-            }
-        );
-
-    });
-
-
-    /* =====================================================
-       SHOW TEAM WHEN PAGE IS DIRECTLY LOADED WITH #ABOUT
-    ===================================================== */
-
-    if(
-        window.location.hash === "#about" ||
-        window.location.hash === "#our-team"
-    ){
-
-        revealTeamSection();
-
-    }
 
 
     /* =====================================================
@@ -458,83 +397,88 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================================== */
 
     const navLinks =
-        document.querySelectorAll(".nav-link");
-
-    const sections =
         document.querySelectorAll(
-            "main section[id]"
+            ".main-nav .nav-link"
         );
 
 
-    function updateActiveNav(){
+    function updateActiveNavigation() {
 
-        const scrollPosition =
-            window.scrollY + 180;
-
-        let currentSection = "home";
-
-
-        sections.forEach(section => {
-
-            const top =
-                section.offsetTop;
-
-            const height =
-                section.offsetHeight;
-
-            if(
-                scrollPosition >= top &&
-                scrollPosition < top + height
-            ){
-
-                currentSection =
-                    section.id;
-
-            }
-
-        });
+        const currentPath =
+            window.location.pathname
+                .split("/")
+                .pop()
+                .toLowerCase();
 
 
-        navLinks.forEach(link => {
+        if (
+            currentPath === "" ||
+            currentPath === "index.html"
+        ) {
 
-            const href =
-                link.getAttribute("href");
+            navLinks.forEach(link => {
 
-            link.classList.toggle(
-                "active",
-                href === `#${currentSection}`
-            );
+                const href =
+                    link.getAttribute("href");
 
-        });
+                link.classList.toggle(
+                    "active",
+                    href === "index.html"
+                );
+
+            });
+
+            return;
+
+        }
 
 
-        /* Team belongs to About */
-
-        if(
-            currentSection === "our-team"
-        ){
+        if (currentPath === "about.html") {
 
             navLinks.forEach(link => {
 
                 link.classList.toggle(
                     "active",
-                    link.getAttribute("href") === "#about"
+                    link.getAttribute("href") ===
+                    "about.html"
                 );
 
             });
 
+            return;
+
         }
+
+
+        if (
+            currentPath === "registration.html"
+        ) {
+
+            navLinks.forEach(link => {
+
+                link.classList.toggle(
+                    "active",
+                    link.getAttribute("href") ===
+                    "registration.html"
+                );
+
+            });
+
+            return;
+
+        }
+
+
+        navLinks.forEach(
+            link => link.classList.remove(
+                "active"
+            )
+        );
 
     }
 
 
-    window.addEventListener(
-        "scroll",
-        updateActiveNav,
-        { passive:true }
-    );
-
-    updateActiveNav();
+    updateActiveNavigation();
 
 
     /* =====================================================
@@ -545,133 +489,285 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".reveal");
 
 
-    const revealObserver =
-        new IntersectionObserver(
-            entries => {
+    if (revealElements.length) {
 
-                entries.forEach(entry => {
+        const revealObserver =
+            new IntersectionObserver(
+                entries => {
 
-                    if(entry.isIntersecting){
+                    entries.forEach(entry => {
 
-                        entry.target.classList.add("visible");
+                        if (
+                            entry.isIntersecting
+                        ) {
 
-                        revealObserver.unobserve(
-                            entry.target
-                        );
+                            entry.target.classList.add(
+                                "revealed"
+                            );
 
-                    }
+                            revealObserver.unobserve(
+                                entry.target
+                            );
 
-                });
+                        }
 
-            },
-            {
-                threshold:.12
+                    });
+
+                },
+                {
+                    threshold: .12
+                }
+            );
+
+
+        revealElements.forEach(
+            element => {
+
+                revealObserver.observe(element);
+
             }
         );
 
+    }
 
-    revealElements.forEach(element => {
 
-        revealObserver.observe(element);
+    /* =====================================================
+       STAGGER CARD ANIMATIONS
+    ===================================================== */
+
+    const cardGroups = [
+        ".why-grid",
+        ".academic-grid",
+        ".student-life-grid",
+        ".news-grid",
+        ".about-values-grid",
+        ".about-info-grid",
+        ".teacher-chart"
+    ];
+
+
+    cardGroups.forEach(selector => {
+
+        const group =
+            document.querySelector(selector);
+
+        if (!group) return;
+
+        const cards =
+            group.children;
+
+        Array.from(cards).forEach(
+            (card, index) => {
+
+                card.style.transitionDelay =
+                    `${index * 70}ms`;
+
+            }
+        );
 
     });
 
 
     /* =====================================================
-       WHY ALTOS MODAL
+       ACADEMIC ORBIT
+    ===================================================== */
+
+    const orbitContainer =
+        document.querySelector(
+            ".orbit-container"
+        );
+
+    const orbitTrack =
+        document.querySelector(
+            ".orbit-track"
+        );
+
+    const orbitItems =
+        document.querySelectorAll(
+            ".orbit-item"
+        );
+
+    const orbitInners =
+        document.querySelectorAll(
+            ".orbit-item-inner"
+        );
+
+
+    if (
+        orbitContainer &&
+        orbitTrack &&
+        orbitItems.length
+    ) {
+
+        function pauseOrbit() {
+
+            orbitTrack.style.animationPlayState =
+                "paused";
+
+            orbitInners.forEach(inner => {
+
+                inner.style.animationPlayState =
+                    "paused";
+
+            });
+
+        }
+
+
+        function resumeOrbit() {
+
+            orbitTrack.style.animationPlayState =
+                "running";
+
+            orbitInners.forEach(inner => {
+
+                inner.style.animationPlayState =
+                    "running";
+
+            });
+
+        }
+
+
+        orbitItems.forEach(item => {
+
+            item.addEventListener(
+                "mouseenter",
+                pauseOrbit
+            );
+
+            item.addEventListener(
+                "mouseleave",
+                resumeOrbit
+            );
+
+            item.addEventListener(
+                "focus",
+                pauseOrbit
+            );
+
+            item.addEventListener(
+                "blur",
+                resumeOrbit
+            );
+
+        });
+
+    }
+
+
+    /* =====================================================
+       WHY ALTOS FEATURE MODAL
     ===================================================== */
 
     const featureModal =
-        document.getElementById("featureModal");
+        document.getElementById(
+            "featureModal"
+        );
 
     const featureModalBack =
-        document.getElementById("featureModalBack");
-
-    const featureModalIcon =
-        document.getElementById("featureModalIcon");
-
-    const featureModalLabel =
-        document.getElementById("featureModalLabel");
+        document.getElementById(
+            "featureModalBack"
+        );
 
     const featureModalTitle =
-        document.getElementById("featureModalTitle");
+        document.getElementById(
+            "featureModalTitle"
+        );
 
     const featureModalDescription =
-        document.getElementById("featureModalDescription");
+        document.getElementById(
+            "featureModalDescription"
+        );
+
+    const featureModalIcon =
+        document.getElementById(
+            "featureModalIcon"
+        );
 
     const featureModalPoints =
-        document.getElementById("featureModalPoints");
+        document.getElementById(
+            "featureModalPoints"
+        );
 
 
     const featureData = {
 
-        academic:{
+        "academic-excellence": {
 
-            title:"Academic Excellence",
+            title:
+                "Academic Excellence",
 
-            icon:"fa-solid fa-book-open-reader",
+            icon:
+                "fa-solid fa-book-open-reader",
 
             description:
-                "Academic excellence at Altos Academy is about more than marks. It is about building strong foundations, developing disciplined study habits, encouraging curiosity and helping every learner understand their own progress.",
+                "Academic excellence at Altos Academy is about more than marks. It is about building strong foundations, developing disciplined learning habits, encouraging curiosity and helping learners make meaningful progress.",
 
-            points:[
+            points: [
                 "Strong academic foundations",
                 "Disciplined study habits",
-                "Curiosity and active learning",
-                "Continuous improvement"
+                "Curiosity and continuous learning",
+                "Meaningful academic progress"
             ]
 
         },
 
 
-        character:{
+        "character-discipline": {
 
-            title:"Character & Discipline",
+            title:
+                "Character & Discipline",
 
-            icon:"fa-solid fa-scale-balanced",
+            icon:
+                "fa-solid fa-scale-balanced",
 
             description:
-                "Character and discipline provide the foundation for responsible learning. Students are encouraged to understand accountability, respect others, act with integrity and take responsibility for their choices.",
+                "Character and discipline help learners understand that their choices matter. We encourage responsibility, respect, integrity and accountability in the way students approach learning and relationships.",
 
-            points:[
-                "Personal accountability",
+            points: [
+                "Integrity and honesty",
                 "Respect for others",
-                "Integrity in action",
-                "Responsibility and self-discipline"
+                "Personal responsibility",
+                "Accountability for choices"
             ]
 
         },
 
 
-        creativity:{
+        "creativity-thinking": {
 
-            title:"Creativity & Thinking",
+            title:
+                "Creativity & Thinking",
 
-            icon:"fa-solid fa-lightbulb",
+            icon:
+                "fa-solid fa-lightbulb",
 
             description:
-                "Learning becomes deeper when students are encouraged to ask questions, investigate ideas and think independently. Creativity and critical thinking help learners approach unfamiliar problems with confidence.",
+                "Learners need the confidence to ask questions, examine ideas and develop solutions. Creativity and critical thinking encourage independent thought and purposeful problem solving.",
 
-            points:[
+            points: [
                 "Critical thinking",
                 "Problem solving",
-                "Curiosity and exploration",
+                "Curiosity and questioning",
                 "Independent thought"
             ]
 
         },
 
 
-        leadership:{
+        "leadership": {
 
-            title:"Leadership",
+            title:
+                "Leadership",
 
-            icon:"fa-solid fa-people-group",
+            icon:
+                "fa-solid fa-people-group",
 
             description:
-                "Leadership is developed through responsibility, communication, initiative and service. Students are encouraged to develop confidence while understanding that leadership also means contributing positively to others.",
+                "Leadership is developed through responsibility, communication, initiative and service. Students are encouraged to build confidence and understand how their actions can positively influence others.",
 
-            points:[
+            points: [
                 "Responsibility",
                 "Communication",
                 "Initiative",
@@ -683,24 +779,17 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 
-    function openFeatureModal(key, trigger){
+    function openFeatureModal(key) {
 
-        if(
+        if (
             !featureModal ||
             !featureData[key]
-        ){
-            return;
-        }
+        ) return;
+
 
         const data =
             featureData[key];
 
-
-        featureModalIcon.innerHTML =
-            `<i class="${data.icon}"></i>`;
-
-        featureModalLabel.textContent =
-            "WHY ALTOS ACADEMY";
 
         featureModalTitle.textContent =
             data.title;
@@ -709,20 +798,24 @@ document.addEventListener("DOMContentLoaded", () => {
             data.description;
 
 
+        featureModalIcon.innerHTML =
+            `<i class="${data.icon}"></i>`;
+
+
         featureModalPoints.innerHTML =
-            data.points.map(point => {
-
-                return `
-                    <div class="feature-point">
+            data.points.map(
+                point => `
+                    <div class="feature-modal-point">
                         <i class="fa-solid fa-check"></i>
                         ${point}
                     </div>
-                `;
+                `
+            ).join("");
 
-            }).join("");
 
-
-        featureModal.classList.add("active");
+        featureModal.classList.add(
+            "active"
+        );
 
         featureModal.setAttribute(
             "aria-hidden",
@@ -734,24 +827,18 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        featureModalBack._trigger =
-            trigger;
-
-
-        setTimeout(() => {
-
-            featureModalBack.focus();
-
-        }, 50);
+        featureModalBack?.focus();
 
     }
 
 
-    function closeFeatureModal(){
+    function closeFeatureModal() {
 
-        if(!featureModal) return;
+        if (!featureModal) return;
 
-        featureModal.classList.remove("active");
+        featureModal.classList.remove(
+            "active"
+        );
 
         featureModal.setAttribute(
             "aria-hidden",
@@ -762,528 +849,369 @@ document.addEventListener("DOMContentLoaded", () => {
             "modal-open"
         );
 
-
-        if(
-            featureModalBack._trigger
-        ){
-
-            featureModalBack._trigger.focus();
-
-            featureModalBack._trigger =
-                null;
-
-        }
-
     }
 
 
-    document
-        .querySelectorAll(".why-read-more")
-        .forEach(link => {
+    document.querySelectorAll(
+        ".feature-read-more"
+    ).forEach(link => {
 
-            link.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    openFeatureModal(
-                        link.dataset.feature,
-                        link
-                    );
-
-                }
-            );
-
-        });
-
-
-    if(featureModalBack){
-
-        featureModalBack.addEventListener(
+        link.addEventListener(
             "click",
-            closeFeatureModal
-        );
+            event => {
 
-    }
+                event.preventDefault();
 
-
-    /* =====================================================
-       TEAM MODAL
-    ===================================================== */
-
-    const teamModal =
-        document.getElementById("teamModal");
-
-    const teamModalBack =
-        document.getElementById("teamModalBack");
-
-    const teamModalInitials =
-        document.getElementById("teamModalInitials");
-
-    const teamModalRole =
-        document.getElementById("teamModalRole");
-
-    const teamModalName =
-        document.getElementById("teamModalName");
-
-    const teamModalBio =
-        document.getElementById("teamModalBio");
-
-    const teamModalPoints =
-        document.getElementById("teamModalPoints");
-
-
-    const teamData = {
-
-        mayesero:{
-
-            name:"Mayesero Solomon",
-
-            role:"PRINCIPAL",
-
-            initials:"MS",
-
-            bio:
-                "Mayesero Solomon serves as the Principal of Altos Academy. This profile area is designed to present the Principal’s official background, educational journey, leadership experience and vision for the Academy. The detailed biography can be added here as the official profile information is provided.",
-
-            points:[
-                "School leadership",
-                "Educational direction",
-                "Academic and institutional development"
-            ]
-
-        },
-
-
-        daniel:{
-
-            name:"Daniel Kaphale",
-
-            role:"ACCOUNTANT",
-
-            initials:"DK",
-
-            bio:
-                "Daniel Kaphale serves as the Accountant at Altos Academy. This profile area is designed to present his official professional background, educational journey, experience and contribution to the Academy. The detailed biography can be added here using the official information supplied by the school.",
-
-            points:[
-                "Financial administration",
-                "Financial reporting and accountability",
-                "Support for institutional operations"
-            ]
-
-        },
-
-
-        blessing:{
-
-            name:"Blessing Mwale",
-
-            role:"HEADTEACHER",
-
-            initials:"BM",
-
-            bio:
-                "Blessing Mwale serves as the Headteacher at Altos Academy. This profile area is designed to present the official background, educational journey, leadership experience and educational philosophy of the Headteacher. The detailed biography can be added here when the official profile is provided.",
-
-            points:[
-                "Academic leadership",
-                "Teaching and learning coordination",
-                "Student and school development"
-            ]
-
-        },
-
-
-        allie:{
-
-            name:"Allie Malota",
-
-            role:"TEACHER",
-
-            initials:"AM",
-
-            bio:
-                "Allie Malota is a Teacher at Altos Academy. This profile area is reserved for the official professional background, educational qualifications, teaching experience and subject responsibilities. The detailed biography can be added here when the official profile information is available.",
-
-            points:[
-                "Teaching and learning",
-                "Student development",
-                "Classroom support"
-            ]
-
-        },
-
-
-        teacher01:{
-            name:"Teacher 01",
-            role:"TEACHER",
-            initials:"T1",
-            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
-            points:["Profile pending"]
-        },
-
-        teacher02:{
-            name:"Teacher 02",
-            role:"TEACHER",
-            initials:"T2",
-            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
-            points:["Profile pending"]
-        },
-
-        teacher03:{
-            name:"Teacher 03",
-            role:"TEACHER",
-            initials:"T3",
-            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
-            points:["Profile pending"]
-        },
-
-        teacher04:{
-            name:"Teacher 04",
-            role:"TEACHER",
-            initials:"T4",
-            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
-            points:["Profile pending"]
-        },
-
-        teacher05:{
-            name:"Teacher 05",
-            role:"TEACHER",
-            initials:"T5",
-            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
-            points:["Profile pending"]
-        },
-
-        teacher06:{
-            name:"Teacher 06",
-            role:"TEACHER",
-            initials:"T6",
-            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
-            points:["Profile pending"]
-        },
-
-        teacher07:{
-            name:"Teacher 07",
-            role:"TEACHER",
-            initials:"T7",
-            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
-            points:["Profile pending"]
-        },
-
-        teacher08:{
-            name:"Teacher 08",
-            role:"TEACHER",
-            initials:"T8",
-            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
-            points:["Profile pending"]
-        },
-
-        teacher09:{
-            name:"Teacher 09",
-            role:"TEACHER",
-            initials:"T9",
-            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
-            points:["Profile pending"]
-        },
-
-        teacher10:{
-            name:"Teacher 10",
-            role:"TEACHER",
-            initials:"T10",
-            bio:"This profile is reserved for a future member of the teaching team. Add the teacher's official name, educational background, teaching experience and subject information here.",
-            points:["Profile pending"]
-        }
-
-    };
-
-
-    function openTeamModal(key, trigger){
-
-        if(
-            !teamModal ||
-            !teamData[key]
-        ){
-            return;
-        }
-
-        const data =
-            teamData[key];
-
-
-        teamModalInitials.textContent =
-            data.initials;
-
-        teamModalRole.textContent =
-            data.role;
-
-        teamModalName.textContent =
-            data.name;
-
-        teamModalBio.textContent =
-            data.bio;
-
-
-        teamModalPoints.innerHTML =
-            data.points.map(point => {
-
-                return `
-                    <div class="team-modal-point">
-                        <i class="fa-solid fa-check"></i>
-                        ${point}
-                    </div>
-                `;
-
-            }).join("");
-
-
-        teamModal.classList.add("active");
-
-        teamModal.setAttribute(
-            "aria-hidden",
-            "false"
-        );
-
-        document.body.classList.add(
-            "modal-open"
-        );
-
-
-        teamModalBack._trigger =
-            trigger;
-
-
-        setTimeout(() => {
-
-            teamModalBack.focus();
-
-        }, 50);
-
-    }
-
-
-    function closeTeamModal(){
-
-        if(!teamModal) return;
-
-        teamModal.classList.remove("active");
-
-        teamModal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-        document.body.classList.remove(
-            "modal-open"
-        );
-
-
-        if(
-            teamModalBack._trigger
-        ){
-
-            teamModalBack._trigger.focus();
-
-            teamModalBack._trigger =
-                null;
-
-        }
-
-    }
-
-
-    document
-        .querySelectorAll(".team-node")
-        .forEach(node => {
-
-            node.addEventListener(
-                "click",
-                () => {
-
-                    openTeamModal(
-                        node.dataset.person,
-                        node
-                    );
-
-                }
-            );
-
-        });
-
-
-    if(teamModalBack){
-
-        teamModalBack.addEventListener(
-            "click",
-            closeTeamModal
-        );
-
-    }
-
-
-    /* =====================================================
-       IMPORTANT:
-       MODALS ONLY CLOSE THROUGH THEIR BACK BUTTON.
-       ESCAPE DOES NOT CLOSE THEM.
-    ===================================================== */
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if(event.key === "Escape"){
-
-                if(
-                    featureModal &&
-                    featureModal.classList.contains("active")
-                ){
-
-                    event.preventDefault();
-
-                    return;
-                }
-
-
-                if(
-                    teamModal &&
-                    teamModal.classList.contains("active")
-                ){
-
-                    event.preventDefault();
-
-                    return;
-                }
+                openFeatureModal(
+                    link.dataset.feature
+                );
 
             }
-
-        }
-    );
-
-
-    /* =====================================================
-       ORBIT PAUSE
-       Rotation pauses when the user hovers/focuses
-       an individual feature.
-    ===================================================== */
-
-    const orbitTrack =
-        document.querySelector(".orbit-track");
-
-    const orbitItems =
-        document.querySelectorAll(".orbit-item");
-
-    const orbitInners =
-        document.querySelectorAll(".orbit-item-inner");
-
-
-    function pauseOrbit(){
-
-        if(!orbitTrack) return;
-
-        orbitTrack.style.animationPlayState =
-            "paused";
-
-        orbitInners.forEach(inner => {
-
-            inner.style.animationPlayState =
-                "paused";
-
-        });
-
-    }
-
-
-    function resumeOrbit(){
-
-        if(!orbitTrack) return;
-
-        orbitTrack.style.animationPlayState =
-            "running";
-
-        orbitInners.forEach(inner => {
-
-            inner.style.animationPlayState =
-                "running";
-
-        });
-
-    }
-
-
-    orbitItems.forEach(item => {
-
-        item.addEventListener(
-            "mouseenter",
-            pauseOrbit
-        );
-
-        item.addEventListener(
-            "mouseleave",
-            resumeOrbit
-        );
-
-        item.addEventListener(
-            "focus",
-            pauseOrbit
-        );
-
-        item.addEventListener(
-            "blur",
-            resumeOrbit
         );
 
     });
 
 
+    featureModalBack?.addEventListener(
+        "click",
+        closeFeatureModal
+    );
+
+
     /* =====================================================
-       CONTACT FORM
-       Front-end visual confirmation only.
+       EMPLOYEE TEAM MODAL
     ===================================================== */
 
-    const contactForm =
-        document.getElementById("contactForm");
+    const teamModal =
+        document.getElementById(
+            "teamModal"
+        );
+
+    const teamModalBack =
+        document.getElementById(
+            "teamModalBack"
+        );
+
+    const teamModalImage =
+        document.getElementById(
+            "teamModalImage"
+        );
+
+    const teamModalName =
+        document.getElementById(
+            "teamModalName"
+        );
+
+    const teamModalRole =
+        document.getElementById(
+            "teamModalRole"
+        );
+
+    const teamModalBio =
+        document.getElementById(
+            "teamModalBio"
+        );
+
+    const teamModalDetails =
+        document.getElementById(
+            "teamModalDetails"
+        );
 
 
-    if(contactForm){
+    const teamData = {
 
-        contactForm.addEventListener(
-            "submit",
-            event => {
+        mayesero: {
 
-                event.preventDefault();
+            name:
+                "Mayesero Solomon",
 
-                const button =
-                    contactForm.querySelector("button");
+            role:
+                "PRINCIPAL",
 
-                if(!button) return;
+            image:
+                "images/team/mayesero-solomon.jpg",
+
+            bio:
+                "This profile provides space for the official background of Mayesero Solomon, Principal of Altos Academy.",
+
+            details: [
+                "Principal — Altos Academy",
+                "Official biography can be added here.",
+                "Qualifications and professional background can be added here."
+            ]
+
+        },
 
 
-                const originalText =
-                    button.innerHTML;
+        daniel: {
+
+            name:
+                "Daniel Kaphale",
+
+            role:
+                "ACCOUNTANT",
+
+            image:
+                "images/team/daniel-kaphale.jpg",
+
+            bio:
+                "This profile provides space for the official background of Daniel Kaphale, Accountant at Altos Academy.",
+
+            details: [
+                "Accountant — Altos Academy",
+                "Official biography can be added here.",
+                "Qualifications and professional background can be added here."
+            ]
+
+        },
 
 
-                button.innerHTML =
-                    `<i class="fa-solid fa-check"></i> Message Sent`;
+        blessing: {
 
-                button.disabled = true;
+            name:
+                "Blessing Mwale",
+
+            role:
+                "HEADTEACHER",
+
+            image:
+                "images/team/blessing-mwale.jpg",
+
+            bio:
+                "This profile provides space for the official background of Blessing Mwale, Headteacher at Altos Academy.",
+
+            details: [
+                "Headteacher — Altos Academy",
+                "Official biography can be added here.",
+                "Qualifications and professional background can be added here."
+            ]
+
+        },
 
 
-                setTimeout(() => {
+        allie: {
 
-                    button.innerHTML =
-                        originalText;
+            name:
+                "Allie Malota",
 
-                    button.disabled = false;
+            role:
+                "TEACHER",
 
-                    contactForm.reset();
+            image:
+                "images/team/allie-malota.jpg",
 
-                }, 2500);
+            bio:
+                "This profile provides space for the official background of Allie Malota, Teacher at Altos Academy.",
+
+            details: [
+                "Teacher — Altos Academy",
+                "Official biography can be added here.",
+                "Teaching area and professional background can be added here."
+            ]
+
+        }
+
+    };
+
+
+    /* Add ten teacher placeholders */
+
+    for (
+        let i = 1;
+        i <= 10;
+        i++
+    ) {
+
+        const number =
+            String(i).padStart(2, "0");
+
+        const key =
+            `teacher-${number}`;
+
+
+        teamData[key] = {
+
+            name:
+                `Teacher ${number}`,
+
+            role:
+                "TEACHER",
+
+            image:
+                `images/team/teacher-${number}.jpg`,
+
+            bio:
+                "This profile is ready for the teacher's official biography. Add the teacher's name, teaching area, qualifications, experience and background when the information is available.",
+
+            details: [
+                "Teacher — Altos Academy",
+                "Profile information pending.",
+                "Add teaching area, qualifications and experience here."
+            ]
+
+        };
+
+    }
+
+
+    function openTeamModal(key) {
+
+        if (
+            !teamModal ||
+            !teamData[key]
+        ) return;
+
+
+        const person =
+            teamData[key];
+
+
+        teamModalName.textContent =
+            person.name;
+
+        teamModalRole.textContent =
+            person.role;
+
+        teamModalBio.textContent =
+            person.bio;
+
+
+        teamModalImage.src =
+            person.image;
+
+        teamModalImage.alt =
+            person.name;
+
+
+        teamModalDetails.innerHTML =
+            person.details.map(
+                detail => `
+                    <div class="team-detail">
+                        <i class="fa-solid fa-circle-check"></i>
+                        ${detail}
+                    </div>
+                `
+            ).join("");
+
+
+        teamModal.classList.add(
+            "active"
+        );
+
+        teamModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        document.body.classList.add(
+            "modal-open"
+        );
+
+
+        teamModalBack?.focus();
+
+    }
+
+
+    function closeTeamModal() {
+
+        if (!teamModal) return;
+
+        teamModal.classList.remove(
+            "active"
+        );
+
+        teamModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        document.body.classList.remove(
+            "modal-open"
+        );
+
+    }
+
+
+    document.querySelectorAll(
+        ".team-member"
+    ).forEach(member => {
+
+        member.addEventListener(
+            "click",
+            () => {
+
+                openTeamModal(
+                    member.dataset.team
+                );
 
             }
         );
 
-    }
+    });
+
+
+    teamModalBack?.addEventListener(
+        "click",
+        closeTeamModal
+    );
+
+
+    /* =====================================================
+       SMOOTH INTERNAL LINKS
+    ===================================================== */
+
+    document.querySelectorAll(
+        'a[href^="#"]'
+    ).forEach(link => {
+
+        link.addEventListener(
+            "click",
+            event => {
+
+                const href =
+                    link.getAttribute("href");
+
+                if (
+                    !href ||
+                    href === "#"
+                ) return;
+
+
+                const target =
+                    document.querySelector(href);
+
+
+                if (!target) return;
+
+
+                event.preventDefault();
+
+
+                const headerHeight =
+                    siteHeader
+                        ? siteHeader.offsetHeight
+                        : 0;
+
+
+                const targetTop =
+                    target.getBoundingClientRect()
+                        .top
+                    +
+                    window.scrollY
+                    -
+                    headerHeight;
+
+
+                window.scrollTo({
+                    top: targetTop,
+                    behavior: "smooth"
+                });
+
+            }
+        );
+
+    });
 
 
     /* =====================================================
@@ -1291,12 +1219,14 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================================== */
 
     const backToTop =
-        document.getElementById("backToTop");
+        document.getElementById(
+            "backToTop"
+        );
 
 
-    function updateBackToTop(){
+    function updateBackToTop() {
 
-        if(!backToTop) return;
+        if (!backToTop) return;
 
         backToTop.classList.toggle(
             "visible",
@@ -1309,60 +1239,85 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener(
         "scroll",
         updateBackToTop,
-        { passive:true }
+        { passive: true }
     );
 
 
-    if(backToTop){
+    backToTop?.addEventListener(
+        "click",
+        () => {
 
-        backToTop.addEventListener(
-            "click",
-            () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
 
-                window.scrollTo({
-                    top:0,
-                    behavior:"smooth"
-                });
-
-            }
-        );
-
-    }
-
-
-    updateBackToTop();
+        }
+    );
 
 
     /* =====================================================
-       CURRENT YEAR
+       CONTACT FORM
     ===================================================== */
 
-    const currentYear =
-        document.getElementById("currentYear");
+    const contactForm =
+        document.getElementById(
+            "contactForm"
+        );
+
+    const formMessage =
+        document.getElementById(
+            "formMessage"
+        );
 
 
-    if(currentYear){
+    contactForm?.addEventListener(
+        "submit",
+        event => {
 
-        currentYear.textContent =
-            new Date().getFullYear();
+            event.preventDefault();
 
-    }
+
+            if (formMessage) {
+
+                formMessage.textContent =
+                    "Thank you. Your message has been received.";
+
+                formMessage.classList.add(
+                    "show"
+                );
+
+            }
+
+
+            contactForm.reset();
+
+        }
+    );
 
 
     /* =====================================================
        PREVENT IMAGE DRAGGING
     ===================================================== */
 
-    document
-        .querySelectorAll("img")
-        .forEach(image => {
+    document.querySelectorAll("img")
+        .forEach(img => {
 
-            image.setAttribute(
+            img.setAttribute(
                 "draggable",
                 "false"
             );
 
         });
+
+
+    /* =====================================================
+       ESCAPE KEY
+       
+       IMPORTANT:
+       Modals intentionally DO NOT close with Escape.
+       They only close through the Back button.
+    ===================================================== */
 
 
     /* =====================================================
@@ -1373,15 +1328,41 @@ document.addEventListener("DOMContentLoaded", () => {
         "resize",
         () => {
 
-            if(
-                window.innerWidth > 900
-            ){
+            if (
+                window.innerWidth > 900 &&
+                mainNav
+            ) {
 
-                closeMobileMenu();
+                mainNav.classList.remove(
+                    "mobile-open"
+                );
+
+                mobileMenuButton?.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
 
             }
 
         }
     );
+
+
+    /* =====================================================
+       CURRENT YEAR
+    ===================================================== */
+
+    const currentYear =
+        document.getElementById(
+            "currentYear"
+        );
+
+
+    if (currentYear) {
+
+        currentYear.textContent =
+            new Date().getFullYear();
+
+    }
 
 });
