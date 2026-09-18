@@ -1,711 +1,2225 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
-<link rel="icon" type="image/x-icon" href="images/logo1 - Copy.png">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+          content="Altos Academy — Inspiring excellence, developing character and preparing students for tomorrow.">
 
+    <meta name="keywords"
+          content="Altos Academy, secondary school, education, Malawi, students, academics">
 
-<title>
-Greysol Academy
-</title>
+    <meta name="author"
+          content="Altos Academy">
 
+    <title>Altos Academy | Inspiring Excellence. Shaping Tomorrow.</title>
 
-<style>
+    <!-- =====================================================
+         GOOGLE FONTS
+    ====================================================== -->
 
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
 
-*{
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
 
-box-sizing:border-box;
-font-family:'Segoe UI',Arial,sans-serif;
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap"
+          rel="stylesheet">
 
-}
 
+    <!-- =====================================================
+         FONT AWESOME
+    ====================================================== -->
 
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-:root{
 
---navy:#001f3f;
---blue:#003366;
---gold:#d4af37;
---light:#f4f7fb;
+    <!-- =====================================================
+         STYLESHEET
+    ====================================================== -->
 
-}
-
-
-
-body{
-
-margin:0;
-
-background:var(--light);
-
-color:#333;
-
-}
-
-
-
-/* NAVIGATION */
-
-
-nav{
-
-background:var(--navy);
-
-color:white;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:15px 50px;
-
-}
-
-
-
-.logo{
-
-display:flex;
-
-align-items:center;
-
-gap:15px;
-
-}
-
-
-.logo img{
-
-width:60px;
-
-height:60px;
-
-object-fit:contain;
-
-}
-
-
-
-.logo h2{
-
-margin:0;
-
-}
-
-
-
-
-
-nav a{
-
-color:white;
-
-text-decoration:none;
-
-margin-left:25px;
-
-font-weight:500;
-
-}
-
-
-
-
-
-nav a:hover{
-
-color:var(--gold);
-
-}
-
-
-
-
-
-
-/* HERO */
-
-
-.hero{
-
-
-height:600px;
-
-
-background:
-
-linear-gradient(
-rgba(0,31,63,.8),
-rgba(0,31,63,.8)
-),
-
-url("images/school-bg.jpg");
-
-
-
-background-size:cover;
-
-background-position:center;
-
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-text-align:center;
-
-color:white;
-
-
-}
-
-
-
-.hero-content{
-
-max-width:800px;
-
-padding:30px;
-
-}
-
-
-
-.hero h1{
-
-font-size:50px;
-
-margin-bottom:20px;
-
-}
-
-
-
-.hero p{
-
-font-size:20px;
-
-line-height:1.6;
-
-}
-
-
-
-
-
-.btn{
-
-
-display:inline-block;
-
-padding:15px 35px;
-
-margin:10px;
-
-border-radius:8px;
-
-text-decoration:none;
-
-font-weight:bold;
-
-}
-
-
-
-.register{
-
-
-background:white;
-
-color:var(--navy);
-
-}
-
-
-
-.login{
-
-
-border:2px solid white;
-
-color:white;
-
-}
-
-
-
-
-
-
-
-
-/* SECTIONS */
-
-
-section{
-
-
-padding:60px 10%;
-
-
-}
-
-
-
-.title{
-
-text-align:center;
-
-color:var(--navy);
-
-font-size:35px;
-
-margin-bottom:40px;
-
-
-}
-
-
-
-
-
-.cards{
-
-
-display:grid;
-
-grid-template-columns:
-
-repeat(auto-fit,minmax(250px,1fr));
-
-gap:25px;
-
-
-}
-
-
-
-.card{
-
-
-background:white;
-
-padding:30px;
-
-border-radius:15px;
-
-text-align:center;
-
-
-box-shadow:
-0 5px 20px rgba(0,0,0,.1);
-
-
-}
-
-
-
-.card h3{
-
-color:var(--navy);
-
-}
-
-
-
-
-
-
-
-
-/* CONTACT */
-
-
-.contact{
-
-
-background:var(--navy);
-
-color:white;
-
-text-align:center;
-
-
-}
-
-
-
-
-
-
-
-footer{
-
-
-background:#000d1a;
-
-color:white;
-
-text-align:center;
-
-padding:20px;
-
-
-}
-
-
-
-
-
-@media(max-width:700px){
-
-
-nav{
-
-flex-direction:column;
-
-}
-
-
-
-nav div{
-
-margin-top:15px;
-
-}
-
-
-
-.hero h1{
-
-font-size:35px;
-
-}
-
-
-
-}
-
-
-
-</style>
-
+    <link rel="stylesheet"
+          href="style.css">
 
 </head>
-
 
 
 <body>
 
 
+<!-- =========================================================
+     PAGE LOADER
+========================================================= -->
 
+<div class="page-loader">
 
+    <div class="loader-logo">
 
-<nav>
+        <div class="loader-mark">
+            A
+        </div>
 
+        <span>ALTOS ACADEMY</span>
 
-<div class="logo">
-
-
-<img src="images/logo.png">
-
-
-<h2>
-GREYSOL ACADEMY
-</h2>
-
-
-</div>
-
-
-
-
-<div>
-
-
-<a href="#">
-Home
-</a>
-
-
-<a href="#about">
-About
-</a>
-
-
-<a href="#programs">
-Programs
-</a>
-
-
-<a href="#contact">
-Contact
-</a>
-
+    </div>
 
 </div>
 
 
+<!-- =========================================================
+     TOP BAR
+========================================================= -->
 
-</nav>
+<div class="top-bar">
 
+    <div class="container top-bar-inner">
 
+        <div class="top-left">
 
+            <span>
+                <i class="fa-solid fa-graduation-cap"></i>
+                Inspiring Excellence. Shaping Tomorrow.
+            </span>
 
-
-
-
-<!-- HERO -->
-
-
-<div class="hero">
-
-
-<div class="hero-content">
-
-
-<h1>
-Building Future Leaders
-</h1>
+        </div>
 
 
-<p>
+        <div class="top-right">
 
-Welcome to Greysol Academy, where excellence in education, discipline and innovation come together to prepare students for tomorrow.
+            <a href="mailto:info@altosacademy.com">
+                <i class="fa-solid fa-envelope"></i>
+                info@altosacademy.com
+            </a>
 
-</p>
+            <span class="top-divider"></span>
 
+            <a href="tel:+265000000000">
+                <i class="fa-solid fa-phone"></i>
+                +265 000 000 000
+            </a>
 
+        </div>
 
-
-<a href="student-registration/registration.html"
-class="btn register">
-
-Register Student
-
-</a>
-
-
-
-<a href="login.html"
-class="btn login">
-
-Student Portal
-
-</a>
-
-
+    </div>
 
 </div>
 
 
-</div>
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
+
+<header class="main-header">
+
+    <div class="container nav-container">
+
+
+        <!-- LOGO -->
+
+        <a href="index.html"
+           class="school-logo">
+
+            <div class="logo-symbol">
+
+                <span>A</span>
+
+            </div>
+
+
+            <div class="logo-text">
+
+                <strong>ALTOS</strong>
+
+                <small>ACADEMY</small>
+
+            </div>
+
+        </a>
 
 
 
+        <!-- DESKTOP NAV -->
+
+        <nav class="main-nav">
+
+            <a href="#home"
+               class="nav-link active">
+                Home
+            </a>
+
+            <a href="#about"
+               class="nav-link">
+                About
+            </a>
+
+            <a href="#academics"
+               class="nav-link">
+                Academics
+            </a>
+
+            <a href="#student-life"
+               class="nav-link">
+                Student Life
+            </a>
+
+            <a href="#admissions"
+               class="nav-link">
+                Admissions
+            </a>
+
+            <a href="#news"
+               class="nav-link">
+                News
+            </a>
+
+            <a href="#contact"
+               class="nav-link">
+                Contact
+            </a>
+
+        </nav>
 
 
 
+        <!-- STUDENT PORTAL -->
+
+        <a href="login.html"
+           class="student-login">
+
+            <i class="fa-solid fa-user-graduate"></i>
+
+            <span>Student Portal</span>
+
+        </a>
 
 
 
-<section id="about">
+        <!-- MOBILE BUTTON -->
+
+        <button class="mobile-menu-btn"
+                id="mobileMenuBtn"
+                aria-label="Open menu">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </button>
+
+    </div>
 
 
-<h2 class="title">
 
-About Greysol Academy
+    <!-- MOBILE NAV -->
 
-</h2>
+    <div class="mobile-nav"
+         id="mobileNav">
+
+        <a href="#home">
+            Home
+        </a>
+
+        <a href="#about">
+            About
+        </a>
+
+        <a href="#academics">
+            Academics
+        </a>
+
+        <a href="#student-life">
+            Student Life
+        </a>
+
+        <a href="#admissions">
+            Admissions
+        </a>
+
+        <a href="#news">
+            News
+        </a>
+
+        <a href="#contact">
+            Contact
+        </a>
+
+
+        <a href="login.html"
+           class="mobile-login">
+
+            <i class="fa-solid fa-user-graduate"></i>
+
+            Student Portal
+
+        </a>
+
+    </div>
+
+</header>
 
 
 
-<p style="
-text-align:center;
-font-size:18px;
-line-height:1.7;
-">
+<!-- =========================================================
+     HERO SECTION
+========================================================= -->
+
+<section class="hero"
+         id="home">
 
 
-Greysol Academy provides quality secondary education focused on academic excellence, character development and preparing students with skills needed for higher education and life.
+    <!-- BACKGROUND SLIDES -->
+
+    <div class="hero-slides">
+
+        <div class="hero-slide active"
+             style="background-image:url('images/hero1.jpg');">
+        </div>
+
+        <div class="hero-slide"
+             style="background-image:url('images/hero2.jpg');">
+        </div>
+
+        <div class="hero-slide"
+             style="background-image:url('images/hero3.jpg');">
+        </div>
+
+    </div>
 
 
-</p>
+
+    <!-- DARK OVERLAY -->
+
+    <div class="hero-overlay"></div>
 
 
+
+    <!-- HERO CONTENT -->
+
+    <div class="container hero-container">
+
+        <div class="hero-content">
+
+
+            <div class="hero-label">
+
+                <span class="label-line"></span>
+
+                <span>
+                    HELLO, WELCOME TO
+                </span>
+
+            </div>
+
+
+
+            <h1>
+
+                <span id="typingText">
+                </span>
+
+                <span class="typing-cursor">
+                    |
+                </span>
+
+            </h1>
+
+
+
+            <p class="hero-description">
+
+                A learning community committed to academic
+                excellence, character development, discipline
+                and the growth of young people into confident
+                future leaders.
+
+            </p>
+
+
+
+            <div class="hero-buttons">
+
+                <a href="#about"
+                   class="btn btn-primary">
+
+                    Discover Altos Academy
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+
+                <a href="login.html"
+                   class="btn btn-outline">
+
+                    Student Portal
+
+                    <i class="fa-solid fa-user-graduate"></i>
+
+                </a>
+
+            </div>
+
+
+
+            <!-- HERO TRUST ITEMS -->
+
+            <div class="hero-trust">
+
+                <div class="trust-item">
+
+                    <i class="fa-solid fa-book-open"></i>
+
+                    <span>
+                        Academic Excellence
+                    </span>
+
+                </div>
+
+
+                <div class="trust-item">
+
+                    <i class="fa-solid fa-shield-heart"></i>
+
+                    <span>
+                        Character & Discipline
+                    </span>
+
+                </div>
+
+
+                <div class="trust-item">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    <span>
+                        Student Development
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- HERO SIDE CARD -->
+
+        <div class="hero-side-card">
+
+
+            <div class="hero-card-top">
+
+                <span>
+                    ALTOS ACADEMY
+                </span>
+
+                <i class="fa-solid fa-graduation-cap"></i>
+
+            </div>
+
+
+            <div class="hero-card-main">
+
+                <span class="hero-card-small">
+                    OUR PURPOSE
+                </span>
+
+                <h3>
+                    Building Young Minds
+                    For A Better Tomorrow.
+                </h3>
+
+            </div>
+
+
+            <div class="hero-card-bottom">
+
+                <div>
+
+                    <strong>
+                        LEARN
+                    </strong>
+
+                    <span>
+                        Knowledge
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        GROW
+                    </strong>
+
+                    <span>
+                        Character
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        LEAD
+                    </strong>
+
+                    <span>
+                        Purpose
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- HERO CONTROLS -->
+
+    <button class="hero-arrow hero-prev"
+            id="heroPrev"
+            aria-label="Previous slide">
+
+        <i class="fa-solid fa-chevron-left"></i>
+
+    </button>
+
+
+    <button class="hero-arrow hero-next"
+            id="heroNext"
+            aria-label="Next slide">
+
+        <i class="fa-solid fa-chevron-right"></i>
+
+    </button>
+
+
+
+    <!-- SLIDE DOTS -->
+
+    <div class="hero-dots"
+         id="heroDots">
+
+        <button class="active"
+                data-slide="0"></button>
+
+        <button data-slide="1"></button>
+
+        <button data-slide="2"></button>
+
+    </div>
 
 </section>
 
 
 
+<!-- =========================================================
+     SCHOOL HIGHLIGHTS
+========================================================= -->
+
+<section class="school-highlights">
+
+    <div class="container highlights-grid">
+
+
+        <div class="highlight-item">
+
+            <div class="highlight-icon">
+
+                <i class="fa-solid fa-book-open"></i>
+
+            </div>
+
+            <div>
+
+                <strong>
+                    Academic Excellence
+                </strong>
+
+                <span>
+                    Learning with purpose
+                </span>
+
+            </div>
+
+        </div>
 
 
 
+        <div class="highlight-item">
+
+            <div class="highlight-icon">
+
+                <i class="fa-solid fa-person-chalkboard"></i>
+
+            </div>
+
+            <div>
+
+                <strong>
+                    Holistic Development
+                </strong>
+
+                <span>
+                    More than the classroom
+                </span>
+
+            </div>
+
+        </div>
 
 
 
-<section id="programs">
+        <div class="highlight-item">
 
+            <div class="highlight-icon">
 
-<h2 class="title">
+                <i class="fa-solid fa-medal"></i>
 
-Our Programs
+            </div>
 
-</h2>
+            <div>
 
+                <strong>
+                    Character Building
+                </strong>
 
+                <span>
+                    Discipline and integrity
+                </span>
 
+            </div>
 
-<div class="cards">
-
-
-
-<div class="card">
-
-
-<h3>
-
-Academic Excellence
-
-</h3>
-
-
-<p>
-
-Strong teaching in science, mathematics, languages and business subjects.
-
-</p>
-
-
-</div>
+        </div>
 
 
 
+        <div class="highlight-item">
 
+            <div class="highlight-icon">
 
-<div class="card">
+                <i class="fa-solid fa-compass"></i>
 
+            </div>
 
-<h3>
+            <div>
 
-Technology
+                <strong>
+                    Future Leadership
+                </strong>
 
-</h3>
+                <span>
+                    Preparing tomorrow's leaders
+                </span>
 
+            </div>
 
-<p>
+        </div>
 
-Computer studies and digital learning preparing students for the modern world.
-
-</p>
-
-
-</div>
-
-
-
-
-
-<div class="card">
-
-
-<h3>
-
-Student Development
-
-</h3>
-
-
-<p>
-
-Sports, leadership, creativity and life skills programs.
-
-</p>
-
-
-</div>
-
-
-
-
-</div>
-
+    </div>
 
 </section>
 
 
 
+<!-- =========================================================
+     ABOUT SECTION
+========================================================= -->
+
+<section class="about-section section"
+         id="about">
+
+    <div class="container">
+
+
+        <div class="section-heading centered">
+
+            <span class="section-label">
+                WHO WE ARE
+            </span>
+
+            <h2>
+                More Than A School.
+                <span>A Place To Grow.</span>
+            </h2>
+
+            <p>
+                Altos Academy is built around the belief that
+                education should develop the whole student —
+                academically, socially, personally and as a
+                future member of society.
+            </p>
+
+        </div>
 
 
 
+        <div class="about-grid">
+
+
+            <!-- IMAGE -->
+
+            <div class="about-image-wrapper">
+
+                <div class="about-image">
+
+                    <img src="images/about-school.jpg"
+                         alt="Altos Academy students">
+
+                </div>
+
+
+                <div class="about-badge">
+
+                    <i class="fa-solid fa-graduation-cap"></i>
+
+                    <div>
+
+                        <strong>
+                            ALTOS
+                        </strong>
+
+                        <span>
+                            Academy
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
 
 
 
-<section class="contact" id="contact">
+            <!-- CONTENT -->
+
+            <div class="about-content">
+
+                <span class="section-label">
+                    OUR IDENTITY
+                </span>
+
+                <h3>
+                    Where Knowledge Meets
+                    Character.
+                </h3>
 
 
-<h2>
+                <p>
 
-Contact Us
+                    At Altos Academy, learning goes beyond
+                    textbooks and examinations. We seek to
+                    create an environment where students can
+                    discover their abilities, develop discipline,
+                    build confidence and prepare for the
+                    responsibilities of tomorrow.
 
-</h2>
-
-
-<p>
-
-📍 Greysol Academy
-
-</p>
+                </p>
 
 
-<p>
+                <p>
 
-📞 +265 880 314 4701
+                    Our approach brings together academic
+                    development, personal growth, leadership,
+                    creativity and meaningful student
+                    experiences.
 
-</p>
+                </p>
 
 
-<p>
 
-✉ info@greysolacademy.com
+                <div class="about-features">
 
-</p>
 
+                    <div class="about-feature">
+
+                        <div class="feature-icon">
+
+                            <i class="fa-solid fa-check"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Purposeful Learning
+                            </strong>
+
+                            <span>
+                                Helping students understand
+                                why they learn.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="about-feature">
+
+                        <div class="feature-icon">
+
+                            <i class="fa-solid fa-check"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Strong Character
+                            </strong>
+
+                            <span>
+                                Encouraging integrity,
+                                responsibility and discipline.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="about-feature">
+
+                        <div class="feature-icon">
+
+                            <i class="fa-solid fa-check"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Future Ready
+                            </strong>
+
+                            <span>
+                                Developing skills for a changing
+                                world.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <a href="#academics"
+                   class="text-link">
+
+                    Explore Our Approach
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </section>
 
 
 
+<!-- =========================================================
+     WHY ALTOS
+========================================================= -->
+
+<section class="why-section section">
+
+    <div class="container">
+
+
+        <div class="section-heading">
+
+            <span class="section-label">
+                WHY ALTOS ACADEMY
+            </span>
+
+            <h2>
+                Education With
+                <span>Purpose.</span>
+            </h2>
+
+            <p>
+                We believe students thrive when academic
+                development is supported by discipline,
+                confidence, responsibility and opportunity.
+            </p>
+
+        </div>
 
 
 
+        <div class="why-grid">
 
 
-<footer>
+            <!-- CARD 1 -->
+
+            <div class="why-card">
+
+                <div class="why-number">
+                    01
+                </div>
+
+                <div class="why-icon">
+
+                    <i class="fa-solid fa-book-open-reader"></i>
+
+                </div>
+
+                <h3>
+                    Academic Excellence
+                </h3>
+
+                <p>
+                    Creating a culture where students are
+                    encouraged to learn, question, understand
+                    and strive for meaningful achievement.
+                </p>
+
+                <a href="#academics">
+                    Learn More
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
 
 
-© 2026 Greysol Academy
 
-<br>
+            <!-- CARD 2 -->
 
-Student Registration & Portal System
+            <div class="why-card">
 
+                <div class="why-number">
+                    02
+                </div>
+
+                <div class="why-icon">
+
+                    <i class="fa-solid fa-scale-balanced"></i>
+
+                </div>
+
+                <h3>
+                    Character & Discipline
+                </h3>
+
+                <p>
+                    Developing responsible young people
+                    through values, accountability, respect
+                    and personal responsibility.
+                </p>
+
+                <a href="#student-life">
+                    Learn More
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+
+
+            <!-- CARD 3 -->
+
+            <div class="why-card">
+
+                <div class="why-number">
+                    03
+                </div>
+
+                <div class="why-icon">
+
+                    <i class="fa-solid fa-lightbulb"></i>
+
+                </div>
+
+                <h3>
+                    Creativity & Thinking
+                </h3>
+
+                <p>
+                    Encouraging students to think critically,
+                    solve problems and approach challenges
+                    with curiosity.
+                </p>
+
+                <a href="#academics">
+                    Learn More
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+
+
+            <!-- CARD 4 -->
+
+            <div class="why-card">
+
+                <div class="why-number">
+                    04
+                </div>
+
+                <div class="why-icon">
+
+                    <i class="fa-solid fa-people-group"></i>
+
+                </div>
+
+                <h3>
+                    Leadership
+                </h3>
+
+                <p>
+                    Giving students opportunities to develop
+                    confidence, communication and leadership
+                    responsibility.
+                </p>
+
+                <a href="#student-life">
+                    Learn More
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     ACADEMICS
+========================================================= -->
+
+<section class="academics-section section"
+         id="academics">
+
+    <div class="container">
+
+
+        <div class="academics-header">
+
+
+            <div class="section-heading">
+
+                <span class="section-label">
+                    ACADEMICS
+                </span>
+
+                <h2>
+                    Learning That
+                    <span>Builds Futures.</span>
+                </h2>
+
+                <p>
+                    Our academic environment is designed to
+                    encourage curiosity, understanding,
+                    discipline and continuous improvement.
+                </p>
+
+            </div>
+
+
+            <a href="#contact"
+               class="outline-link">
+
+                Ask About Academics
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+
+
+        <div class="academic-grid">
+
+
+            <div class="academic-card">
+
+                <div class="academic-icon">
+
+                    <i class="fa-solid fa-graduation-cap"></i>
+
+                </div>
+
+                <h3>
+                    Academic Development
+                </h3>
+
+                <p>
+                    Supporting students in building strong
+                    foundations and developing deeper
+                    understanding.
+                </p>
+
+                <span class="academic-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+
+            </div>
+
+
+
+            <div class="academic-card">
+
+                <div class="academic-icon">
+
+                    <i class="fa-solid fa-laptop-code"></i>
+
+                </div>
+
+                <h3>
+                    Digital Skills
+                </h3>
+
+                <p>
+                    Preparing students to interact confidently
+                    with technology and the digital world.
+                </p>
+
+                <span class="academic-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+
+            </div>
+
+
+
+            <div class="academic-card">
+
+                <div class="academic-icon">
+
+                    <i class="fa-solid fa-brain"></i>
+
+                </div>
+
+                <h3>
+                    Critical Thinking
+                </h3>
+
+                <p>
+                    Encouraging students to ask questions,
+                    analyse information and solve problems.
+                </p>
+
+                <span class="academic-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+
+            </div>
+
+
+
+            <div class="academic-card">
+
+                <div class="academic-icon">
+
+                    <i class="fa-solid fa-users"></i>
+
+                </div>
+
+                <h3>
+                    Learning Support
+                </h3>
+
+                <p>
+                    Helping learners identify areas for
+                    improvement and continue progressing.
+                </p>
+
+                <span class="academic-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     STUDENT LIFE
+========================================================= -->
+
+<section class="student-life-section section"
+         id="student-life">
+
+    <div class="container">
+
+
+        <div class="section-heading centered">
+
+            <span class="section-label">
+                STUDENT LIFE
+            </span>
+
+            <h2>
+                Learning Happens
+                <span>Beyond The Classroom.</span>
+            </h2>
+
+            <p>
+                A student's development is shaped by experiences,
+                relationships, responsibility and participation.
+            </p>
+
+        </div>
+
+
+
+        <div class="life-grid">
+
+
+            <!-- LARGE IMAGE -->
+
+            <div class="life-main">
+
+                <img src="images/student-life.jpg"
+                     alt="Altos Academy student life">
+
+                <div class="life-overlay">
+
+                    <span>
+                        STUDENT EXPERIENCE
+                    </span>
+
+                    <h3>
+                        Discover. Participate.
+                        Grow.
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SPORTS -->
+
+            <div class="life-card">
+
+                <img src="images/sports.jpg"
+                     alt="School sports">
+
+                <div class="life-card-overlay">
+
+                    <i class="fa-solid fa-futbol"></i>
+
+                    <h3>
+                        Sports & Recreation
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CLUBS -->
+
+            <div class="life-card">
+
+                <img src="images/clubs.jpg"
+                     alt="School clubs and activities">
+
+                <div class="life-card-overlay">
+
+                    <i class="fa-solid fa-puzzle-piece"></i>
+
+                    <h3>
+                        Clubs & Activities
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- LEADERSHIP -->
+
+            <div class="life-card">
+
+                <img src="images/leadership.jpg"
+                     alt="Student leadership">
+
+                <div class="life-card-overlay">
+
+                    <i class="fa-solid fa-flag"></i>
+
+                    <h3>
+                        Student Leadership
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- COMMUNITY -->
+
+            <div class="life-card">
+
+                <img src="images/community.jpg"
+                     alt="School community">
+
+                <div class="life-card-overlay">
+
+                    <i class="fa-solid fa-handshake"></i>
+
+                    <h3>
+                        Community
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     VALUES
+========================================================= -->
+
+<section class="values-section section">
+
+    <div class="container">
+
+
+        <div class="values-layout">
+
+
+            <div class="values-content">
+
+                <span class="section-label">
+                    OUR VALUES
+                </span>
+
+                <h2>
+                    The Principles
+                    <span>That Guide Us.</span>
+                </h2>
+
+                <p>
+                    Education is not only about what students
+                    know. It is also about who they become.
+                </p>
+
+
+                <div class="values-list">
+
+
+                    <div class="value-item">
+
+                        <div class="value-icon">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Excellence
+                            </h3>
+
+                            <p>
+                                Encouraging every student to
+                                pursue meaningful improvement.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="value-item">
+
+                        <div class="value-icon">
+                            <i class="fa-solid fa-shield-heart"></i>
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Integrity
+                            </h3>
+
+                            <p>
+                                Doing what is right even when
+                                nobody is watching.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="value-item">
+
+                        <div class="value-icon">
+                            <i class="fa-solid fa-people-group"></i>
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Respect
+                            </h3>
+
+                            <p>
+                                Building a community where
+                                everyone is valued.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="value-item">
+
+                        <div class="value-icon">
+                            <i class="fa-solid fa-compass"></i>
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Responsibility
+                            </h3>
+
+                            <p>
+                                Preparing students to take
+                                ownership of their choices.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <div class="values-image">
+
+                <img src="images/values.jpg"
+                     alt="Altos Academy students">
+
+                <div class="values-image-card">
+
+                    <span>
+                        ALTOS ACADEMY
+                    </span>
+
+                    <strong>
+                        Learn.
+                        Grow.
+                        Lead.
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     ADMISSIONS CTA
+========================================================= -->
+
+<section class="admissions-section"
+         id="admissions">
+
+    <div class="admissions-background">
+
+        <img src="images/admissions.jpg"
+             alt="Altos Academy">
+
+    </div>
+
+
+    <div class="admissions-overlay"></div>
+
+
+    <div class="container admissions-content">
+
+
+        <span class="section-label light-label">
+            ADMISSIONS
+        </span>
+
+
+        <h2>
+            Give Your Child
+            <span>A Place To Grow.</span>
+        </h2>
+
+
+        <p>
+            Discover an educational environment where
+            academic development, character and opportunity
+            come together.
+        </p>
+
+
+        <div class="admission-buttons">
+
+            <a href="#contact"
+               class="btn btn-primary">
+
+                Enquire About Admissions
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+
+            <a href="#contact"
+               class="btn btn-outline-white">
+
+                Contact The School
+
+                <i class="fa-solid fa-phone"></i>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     NEWS / ANNOUNCEMENTS
+========================================================= -->
+
+<section class="news-section section"
+         id="news">
+
+    <div class="container">
+
+
+        <div class="news-header">
+
+            <div class="section-heading">
+
+                <span class="section-label">
+                    SCHOOL NEWS
+                </span>
+
+                <h2>
+                    What's Happening
+                    <span>At Altos.</span>
+                </h2>
+
+                <p>
+                    Keep up with school announcements,
+                    activities and important updates.
+                </p>
+
+            </div>
+
+
+            <a href="#contact"
+               class="outline-link">
+
+                School Updates
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+
+
+        <div class="news-grid">
+
+
+            <article class="news-card">
+
+                <div class="news-image">
+
+                    <img src="images/news1.jpg"
+                         alt="School announcement">
+
+                    <span class="news-tag">
+                        Announcement
+                    </span>
+
+                </div>
+
+
+                <div class="news-content">
+
+                    <span class="news-date">
+                        SCHOOL UPDATE
+                    </span>
+
+                    <h3>
+                        Important School
+                        Announcements
+                    </h3>
+
+                    <p>
+                        Updates and information for students,
+                        parents and the wider school community.
+                    </p>
+
+                    <a href="#contact">
+                        Read More
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="news-card">
+
+                <div class="news-image">
+
+                    <img src="images/news2.jpg"
+                         alt="Academic activities">
+
+                    <span class="news-tag">
+                        Academics
+                    </span>
+
+                </div>
+
+
+                <div class="news-content">
+
+                    <span class="news-date">
+                        ACADEMIC UPDATE
+                    </span>
+
+                    <h3>
+                        Supporting Students
+                        In Their Learning
+                    </h3>
+
+                    <p>
+                        Information about learning activities,
+                        academic development and student support.
+                    </p>
+
+                    <a href="#contact">
+                        Read More
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="news-card">
+
+                <div class="news-image">
+
+                    <img src="images/news3.jpg"
+                         alt="Student activities">
+
+                    <span class="news-tag">
+                        Student Life
+                    </span>
+
+                </div>
+
+
+                <div class="news-content">
+
+                    <span class="news-date">
+                        STUDENT LIFE
+                    </span>
+
+                    <h3>
+                        Beyond The
+                        Classroom
+                    </h3>
+
+                    <p>
+                        Discover activities and experiences
+                        that contribute to student development.
+                    </p>
+
+                    <a href="#contact">
+                        Read More
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </article>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     STUDENT PORTAL CTA
+========================================================= -->
+
+<section class="portal-section">
+
+    <div class="container portal-inner">
+
+
+        <div class="portal-icon">
+
+            <i class="fa-solid fa-user-graduate"></i>
+
+        </div>
+
+
+        <div class="portal-content">
+
+            <span>
+                STUDENT PORTAL
+            </span>
+
+            <h2>
+                Access Your Academic Information
+            </h2>
+
+            <p>
+                Students can securely log in to access
+                their personal academic information and
+                examination results.
+            </p>
+
+        </div>
+
+
+        <a href="login.html"
+           class="portal-button">
+
+            Login To Student Portal
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     CONTACT
+========================================================= -->
+
+<section class="contact-section section"
+         id="contact">
+
+    <div class="container">
+
+
+        <div class="contact-grid">
+
+
+            <!-- CONTACT INFO -->
+
+            <div class="contact-info">
+
+                <span class="section-label">
+                    CONTACT US
+                </span>
+
+                <h2>
+                    Let's Start
+                    <span>A Conversation.</span>
+                </h2>
+
+                <p>
+                    Whether you are a parent, student or
+                    member of the community, we would be
+                    happy to hear from you.
+                </p>
+
+
+                <div class="contact-details">
+
+
+                    <div class="contact-item">
+
+                        <div class="contact-icon">
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                SCHOOL ADDRESS
+                            </span>
+
+                            <strong>
+                                Altos Academy
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="contact-item">
+
+                        <div class="contact-icon">
+
+                            <i class="fa-solid fa-envelope"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                EMAIL
+                            </span>
+
+                            <strong>
+                                info@altosacademy.com
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="contact-item">
+
+                        <div class="contact-icon">
+
+                            <i class="fa-solid fa-phone"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                PHONE
+                            </span>
+
+                            <strong>
+                                +265 000 000 000
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CONTACT FORM -->
+
+            <div class="contact-form-wrapper">
+
+                <form id="contactForm"
+                      class="contact-form">
+
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label>
+                                Your Name
+                            </label>
+
+                            <input type="text"
+                                   name="name"
+                                   placeholder="Enter your name"
+                                   required>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Phone
+                            </label>
+
+                            <input type="tel"
+                                   name="phone"
+                                   placeholder="Your phone number">
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Email Address
+                        </label>
+
+                        <input type="email"
+                               name="email"
+                               placeholder="Enter your email"
+                               required>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Subject
+                        </label>
+
+                        <select name="subject">
+
+                            <option value="">
+                                Select an enquiry
+                            </option>
+
+                            <option>
+                                Admissions
+                            </option>
+
+                            <option>
+                                Academic Information
+                            </option>
+
+                            <option>
+                                Student Information
+                            </option>
+
+                            <option>
+                                General Enquiry
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Message
+                        </label>
+
+                        <textarea name="message"
+                                  rows="5"
+                                  placeholder="How can we help you?"
+                                  required></textarea>
+
+                    </div>
+
+
+
+                    <button type="submit"
+                            class="form-submit">
+
+                        Send Enquiry
+
+                        <i class="fa-solid fa-paper-plane"></i>
+
+                    </button>
+
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="footer">
+
+
+    <div class="container footer-grid">
+
+
+        <!-- BRAND -->
+
+        <div class="footer-brand">
+
+
+            <a href="#home"
+               class="school-logo footer-logo">
+
+                <div class="logo-symbol">
+
+                    <span>A</span>
+
+                </div>
+
+
+                <div class="logo-text">
+
+                    <strong>ALTOS</strong>
+
+                    <small>ACADEMY</small>
+
+                </div>
+
+            </a>
+
+
+            <p>
+                Inspiring excellence, developing character
+                and preparing young people for tomorrow.
+            </p>
+
+
+            <div class="social-links">
+
+                <a href="#"
+                   aria-label="Facebook">
+
+                    <i class="fa-brands fa-facebook-f"></i>
+
+                </a>
+
+                <a href="#"
+                   aria-label="Instagram">
+
+                    <i class="fa-brands fa-instagram"></i>
+
+                </a>
+
+                <a href="#"
+                   aria-label="YouTube">
+
+                    <i class="fa-brands fa-youtube"></i>
+
+                </a>
+
+                <a href="#"
+                   aria-label="WhatsApp">
+
+                    <i class="fa-brands fa-whatsapp"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- QUICK LINKS -->
+
+        <div class="footer-column">
+
+            <h3>
+                Quick Links
+            </h3>
+
+            <a href="#home">
+                Home
+            </a>
+
+            <a href="#about">
+                About Us
+            </a>
+
+            <a href="#academics">
+                Academics
+            </a>
+
+            <a href="#student-life">
+                Student Life
+            </a>
+
+            <a href="#admissions">
+                Admissions
+            </a>
+
+        </div>
+
+
+
+        <!-- STUDENT -->
+
+        <div class="footer-column">
+
+            <h3>
+                Student
+            </h3>
+
+            <a href="login.html">
+                Student Portal
+            </a>
+
+            <a href="login.html">
+                Examination Results
+            </a>
+
+            <a href="login.html">
+                Academic Information
+            </a>
+
+            <a href="#contact">
+                Student Support
+            </a>
+
+        </div>
+
+
+
+        <!-- CONTACT -->
+
+        <div class="footer-column">
+
+            <h3>
+                Contact
+            </h3>
+
+            <span>
+                <i class="fa-solid fa-location-dot"></i>
+                Altos Academy
+            </span>
+
+            <span>
+                <i class="fa-solid fa-envelope"></i>
+                info@altosacademy.com
+            </span>
+
+            <span>
+                <i class="fa-solid fa-phone"></i>
+                +265 000 000 000
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- FOOTER BOTTOM -->
+
+    <div class="footer-bottom">
+
+        <div class="container footer-bottom-inner">
+
+            <p>
+                © <span id="currentYear"></span>
+                Altos Academy. All Rights Reserved.
+            </p>
+
+            <p>
+                Learn. Grow. Lead.
+            </p>
+
+        </div>
+
+    </div>
 
 </footer>
 
 
 
+<!-- =========================================================
+     BACK TO TOP
+========================================================= -->
+
+<button class="back-to-top"
+        id="backToTop"
+        aria-label="Back to top">
+
+    <i class="fa-solid fa-arrow-up"></i>
+
+</button>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script src="functions/script1.js"></script>
 
 
 </body>
-
 </html>
